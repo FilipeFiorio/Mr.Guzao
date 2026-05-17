@@ -23,6 +23,7 @@
 
 
 static void atualizarCamera(GameWorld *gw);
+static void desenharFundo(GameWorld *gw);
 
 /**
  * @brief Creates a dinamically allocated GameWorld struct instance.
@@ -73,16 +74,32 @@ void drawGameWorld( GameWorld *gw ) {
 
     BeginDrawing();
 
-    ClearBackground( PINK );
+    ClearBackground( (Color) {167, 222, 255, 255} );
 
     BeginMode2D(gw->camera);
 
+    desenharFundo(gw);
     desenharMapa(gw->mapa);
     desenharJogador(gw->jogador);
 
     EndMode2D();
 
     EndDrawing();
+
+}
+
+static void desenharFundo( GameWorld *gw ) {
+
+    int larguraFundo = rm.texturaFundo.width;
+    int larguraMapa = calcularLarguraMapa( gw->mapa );
+    int alturaMapa = calcularAlturaMapa( gw->mapa );
+    int repeticoes = larguraMapa / larguraFundo;
+
+    int deslocamentoParallax = (int) ( ( gw->camera.target.x / (float) larguraMapa ) * 200 );
+
+    for ( int i = 0; i <= repeticoes + 1; i++ ) {
+        DrawTexture( rm.texturaFundo, larguraFundo * i - deslocamentoParallax, alturaMapa - rm.texturaFundo.height, WHITE );
+    }
 
 }
 

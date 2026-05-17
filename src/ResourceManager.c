@@ -15,12 +15,14 @@ ResourceManager rm = { 0 };
 
 void loadResourcesResourceManager( void ) {
 
-    rm.texturaTerreno = LoadTexture( "resources/images/terreno.png" );
+    rm.texturaTerreno = LoadTexture( "resources/images/tiles/terreno.png" );
+    rm.texturaFundo = LoadTexture("resources/images/fundos/bg_montado.png");
 
 }
 
 void unloadResourcesResourceManager( void ) {
 
     UnloadTexture( rm.texturaTerreno );
+    UnloadTexture( rm.texturaFundo );
 
 }
