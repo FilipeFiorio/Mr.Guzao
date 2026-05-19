@@ -19,6 +19,8 @@ Jogador *criarJogador(float x, float y, float largura, float altura, Color cor) 
     novoJogador->vel = (Vector2) {0};
     novoJogador->cor = BLUE;
 
+    novoJogador->vidas = 5;
+
     novoJogador->velAndando = 225;
     novoJogador->velCorrendo = 325;
     novoJogador->velPulo = -425;

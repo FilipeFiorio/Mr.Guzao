@@ -25,6 +25,7 @@
 static void atualizarCamera(GameWorld *gw);
 static void desenharFundo(GameWorld *gw);
 static void verificarMorteJogador(GameWorld *gw);
+static void verificarGameOver(GameWorld *gw);
 static void reiniciarJogo(GameWorld *gw);
 
 /**
@@ -66,6 +67,7 @@ void updateGameWorld( GameWorld *gw, float delta ) {
     entradaJogador(gw->jogador);
     atualizarJogador(gw->jogador, gw, delta);
     atualizarCamera(gw);
+    verificarGameOver(gw);
     verificarMorteJogador(gw);
 
 }
@@ -86,6 +88,10 @@ void drawGameWorld( GameWorld *gw ) {
     desenharJogador(gw->jogador);
 
     EndMode2D();
+
+    char textoVidas[10];
+    sprintf(textoVidas, "vidas: %d", gw->jogador->vidas);
+    DrawText(textoVidas,10, 10, 20, WHITE);
 
     EndDrawing();
 
@@ -139,11 +145,26 @@ static void verificarMorteJogador(GameWorld *gw) {
     int alturaMapa = calcularAlturaMapa(gw->mapa);
 
     if(jogador->ret.y > alturaMapa) {
+        jogador->vidas--; 
         reiniciarJogo(gw);
     }
+
+}
+
+
+//no futuro usar estados do jogo --> ESTADO_JOGO_GAME_OVER
+static void verificarGameOver(GameWorld *gw) {
+
+    if(gw->jogador->vidas <= 0) {
+        //ir para a tela de gameOver
+        //Opcao de sair do jogo, ou tentar de novo
+    }
+
 }
 
 static void reiniciarJogo(GameWorld *gw) {
+
     gw->jogador->ret.x = GetScreenWidth() / 2 - 100;
     gw->jogador->ret.y = calcularAlturaMapa(gw->mapa) - 100;
+    
 }
