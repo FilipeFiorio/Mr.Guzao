@@ -12,6 +12,7 @@
 #include "ResourceManager.h"
 #include "Tipos.h"
 #include "Jogador.h"
+#include "Inimigo.h"
 #include "Mapa.h"
 
 
@@ -26,7 +27,10 @@ static void atualizarCamera(GameWorld *gw);
 static void desenharFundo(GameWorld *gw);
 static void verificarMorteJogador(GameWorld *gw);
 static void verificarGameOver(GameWorld *gw);
+static void verificarColisaoJogadorInimigo(GameWorld *gw);
 static void reiniciarJogo(GameWorld *gw);
+static void inicializarGW(GameWorld *gw);
+
 
 /**
  * @brief Creates a dinamically allocated GameWorld struct instance.
@@ -35,16 +39,7 @@ GameWorld* createGameWorld( void ) {
 
     GameWorld *gw = (GameWorld*) malloc( sizeof( GameWorld ) );
 
-    gw->mapa = carregarMapa("resources/mapas/fase01.txt");
-    gw->jogador = criarJogador(GetScreenWidth() / 2 - 100, calcularAlturaMapa(gw->mapa) - 150, 50, 50, BLUE);
-    gw->gravidade = 600;
-
-    gw->camera = (Camera2D) {
-        .offset = {0},
-        .target = {0},
-        .rotation = 0.0f,
-        .zoom = 1.0f
-    };
+    inicializarGW(gw);
 
     return gw;
 
@@ -66,9 +61,11 @@ void updateGameWorld( GameWorld *gw, float delta ) {
 
     entradaJogador(gw->jogador);
     atualizarJogador(gw->jogador, gw, delta);
+    atualizarInimigo(gw->inimigo, gw, delta);
     atualizarCamera(gw);
     verificarGameOver(gw);
     verificarMorteJogador(gw);
+    verificarColisaoJogadorInimigo(gw);
 
 }
 
@@ -86,12 +83,17 @@ void drawGameWorld( GameWorld *gw ) {
     desenharFundo(gw);
     desenharMapa(gw->mapa);
     desenharJogador(gw->jogador);
+    desenharInimigo(gw->inimigo);
 
     EndMode2D();
 
     char textoVidas[10];
     sprintf(textoVidas, "vidas: %d", gw->jogador->vidas);
     DrawText(textoVidas,10, 10, 20, WHITE);
+
+    char posJogador[30];
+    sprintf(posJogador, "posicao: x: %d, y: %d", (int) gw->jogador->ret.x, (int) gw->jogador->ret.y);
+    DrawText(posJogador,10, 30, 20, BLACK);
 
     EndDrawing();
 
@@ -147,7 +149,9 @@ static void verificarMorteJogador(GameWorld *gw) {
     if(jogador->ret.y > alturaMapa) {
         jogador->vidas--; 
         reiniciarJogo(gw);
+        return;
     }
+
 
 }
 
@@ -164,7 +168,66 @@ static void verificarGameOver(GameWorld *gw) {
 
 static void reiniciarJogo(GameWorld *gw) {
 
-    gw->jogador->ret.x = GetScreenWidth() / 2 - 100;
-    gw->jogador->ret.y = calcularAlturaMapa(gw->mapa) - 100;
+    destruirJogador(gw->jogador);
+    destruirInimigo(gw->inimigo);
+    destruirMapa(gw->mapa);
+
+    inicializarGW(gw);
     
 }
+
+
+static void inicializarGW(GameWorld *gw) {
+
+    // Todos os valores para a criação dos inimigos foram conseguindo usando a posicao do jogador;
+
+    gw->mapa = carregarMapa("resources/mapas/fase01.txt");
+    gw->jogador = criarJogador(GetScreenWidth() / 2 - 100, calcularAlturaMapa(gw->mapa) - 150, 50, 50, BLUE);
+    gw->inimigo = criarInimigo(20, 430, 50, 50, RED );
+    gw->gravidade = 600;
+
+    gw->camera = (Camera2D) {
+        .offset = {0},
+        .target = {0},
+        .rotation = 0.0f,
+        .zoom = 1.0f
+    };
+
+}
+
+static void verificarJogadorForaMapa(GameWorld *gw) {
+
+    Jogador *jogador = gw->jogador;
+    int alturaMapa = calcularAlturaMapa(gw->mapa);
+
+    if(jogador->ret.y > alturaMapa) {
+        jogador->vidas--; 
+        reiniciarJogo(gw);
+        return;
+    }
+
+}
+
+static void verificarColisaoJogadorInimigo(GameWorld *gw) {
+
+    Jogador *j = gw->jogador;
+    Inimigo *i = gw->inimigo;
+
+    // Atualmente verifica apenas se há colisão pela esquerda, direita e por cima
+    // por cima apenas ve se a vel.x é maior que zero
+    // se for > 0 o jogador está em cima do inimigo
+    if(CheckCollisionRecs(j->ret, i->ret)) {
+        if(j->vel.y > 0) {
+            destruirInimigo(i);            
+        } else {
+            if(j->ret.x + j->ret.width / 2 > i->ret.x + i->ret.width / 2) {
+                j->ret.x = i->ret.x + i->ret.width;
+            } else if(j->ret.x + j->ret.width / 2 < i->ret.x + i->ret.width / 2 ) {
+                j->ret.x = i->ret.x - i->ret.width;
+            }
+        }
+    }
+
+}
+
+

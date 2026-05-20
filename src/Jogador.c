@@ -2,9 +2,14 @@
 #include "raylib/raylib.h"
 #include "Jogador.h"
 #include "Tipos.h"
+#include "Inimigo.h"
+#include "Mapa.h"
 
 static void resolverColisaoJogadorMapaX( Jogador *j, Mapa *mapa );
 static void resolverColisaoJogadorMapaY( Jogador *j, Mapa *mapa );
+static void verificarJogadorForaMapa(GameWorld *gw);
+static void verificarColisaoJogadorInimigo(GameWorld *gw);
+
 
 Jogador *criarJogador(float x, float y, float largura, float altura, Color cor) {
 
@@ -122,3 +127,4 @@ static void resolverColisaoJogadorMapaY( Jogador *j, Mapa *mapa ) {
     }
 
 }
+

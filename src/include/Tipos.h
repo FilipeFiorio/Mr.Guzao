@@ -25,6 +25,12 @@ typedef struct Jogador {
     bool noChao;
 } Jogador;
 
+typedef struct Inimigo {
+    Rectangle ret;
+    Color cor;
+    float velX;
+} Inimigo;
+
 typedef struct Obstaculo {
     Rectangle ret;
     Color cor;
@@ -50,6 +56,7 @@ typedef struct GameWorld {
     Mapa *mapa;
     Jogador *jogador;
     Camera2D camera;
+    Inimigo *inimigo;
     float gravidade;
 }GameWorld;
 
