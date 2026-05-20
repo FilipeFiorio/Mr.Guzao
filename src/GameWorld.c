@@ -61,7 +61,9 @@ void updateGameWorld( GameWorld *gw, float delta ) {
 
     entradaJogador(gw->jogador);
     atualizarJogador(gw->jogador, gw, delta);
-    atualizarInimigo(gw->inimigo, gw, delta);
+    if(gw->inimigo->estaVivo) {
+        atualizarInimigo(gw->inimigo, gw, delta);
+    }
     atualizarCamera(gw);
     verificarGameOver(gw);
     verificarMorteJogador(gw);
@@ -83,7 +85,10 @@ void drawGameWorld( GameWorld *gw ) {
     desenharFundo(gw);
     desenharMapa(gw->mapa);
     desenharJogador(gw->jogador);
-    desenharInimigo(gw->inimigo);
+
+    if(gw->inimigo->estaVivo) {
+        desenharInimigo(gw->inimigo);
+    }
 
     EndMode2D();
 
@@ -152,9 +157,7 @@ static void verificarMorteJogador(GameWorld *gw) {
         return;
     }
 
-
 }
-
 
 //no futuro usar estados do jogo --> ESTADO_JOGO_GAME_OVER
 static void verificarGameOver(GameWorld *gw) {
@@ -182,6 +185,7 @@ static void inicializarGW(GameWorld *gw) {
     // Todos os valores para a criação dos inimigos foram conseguindo usando a posicao do jogador;
 
     gw->mapa = carregarMapa("resources/mapas/fase01.txt");
+    // Apenas um placeholder para testes
     gw->jogador = criarJogador(GetScreenWidth() / 2 - 100, calcularAlturaMapa(gw->mapa) - 150, 50, 50, BLUE);
     gw->inimigo = criarInimigo(20, 430, 50, 50, RED );
     gw->gravidade = 600;
@@ -216,14 +220,16 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
     // Atualmente verifica apenas se há colisão pela esquerda, direita e por cima
     // por cima apenas ve se a vel.x é maior que zero
     // se for > 0 o jogador está em cima do inimigo
-    if(CheckCollisionRecs(j->ret, i->ret)) {
+    if(CheckCollisionRecs(j->ret, i->ret) && gw->inimigo->estaVivo) {
         if(j->vel.y > 0) {
-            destruirInimigo(i);            
+            i->estaVivo = false;         
         } else {
             if(j->ret.x + j->ret.width / 2 > i->ret.x + i->ret.width / 2) {
                 j->ret.x = i->ret.x + i->ret.width;
+                j->vidas--;
             } else if(j->ret.x + j->ret.width / 2 < i->ret.x + i->ret.width / 2 ) {
                 j->ret.x = i->ret.x - i->ret.width;
+                j->vidas--;
             }
         }
     }

@@ -29,6 +29,7 @@ typedef struct Inimigo {
     Rectangle ret;
     Color cor;
     float velX;
+    bool estaVivo;
 } Inimigo;
 
 typedef struct Obstaculo {

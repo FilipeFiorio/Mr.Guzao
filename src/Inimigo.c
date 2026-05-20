@@ -19,6 +19,8 @@ Inimigo *criarInimigo(float x, float y, float largura, float altura, Color cor) 
     
     novoInimigo->cor = cor;
 
+    novoInimigo->estaVivo = true;
+
     return novoInimigo;
 
 }
@@ -28,15 +30,15 @@ void atualizarInimigo(Inimigo *inimigo, GameWorld *gw, float delta) {
     inimigo->ret.x += inimigo->velX * delta;
     resolverColisaoMapaX(inimigo, gw->mapa);
 
-
 }
 
 void destruirInimigo(Inimigo *inimigo) {
 
     if(inimigo != NULL) {
         free(inimigo);
+        inimigo = NULL;
     }
-
+    
 }
 
 void desenharInimigo(Inimigo *inimigo) {
