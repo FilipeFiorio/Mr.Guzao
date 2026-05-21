@@ -85,13 +85,9 @@ Mapa *carregarMapa( const char *caminhoArquivo ) {
                             break;
                     }
 
-                    if(el != NULL) {
-                        inserirInimigo(novoMapa, el);
-                    }
+                    inserirInimigo(novoMapa, el);
 
-                } else {
-                    free(el); // caractere desconhecido, descarta
-                }
+                } 
 
             }
 

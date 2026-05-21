@@ -36,6 +36,7 @@ typedef struct Inimigo {
     Vector2 vel;
     float velMaxQueda;
     bool estaVivo;
+    bool noChao;
 } Inimigo;
 
 typedef struct Obstaculo {

@@ -6,6 +6,7 @@
 
 static void resolverColisaoinimigoMapaX(Inimigo *i, Mapa *m);
 static void resolverColisaoInimigoMapaY( Inimigo *i, Mapa *m);
+static bool verificarSeTemChao(Inimigo *i, Mapa *m);
 
 Inimigo *criarInimigo(float x, float y, float largura, float altura, Color cor) {
 
@@ -23,6 +24,7 @@ Inimigo *criarInimigo(float x, float y, float largura, float altura, Color cor) 
     novoInimigo->cor = cor;
 
     novoInimigo->estaVivo = true;
+    novoInimigo->noChao = false;
 
     return novoInimigo;
 
@@ -38,6 +40,10 @@ void atualizarInimigo(Inimigo *inimigo, GameWorld *gw, float delta) {
 
         inimigo->ret.y += inimigo->vel.y * delta;
         resolverColisaoInimigoMapaY(inimigo, gw->mapa);
+
+        if(inimigo->noChao && !verificarSeTemChao(inimigo, gw->mapa)) {
+            inimigo->vel.x = -inimigo->vel.x;
+        }
     }
 
 }
@@ -99,14 +105,37 @@ static void resolverColisaoInimigoMapaY( Inimigo *i, Mapa *m ) {
         if ( CheckCollisionRecs( i->ret, o->ret ) ) {
             if ( i->ret.y + i->ret.height / 2 < o->ret.y + o->ret.height / 2 ) {
                 i->ret.y = o->ret.y - i->ret.height;
+                i->noChao = true;
             } else { //não precisa
                 i->ret.y = o->ret.y + o->ret.height;
             }
             i->vel.y = 0;
-        }
+        } 
 
         el = el->proximo;
 
     }
 
+}
+
+static bool verificarSeTemChao(Inimigo *i, Mapa *m) {
+
+    Rectangle ret = {
+        .x = (i->vel.x > 0) ? (i->ret.x + i->ret.width) : (i->ret.x) - 1,
+        .y = i->ret.y + i->ret.height,
+        .width = 1,
+        .height = 1
+    };
+
+    ElementoMapa *el = m->obstaculos;
+
+    while(el != NULL) {
+        Obstaculo *o = (Obstaculo*) el->objeto;
+        if(CheckCollisionRecs(ret, o->ret)) {
+            return true;
+        }
+        el = el->proximo;
+    }
+
+    return false;
 }
