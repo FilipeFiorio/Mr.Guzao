@@ -96,6 +96,10 @@ void drawGameWorld( GameWorld *gw ) {
     sprintf(textoVidas, "vidas: %d", gw->jogador->vidas);
     DrawText(textoVidas,10, 10, 20, WHITE);
 
+    char textoMoedas[10];
+    sprintf(textoMoedas, "moedas: %d", gw->jogador->moedas);
+    DrawText(textoMoedas,100, 10, 20, WHITE);
+    
     char posJogador[30];
     sprintf(posJogador, "posicao: x: %d, y: %d", (int) gw->jogador->ret.x, (int) gw->jogador->ret.y);
     DrawText(posJogador,10, 30, 20, BLACK);
@@ -238,7 +242,7 @@ static void verificarColisaoJogadorItem(GameWorld *gw) {
 
         Item *i = (Item*) el->objeto;
 
-        if(CheckCollisionRecs(j->ret, i->ret)) {
+        if(CheckCollisionRecs(j->ret, i->ret) && i->ativo) {
             i->ativo = false;
             j->moedas++;
         }
