@@ -28,6 +28,7 @@ static void desenharFundo(GameWorld *gw);
 static void verificarMorteJogador(GameWorld *gw);
 static void verificarGameOver(GameWorld *gw);
 static void verificarColisaoJogadorInimigo(GameWorld *gw);
+static void verificarColisaoJogadorItem(GameWorld *gw);
 static void reiniciarJogo(GameWorld *gw);
 static void inicializarGW(GameWorld *gw);
 
@@ -64,6 +65,7 @@ void updateGameWorld( GameWorld *gw, float delta ) {
     atualizarMapa(gw->mapa, gw, delta);
     verificarMorteJogador(gw);
     verificarColisaoJogadorInimigo(gw);
+    verificarColisaoJogadorItem(gw);
 
     atualizarCamera(gw);
 
@@ -208,7 +210,8 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
 
         if(CheckCollisionRecs(j->ret, i->ret) && i->estaVivo) {
             if(j->vel.y > 0) {
-                i->estaVivo = false;         
+                i->estaVivo = false;  
+                j->vel.y = j->velPulo * 0.75;   
             } else {
                 if(j->ret.x + j->ret.width / 2 > i->ret.x + i->ret.width / 2) {
                     j->ret.x = i->ret.x + i->ret.width;
@@ -219,6 +222,25 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
                 }
             }
             return;
+        }
+
+        el = el->proximo;
+    }
+
+}
+
+static void verificarColisaoJogadorItem(GameWorld *gw) {
+
+    Jogador *j = gw->jogador;
+    ElementoMapa *el = gw->mapa->itens;
+
+    while(el != NULL) {
+
+        Item *i = (Item*) el->objeto;
+
+        if(CheckCollisionRecs(j->ret, i->ret)) {
+            i->ativo = false;
+            j->moedas++;
         }
 
         el = el->proximo;
