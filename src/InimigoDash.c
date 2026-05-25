@@ -219,7 +219,7 @@ static void dash(InimigoDash *i, float distancia) {
 
     if(distancia != 0) {
         int direcao = (distancia > 0) ? 1 : -1;
-        i->vel.x = direcao * i->velXInicial * 3;
+        i->vel.x = direcao * i->velXInicial * 4;
     } else {
         int direcao = (i->vel.x >= 0) ? 1 : -1;
         i->vel.x = direcao * i->velXInicial;

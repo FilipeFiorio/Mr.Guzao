@@ -194,6 +194,8 @@ static void verificarColisaoJogadorItem(GameWorld *gw) {
 // Atualmente verifica apenas se há colisão pela esquerda, direita e por cima
 // por cima apenas ve se a vel.x é maior que zero
 // se for > 0 o jogador está em cima do inimigo
+
+// Corrigir logica ao bater na parte inferiori  de um inimigo
 static void verificarColisaoJogadorInimigo(GameWorld *gw) {
 
     Jogador *j = gw->mapa->jogador;

@@ -9,14 +9,3 @@ G                  NR    QO         G          G                     a        G 
 G                 NBE    DCO        G          G             a       G        G         G                                                    MMMMMM           1              MMM         DFFFFFFFCAAAAAAAAAAAAAAAAG
 G@               NBFE    DFCO       G     2    G             G   1   G    1   G    1    G                                                  A              NAAAAAAAAAAO                   DFFFFFFFFFFFFFFFFFFFFFFFFG
 GAAAAAAAAAAAAAAAABFFE    DFFCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAO                                               A                DFFFFFFFFFFE                   DFFFFFFFFFFFFFFFFFFFFFFFFF
-                                                                                                                                       A
-                                                                                                                                   AA   
-                                                                                                                                        AAA
-                                                                                                                                     A
-                                                       AAAAA                                                                       A
-                          AAAA             AAAAAA                                                                                A
-             AAAAAAAAAAA         AAAAAAA                        SSSSSSSSSSSSSS                                                 A
-                                                                                                                             Ama
-                                                                                                                           A
-                                                                                              AAAAAAAAAA    AA   AA   AAA               
-                                                                              AAAAAAAAAAAA
