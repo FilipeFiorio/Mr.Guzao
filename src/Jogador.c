@@ -201,12 +201,28 @@ static void verificarColisaoJogadorItem(GameWorld *gw) {
 
     while(el != NULL) {
 
-        Item *i = (Item*) el->objeto;
+        Item *item = (Item*) el->objeto;
 
-        if(CheckCollisionRecs(j->ret, i->ret) && i->ativo) {
-            i->ativo = false;
-            j->moedas++;
+        if(item->tipo == ITEM_MOEDA) {
+
+            ItemMoeda *i = (ItemMoeda*) item->objeto;
+
+            if(CheckCollisionRecs(j->ret, i->ret) && i->ativo) {
+                i->ativo = false;
+                j->moedas += i->valor;
+            }
+
+        } else if(item->tipo == ITEM_MOEDA_ESPECIAL) {
+
+            ItemMoedaEspecial *i = (ItemMoedaEspecial*) item->objeto;
+
+            if(CheckCollisionRecs(j->ret, i->ret) && i->ativo) {
+                i->ativo = false;
+                j->moedas += i->valor;
+            }
+
         }
+
 
         el = el->proximo;
     }
@@ -234,7 +250,7 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
             if (CheckCollisionRecs(j->ret, i->ret) && i->estaVivo) {
                 if (j->vel.y > 0) {
                     i->estaVivo = false;
-                    j->vel.y = j->velPulo * 0.75f;
+                    j->vel.y = -j->vel.y * 0.75f;
                 } else {
                     if (j->ret.x + j->ret.width / 2 > i->ret.x + i->ret.width / 2) {
                         j->ret.x = i->ret.x + i->ret.width;
@@ -253,7 +269,7 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
             if (CheckCollisionRecs(j->ret, i->ret) && i->estaVivo) {
                 if (j->vel.y > 0) {
                     i->estaVivo = false;
-                    j->vel.y = j->velPulo * 0.75f;
+                    j->vel.y = -j->vel.y * 0.75f;
                 } else {
                     if (j->ret.x + j->ret.width / 2 > i->ret.x + i->ret.width / 2) {
                         j->ret.x = i->ret.x + i->ret.width;
@@ -272,7 +288,7 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
             if (CheckCollisionRecs(j->ret, i->ret) && i->estaVivo) {
                 if (j->vel.y > 0) {
                     i->estaVivo = false;
-                    j->vel.y = j->velPulo * 0.75f;
+                    j->vel.y = -j->vel.y * 0.75f;
                 } else {
                     if (j->ret.x + j->ret.width / 2 > i->ret.x + i->ret.width / 2) {
                         j->ret.x = i->ret.x + i->ret.width;

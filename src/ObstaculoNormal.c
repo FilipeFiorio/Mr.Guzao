@@ -14,7 +14,7 @@ ObstaculoNormal *criarObstaculoNormal(Rectangle ret, Rectangle fonte, Color cor,
     novoObstaculoNormal->fonte = fonte;
     novoObstaculoNormal->cor = cor;
     novoObstaculoNormal->textura = textura;
-    novoObstaculoNormal->fonte;
+    novoObstaculoNormal->fonte = fonte;
 
     return novoObstaculoNormal;
 

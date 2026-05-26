@@ -13,6 +13,8 @@
 #include "InimigoDash.h"
 #include "InimigoVoador.h"
 #include "Item.h"
+#include "ItemMoeda.h"
+#include "ItemMoedaEspecial.h"
 #include "Jogador.h"
 
 static void inserirObstaculo(Mapa *m, ElementoMapa *o);
@@ -225,17 +227,40 @@ Mapa *carregarMapa( const char *caminhoArquivo ) {
                     switch(*caractereAtual) {
                         case 'a':
 
-                            item = criarItem(
+                            item = criarItem(ITEM_MOEDA);
+
+                            item->objeto = criarItemMoeda(
                                 colunaAtual * novoMapa->tamanhoElemento,
                                 linhaAtual * novoMapa->tamanhoElemento,
                                 novoMapa->tamanhoElemento,
                                 novoMapa->tamanhoElemento,
                                 YELLOW
                             );
+
                             el->objeto = item;
                             el->tipo = ELEMENTO_MAPA_ITEM;
-                            break;
+
                             inserirItem(novoMapa, el);
+
+                            break;
+                        case 'b':
+
+                            item = criarItem(ITEM_MOEDA_ESPECIAL);
+
+                            item->objeto = criarItemMoedaEspecial(
+                                colunaAtual * novoMapa->tamanhoElemento,
+                                linhaAtual * novoMapa->tamanhoElemento,
+                                novoMapa->tamanhoElemento,
+                                novoMapa->tamanhoElemento,
+                                ORANGE
+                            );
+
+                            el->objeto = item;
+                            el->tipo = ELEMENTO_MAPA_ITEM;
+
+                            inserirItem(novoMapa, el);
+
+                            break;
                         default:
                             free(el);
                             break;

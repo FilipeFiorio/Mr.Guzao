@@ -29,6 +29,11 @@ typedef enum TipoInimigo {
     INIMIGO_DASH
 }TipoInimigo;
 
+typedef enum TipoItem {
+    ITEM_MOEDA,
+    ITEM_MOEDA_ESPECIAL
+} TipoItem;
+
 typedef struct Jogador {
     Rectangle ret;
     Vector2 vel;
@@ -102,10 +107,23 @@ typedef struct ObstaculoMovel {
 } ObstaculoMovel;
 
 typedef struct Item {
+    void *objeto;
+    TipoItem tipo;
+} Item;
+
+typedef struct ItemMoeda {
     Rectangle ret;
     Color cor;
+    int valor;
     bool ativo;
-} Item;
+} ItemMoeda;
+
+typedef struct ItemMoedaEspecial {
+    Rectangle ret;
+    Color cor;
+    int valor;
+    bool ativo;
+}ItemMoedaEspecial;
 
 typedef struct ElementoMapa ElementoMapa;
 struct ElementoMapa {
