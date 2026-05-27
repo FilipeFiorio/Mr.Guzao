@@ -81,7 +81,7 @@ void drawGameWorld( GameWorld *gw ) {
 
     BeginDrawing();
 
-    ClearBackground( (Color) {167, 222, 255, 255} );
+    ClearBackground( (Color) {175, 231, 255, 255} );
 
     BeginMode2D(gw->camera);
 
