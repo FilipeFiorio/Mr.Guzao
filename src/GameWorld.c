@@ -145,11 +145,6 @@ void drawGameWorld( GameWorld *gw ) {
 
     }
 
-    
-    
- 
-
-
     EndDrawing();
 
 }

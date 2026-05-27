@@ -2,8 +2,7 @@
 **/*.exe
 .vscode/
 todo.txt
-Makefile
 build.bat
 build.ps1
 build.sh
-READEME.md
+README.md
