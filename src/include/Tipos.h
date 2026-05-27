@@ -4,7 +4,7 @@
 #include "raylib/raylib.h"
 
 typedef enum EstadoJogo {
-    ESTADO_JOGO_MENU,
+    ESTADO_JOGO_INICIO,
     ESTADO_JOGO_WORLD_MAP,
     ESTADO_JOGO_GAMEPLAY,
     ESTADO_JOGO_PAUSE,

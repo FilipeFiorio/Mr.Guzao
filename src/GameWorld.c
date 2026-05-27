@@ -61,6 +61,10 @@ void updateGameWorld( GameWorld *gw, float delta ) {
 
         case ESTADO_JOGO_GAMEPLAY:
 
+            if(IsKeyPressed(KEY_P)) {
+                gw->estado = ESTADO_JOGO_PAUSE;
+            }
+
             gw->timerJogo -= (int) (1000 * delta);
         
             if(gw->timerJogo <= 0) {
@@ -85,6 +89,20 @@ void updateGameWorld( GameWorld *gw, float delta ) {
             
             break;;
 
+        case ESTADO_JOGO_INICIO:
+
+            if(IsKeyPressed(KEY_ONE)) {
+                inicializarGW(gw);
+                gw->estado = ESTADO_JOGO_GAMEPLAY;
+            }
+
+            break;
+
+        case ESTADO_JOGO_PAUSE:
+
+            if(IsKeyPressed(KEY_P)) {
+                gw->estado = ESTADO_JOGO_GAMEPLAY;
+            }
         default:
             break;
     }
@@ -96,6 +114,8 @@ void updateGameWorld( GameWorld *gw, float delta ) {
  * @brief Draws the state of the game.
  */
 void drawGameWorld( GameWorld *gw ) {
+
+    
 
     BeginDrawing();
 
@@ -138,7 +158,35 @@ void drawGameWorld( GameWorld *gw ) {
 
             break;
 
+        case ESTADO_JOGO_INICIO:
+
+            ClearBackground(WHITE);
+
+            DrawTexture(rm.texturaInicio, 0, 0, WHITE);
+
+            DrawText("Mr. Guzão", 400, 200, 70, WHITE);
+            DrawText("[1] SinglePlayrt", 500, 500, 20, WHITE);
+            DrawText("[2] SinglePlayrt", 500, 530, 20, GRAY);
+
+            break;
+
+        case ESTADO_JOGO_PAUSE:    
+
+            ClearBackground( (Color) {175, 231, 255, 255} );
+            DrawText("Jogo Pausado", 600, 200, 24, WHITE);
+
+            BeginMode2D(gw->camera);
+
+            desenharFundo(gw);
+            desenharMapa(gw->mapa);
+            
+            EndMode2D();
+
+            break;
+
         default:
+
+
             break;
 
 
@@ -238,7 +286,7 @@ static void inicializarGW(GameWorld *gw) {
     gw->mapa = carregarMapa("resources/mapas/fase01.txt");
     gw->gravidade = 600;
     gw->timerJogo = 300000;
-    gw->estado = ESTADO_JOGO_GAMEPLAY;
+    gw->estado = ESTADO_JOGO_INICIO;
 
     gw->camera = (Camera2D) {
         .offset = {0},
