@@ -25,7 +25,11 @@ ObstaculoMovel *criarObstaculoMovel(Rectangle ret, Rectangle fonte, Vector2 desl
 }
 
 void destruirObstaculoMovel(ObstaculoMovel *obstaculoMovel) {
-    // Fazer dps
+    
+    if(obstaculoMovel != NULL) {
+        free(obstaculoMovel);
+    }
+
 }
 
 void desenharObstaculoMovel(ObstaculoMovel *obstaculoMovel) {

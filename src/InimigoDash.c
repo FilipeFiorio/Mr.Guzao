@@ -57,6 +57,10 @@ void atualizarInimigoDash(InimigoDash *inimigo, GameWorld *gw, float delta) {
 
 void destruirInimigoDash(InimigoDash *inimigo) {
 
+    if(inimigo != NULL) {
+        free(inimigo);
+    }
+
 }
 
 void desenharInimigoDash(InimigoDash *inimigo) {

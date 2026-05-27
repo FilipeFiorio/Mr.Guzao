@@ -33,6 +33,7 @@ Jogador *criarJogador(float x, float y, float largura, float altura, Color cor) 
     novoJogador->velMaxQueda = 600;
 
     novoJogador->noChao = false;
+    novoJogador->morto = false;
 
     return novoJogador;
 }
@@ -43,20 +44,26 @@ void destruirJogador(Jogador *j) {
     }
 }
 
+
+// Implementado para WASD, setinhas e controle(n sei se funciona)
 void entradaJogador(Jogador *j) {
     
-    bool shiftApertado = IsKeyDown(KEY_LEFT_SHIFT);
-
-    if(IsKeyDown(KEY_A)) {
-        j->vel.x = shiftApertado ? -j->velCorrendo : -j->velAndando;
-    } else if (IsKeyDown(KEY_D)) {
-        j->vel.x = shiftApertado ? j->velCorrendo : j->velAndando;
+    bool correr = IsKeyDown(KEY_LEFT_SHIFT) || (IsGamepadAvailable(0) && IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT));
+    bool esquerda = IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT) || (IsGamepadAvailable(0) && IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_LEFT));
+    bool direita = IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT) || (IsGamepadAvailable(0) && IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_RIGHT));
+    
+    if(esquerda) {
+        j->vel.x = correr ? -j->velCorrendo : -j->velAndando;
+    } else if (direita) {
+        j->vel.x = correr ? j->velCorrendo : j->velAndando;
     } else {
         j->vel.x = 0;
     }
+    
+    bool pular = IsKeyPressed(KEY_SPACE) || (IsGamepadAvailable(0) && IsGamepadButtonPressed(0, GAMEPAD_BUTTON_RIGHT_FACE_DOWN));
 
-    if(IsKeyPressed(KEY_SPACE) && j->noChao) {
-        j->vel.y = shiftApertado ? j->velPuloCorrendo : j->velPulo;
+    if(pular && j->noChao) {
+        j->vel.y = correr ? j->velPuloCorrendo : j->velPulo;
         j->noChao = false;
     }
 
@@ -79,6 +86,11 @@ void atualizarJogador(Jogador *j, GameWorld *gw, float delta) {
 
     verificarColisaoJogadorInimigo(gw);
     verificarColisaoJogadorItem(gw);
+
+    if(j->moedas >= 100) {
+        j->moedas -= 100;
+        j->vidas++;
+    }
 }
 
 void desenharJogador(Jogador *j) {
@@ -232,8 +244,9 @@ static void verificarColisaoJogadorItem(GameWorld *gw) {
 // Atualmente verifica apenas se há colisão pela esquerda, direita e por cima
 // por cima apenas ve se a vel.x é maior que zero
 // se for > 0 o jogador está em cima do inimigo
+//Utiliza a mesma logica com a colisao com o mapa
 
-// Corrigir logica ao bater na parte inferiori  de um inimigo
+// Corrigir logica ao bater na parte inferiori  de um inimigo - acho que ta feito
 static void verificarColisaoJogadorInimigo(GameWorld *gw) {
 
     Jogador *j = gw->mapa->jogador;
@@ -248,17 +261,29 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
             InimigoNormal *i = (InimigoNormal*) inimigo->objeto;
 
             if (CheckCollisionRecs(j->ret, i->ret) && i->estaVivo) {
-                if (j->vel.y > 0) {
-                    i->estaVivo = false;
-                    j->vel.y = -j->vel.y * 0.75f;
+
+                Rectangle retSobreposicao = GetCollisionRec(j->ret, i->ret);
+
+                if(retSobreposicao.height < retSobreposicao.width) {
+                    if (j->vel.y > 0) {
+                        i->estaVivo = false;
+                        j->vel.y = -j->vel.y * 0.75f;
+                    } else {
+                        j->ret.y = i->ret.y + j->ret.height;
+                        j->vel.y = i->vel.y;
+                        j->morto = true;
+                    }
                 } else {
+
                     if (j->ret.x + j->ret.width / 2 > i->ret.x + i->ret.width / 2) {
                         j->ret.x = i->ret.x + i->ret.width;
                     } else {
                         j->ret.x = i->ret.x - j->ret.width;
                     }
-                    j->vidas--;
+                    j->morto = true;
+
                 }
+
                 return;
             }
 
@@ -267,17 +292,29 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
             InimigoDash *i = (InimigoDash*) inimigo->objeto;
 
             if (CheckCollisionRecs(j->ret, i->ret) && i->estaVivo) {
-                if (j->vel.y > 0) {
-                    i->estaVivo = false;
-                    j->vel.y = -j->vel.y * 0.75f;
+
+                Rectangle retSobreposicao = GetCollisionRec(j->ret, i->ret);
+
+                if(retSobreposicao.height < retSobreposicao.width) {
+                    if (j->vel.y > 0) {
+                        i->estaVivo = false;
+                        j->vel.y = -j->vel.y * 0.75f;
+                    } else {
+                        j->ret.y = i->ret.y + j->ret.height;
+                        j->vel.y = i->vel.y;
+                        j->morto = true;
+                    }
                 } else {
+
                     if (j->ret.x + j->ret.width / 2 > i->ret.x + i->ret.width / 2) {
                         j->ret.x = i->ret.x + i->ret.width;
                     } else {
                         j->ret.x = i->ret.x - j->ret.width;
                     }
-                    j->vidas--;
+                    j->morto = true;
+
                 }
+
                 return;
             }
 
@@ -286,17 +323,30 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
             InimigoVoador *i = (InimigoVoador*) inimigo->objeto;
 
             if (CheckCollisionRecs(j->ret, i->ret) && i->estaVivo) {
-                if (j->vel.y > 0) {
-                    i->estaVivo = false;
-                    j->vel.y = -j->vel.y * 0.75f;
+
+                Rectangle retSobreposicao = GetCollisionRec(j->ret, i->ret);
+
+                //talvez melhorar
+                if(retSobreposicao.height < retSobreposicao.width) {
+                    if (j->ret.y + j->ret.height / 2 < i->ret.y + i->ret.height / 2) {
+                        i->estaVivo = false;
+                        j->vel.y = -j->vel.y * 0.75f;
+                    } else {
+                        j->ret.y = i->ret.y + j->ret.height;
+                        j->vel.y = i->vel.y;
+                        j->morto = true;
+                    }
                 } else {
+
                     if (j->ret.x + j->ret.width / 2 > i->ret.x + i->ret.width / 2) {
                         j->ret.x = i->ret.x + i->ret.width;
                     } else {
                         j->ret.x = i->ret.x - j->ret.width;
                     }
-                    j->vidas--;
+                    j->morto = true;
+
                 }
+
                 return;
             }
 

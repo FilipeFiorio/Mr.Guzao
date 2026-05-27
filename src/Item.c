@@ -29,11 +29,23 @@ void atualizarItem(Item *item, GameWorld *gw, float delta) {
 
 void destruirItem(Item *item) {
     
-    // Não precisa por agora
+    if(item == NULL) {
+        return;
+    }
+
+    if(item->tipo == ITEM_MOEDA) {
+        destruirItemMoeda((ItemMoeda*) item->objeto);
+    } else if(item->tipo == ITEM_MOEDA_ESPECIAL) {
+        destruirItemMoedaEspecial((ItemMoedaEspecial*) item->objeto);
+    }
 
 }
 
 void desenharItem(Item *item) {
+
+    if(item == NULL) {
+        return;
+    }
 
     if(item->tipo == ITEM_MOEDA) {
         desenharItemMoeda((ItemMoeda*) item->objeto);

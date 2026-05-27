@@ -31,6 +31,10 @@ void atualizarItemMoedaEspecial(ItemMoedaEspecial *item, GameWorld *gw, float de
 
 void destruirItemMoedaEspecial(ItemMoedaEspecial *item) {
 
+    if(item != NULL) {
+        free(item);
+    }
+
 }
 
 void desenharItemMoedaEspecial(ItemMoedaEspecial *item) {

@@ -53,7 +53,9 @@ void atualizarInimigoNormal(InimigoNormal *inimigo, GameWorld *gw, float delta) 
 
 void destruirInimigoNormal(InimigoNormal *inimigo) {
 
-    // Fazer Depois
+    if(inimigo != NULL) {
+        free(inimigo);
+    }
 
 }
 
