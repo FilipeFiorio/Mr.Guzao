@@ -304,7 +304,30 @@ Mapa *carregarMapa( const char *caminhoArquivo ) {
 }
 
 void destruirMapa(Mapa *m) {
-   //fazer 
+   
+    ElementoMapa *el = NULL;
+
+    el = m->obstaculos;
+    while(el != NULL) {
+        destruirObstaculo((Obstaculo*) el->objeto);
+        el = el->proximo;
+    }
+
+    el = m->inimigos;
+    while(el != NULL) {
+        desenharInimigo((Inimigo*) el->objeto);
+        el = el->proximo;
+    }
+
+    el = m->itens;
+    while(el != NULL) {
+        destruirItem((Item*) el->objeto);
+        el = el->proximo;
+    }
+
+    if(m->jogador != NULL) {
+        destruirJogador(m->jogador);
+    }
 }
 
 void desenharMapa(Mapa *m) {

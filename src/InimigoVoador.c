@@ -86,7 +86,9 @@ void atualizarInimigoVoador(InimigoVoador *inimigo, GameWorld *gw, float delta) 
 
 void destruirInimigoVoador(InimigoVoador *inimigo) {
 
-    // Fazer dps
+    if(inimigo != NULL) {
+        free(inimigo);
+    }
 
 }
 

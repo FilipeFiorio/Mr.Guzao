@@ -46,6 +46,7 @@ typedef struct Jogador {
     float velPuloCorrendo;
     float velMaxQueda;
     bool noChao;
+    bool morto;
 } Jogador;
 
 typedef struct Inimigo {

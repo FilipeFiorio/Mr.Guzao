@@ -21,7 +21,11 @@ ObstaculoNormal *criarObstaculoNormal(Rectangle ret, Rectangle fonte, Color cor,
 }
 
 void destruirObstaculoNormal(ObstaculoNormal *obstaculoNormal) {
-    // Fazer dps
+    
+    if(obstaculoNormal != NULL) {
+        free(obstaculoNormal);
+    }
+
 }
 
 void desenharObstaculoNormal(ObstaculoNormal *obstaculoNormal) {

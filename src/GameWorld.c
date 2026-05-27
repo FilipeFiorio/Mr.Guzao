@@ -27,8 +27,6 @@ static void atualizarCamera(GameWorld *gw);
 static void desenharFundo(GameWorld *gw);
 static void verificarMorteJogador(GameWorld *gw);
 static void verificarGameOver(GameWorld *gw);
-static void verificarColisaoJogadorInimigo(GameWorld *gw);
-static void verificarColisaoJogadorItem(GameWorld *gw);
 static void reiniciarJogo(GameWorld *gw);
 static void inicializarGW(GameWorld *gw);
 
@@ -92,15 +90,15 @@ void drawGameWorld( GameWorld *gw ) {
 
     EndMode2D();
 
-    char textoVidas[10];
+    char textoVidas[20];
     sprintf(textoVidas, "Vidas: %d", gw->mapa->jogador->vidas);
     DrawText(textoVidas,10, 10, 24, WHITE);
 
-    char textoMoedas[10];
+    char textoMoedas[20];
     sprintf(textoMoedas, "Moedas: %d", gw->mapa->jogador->moedas);
     DrawText(textoMoedas,150, 10, 24, WHITE);
 
-    char textoTimer[10];
+    char textoTimer[20];
     sprintf(textoTimer, "Tempo: %d", gw->timerJogo / 1000);
     DrawText(textoTimer,300, 10, 24, WHITE);
     
@@ -156,33 +154,42 @@ static void atualizarCamera(GameWorld *gw) {
 
 static void verificarMorteJogador(GameWorld *gw) {
 
-    Jogador *jogador = gw->mapa->jogador;
-    int alturaMapa = calcularAlturaMapa(gw->mapa);
+    Jogador *j = gw->mapa->jogador;
 
-    if(jogador->ret.y > alturaMapa) {
-        jogador->vidas--; 
-        reiniciarJogo(gw);
-        return;
-    }
+    bool foraDoMapa = (j->ret.y > calcularAlturaMapa(gw->mapa));
+
+    if(foraDoMapa || j->morto) {
+        j->vidas--;
+        if(j->vidas >= 0) {
+            reiniciarJogo(gw);
+            j->morto = false;
+        }
+    } 
 
 }
 
 //no futuro usar estados do jogo --> ESTADO_JOGO_GAME_OVER
 static void verificarGameOver(GameWorld *gw) {
 
-    if(gw->mapa->jogador->vidas <= 0) {
-        //ir para a tela de gameOver
-        //Opcao de sair do jogo, ou tentar de novo
+    if(gw->mapa->jogador->vidas < 0) {
+        destruirMapa(gw->mapa);
+        inicializarGW(gw);
     }
 
 }
 
 static void reiniciarJogo(GameWorld *gw) {
 
-    destruirJogador(gw->mapa->jogador);
-    destruirMapa(gw->mapa);
+    Jogador *j = gw->mapa->jogador;
 
+    int vidaAtual = j->vidas;
+    int moedaAtual = j->moedas;
+
+    destruirMapa(gw->mapa);
     inicializarGW(gw);
+    
+    gw->mapa->jogador->vidas = vidaAtual;
+    gw->mapa->jogador->moedas = moedaAtual;
     
 }
 

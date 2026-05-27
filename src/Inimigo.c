@@ -36,7 +36,17 @@ void atualizarInimigo(Inimigo *inimigo, GameWorld *gw, float delta) {
 
 void destruirInimigo(Inimigo *inimigo) {
 
-    // Fazer dps
+    if(inimigo == NULL) {
+        return;
+    }
+
+    if(inimigo->tipo == INIMIGO_NORMAL) {
+        destruirInimigoNormal((InimigoNormal*) inimigo->objeto);
+    } else if(inimigo->tipo == INIMIGO_DASH) {
+        destruirInimigoDash((InimigoDash*) inimigo->objeto);
+    } else if(inimigo->tipo == INIMIGO_VOADOR) {
+        destruirInimigoVoador((InimigoVoador*) inimigo->objeto);
+    }
     
 }
 

@@ -31,6 +31,10 @@ void atualizarItemMoeda(ItemMoeda *item, GameWorld *gw, float delta) {
 
 void destruirItemMoeda(ItemMoeda *item) {
 
+    if(item != NULL) {
+        free(item);
+    }
+
 }
 
 void desenharItemMoeda(ItemMoeda *item) {

@@ -31,6 +31,14 @@ Obstaculo *criarObstaculo(TipoObstaculo tipo) {
 
 void destruirObstaculo(Obstaculo *obstaculo) {
 
-    // Fazer dps
+    if(obstaculo == NULL) {
+        return;
+    }
+
+    if(obstaculo->tipo == OBSTACULO_NORMAL) {
+        destruirObstaculoNormal((ObstaculoNormal*) obstaculo->objeto);
+    } else if(obstaculo->tipo == OBSTACULO_MOVEL) {
+        destruirObstaculoMovel((ObstaculoMovel*) obstaculo->objeto);
+    }
     
 }
