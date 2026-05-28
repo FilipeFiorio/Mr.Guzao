@@ -31,7 +31,8 @@ typedef enum TipoInimigo {
 
 typedef enum TipoItem {
     ITEM_MOEDA,
-    ITEM_MOEDA_ESPECIAL
+    ITEM_MOEDA_ESPECIAL,
+    ITEM_VIDA
 } TipoItem;
 
 typedef struct Jogador {
@@ -125,6 +126,12 @@ typedef struct ItemMoedaEspecial {
     int valor;
     bool ativo;
 }ItemMoedaEspecial;
+
+typedef struct ItemVida{
+    Rectangle ret;
+    Color cor;
+    bool ativo;
+}ItemVida;
 
 typedef struct ElementoMapa ElementoMapa;
 struct ElementoMapa {

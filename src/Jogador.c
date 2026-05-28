@@ -186,26 +186,17 @@ static void resolverColisaoJogadorMapaY(Jogador *j, Mapa *mapa, float delta) {
             if (CheckCollisionRecs(j->ret, o->ret)) {
 
                 Rectangle retSobre = GetCollisionRec(j->ret, o->ret);
-
-                Rectangle toleranciaPulo = (Rectangle) {
-                    .x = j->ret.x,
-                    .y = j->ret.y + j->ret.height,
-                    .width = j->ret.width,
-                    .height = 4
-                };
                 
                 // Ficar de olho pra ver se funciona, correção meio meia boca
                 if (retSobre.height < retSobre.width) {
                     if (j->ret.y + j->ret.height / 2 < o->ret.y + o->ret.height / 2) {
-                       j->ret.y = o->ret.y - j->ret.height;
+                        j->ret.y = o->ret.y - j->ret.height + (o->vel.y * delta);
                         j->noChao = true;
                         
                         if (o->retornando) {
                             j->ret.x -= o->vel.x * delta;
-                            j->ret.y = o->ret.y - j->ret.height - (o->vel.y * delta);
                         } else {
                             j->ret.x += o->vel.x * delta;
-                            j->ret.y = o->ret.y - j->ret.height + (o->vel.y * delta);
                             
                         }
                     } else {
@@ -245,6 +236,14 @@ static void verificarColisaoJogadorItem(GameWorld *gw) {
             if(CheckCollisionRecs(j->ret, i->ret) && i->ativo) {
                 i->ativo = false;
                 j->moedas += i->valor;
+            }
+        } else if(item->tipo == ITEM_VIDA) {
+
+            ItemVida *i = (ItemVida*) item->objeto;
+
+            if(CheckCollisionRecs(j->ret, i->ret) && i->ativo) {
+                i->ativo = false;
+                j->vidas++;
             }
 
         }
