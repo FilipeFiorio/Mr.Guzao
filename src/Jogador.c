@@ -164,11 +164,13 @@ static void resolverColisaoJogadorMapaY(Jogador *j, Mapa *mapa, float delta) {
             ObstaculoNormal *o = (ObstaculoNormal*) obs->objeto;
 
             if (CheckCollisionRecs(j->ret, o->ret)) {
+
                 Rectangle retSobre = GetCollisionRec(j->ret, o->ret);
 
+                
                 if (retSobre.height < retSobre.width) {
                     if (j->ret.y + j->ret.height / 2 < o->ret.y + o->ret.height / 2) {
-                        j->ret.y = o->ret.y - j->ret.height;
+                        j->ret.y = o->ret.y - j->ret.height + 2;
                         j->noChao = true;
                     } else {
                         j->ret.y = o->ret.y + o->ret.height;
@@ -176,23 +178,35 @@ static void resolverColisaoJogadorMapaY(Jogador *j, Mapa *mapa, float delta) {
                     j->vel.y = 0;
                 }
             }
-
+            
         } else if (obs->tipo == OBSTACULO_MOVEL) {
-
+            
             ObstaculoMovel *o = (ObstaculoMovel*) obs->objeto;
-
+            
             if (CheckCollisionRecs(j->ret, o->ret)) {
+
                 Rectangle retSobre = GetCollisionRec(j->ret, o->ret);
 
+                Rectangle toleranciaPulo = (Rectangle) {
+                    .x = j->ret.x,
+                    .y = j->ret.y + j->ret.height,
+                    .width = j->ret.width,
+                    .height = 4
+                };
+                
+                // Ficar de olho pra ver se funciona, correção meio meia boca
                 if (retSobre.height < retSobre.width) {
                     if (j->ret.y + j->ret.height / 2 < o->ret.y + o->ret.height / 2) {
-                        j->ret.y = o->ret.y - j->ret.height;
+                       j->ret.y = o->ret.y - j->ret.height;
                         j->noChao = true;
-
+                        
                         if (o->retornando) {
                             j->ret.x -= o->vel.x * delta;
+                            j->ret.y = o->ret.y - j->ret.height - (o->vel.y * delta);
                         } else {
                             j->ret.x += o->vel.x * delta;
+                            j->ret.y = o->ret.y - j->ret.height + (o->vel.y * delta);
+                            
                         }
                     } else {
                         j->ret.y = o->ret.y + o->ret.height;
@@ -201,7 +215,7 @@ static void resolverColisaoJogadorMapaY(Jogador *j, Mapa *mapa, float delta) {
                 }
             }
         }
-
+        
         el = el->proximo;
     }
 }

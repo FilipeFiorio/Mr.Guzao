@@ -304,6 +304,10 @@ Mapa *carregarMapa( const char *caminhoArquivo ) {
 }
 
 void destruirMapa(Mapa *m) {
+    
+    if(m->jogador != NULL) {
+        destruirJogador(m->jogador);
+    }
    
     ElementoMapa *el = NULL;
 
@@ -325,9 +329,6 @@ void destruirMapa(Mapa *m) {
         el = el->proximo;
     }
 
-    if(m->jogador != NULL) {
-        destruirJogador(m->jogador);
-    }
 }
 
 void desenharMapa(Mapa *m) {
