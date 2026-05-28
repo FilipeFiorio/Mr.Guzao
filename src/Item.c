@@ -5,6 +5,7 @@
 #include "Item.h"
 #include "ItemMoeda.h"
 #include "ItemMoedaEspecial.h"
+#include "ItemVida.h"
 
 Item *criarItem(TipoItem tipo) {
 
@@ -23,6 +24,8 @@ void atualizarItem(Item *item, GameWorld *gw, float delta) {
         atualizarItemMoeda((ItemMoeda*) item->objeto, gw, delta);
     } else if(item->tipo == ITEM_MOEDA_ESPECIAL) {
         atualizarItemMoedaEspecial((ItemMoedaEspecial*) item->objeto, gw, delta);
+    } else if(item->tipo == ITEM_VIDA) {
+        atualizarItemVida((ItemVida*) item->objeto, gw, delta);
     }
 
 }
@@ -37,6 +40,8 @@ void destruirItem(Item *item) {
         destruirItemMoeda((ItemMoeda*) item->objeto);
     } else if(item->tipo == ITEM_MOEDA_ESPECIAL) {
         destruirItemMoedaEspecial((ItemMoedaEspecial*) item->objeto);
+    } else if(item->tipo == ITEM_VIDA) {
+        destruirItemVida((ItemVida*) item->objeto);
     }
 
 }
@@ -51,6 +56,8 @@ void desenharItem(Item *item) {
         desenharItemMoeda((ItemMoeda*) item->objeto);
     } else if(item->tipo == ITEM_MOEDA_ESPECIAL) {
         desenharItemMoedaEspecial((ItemMoedaEspecial*) item->objeto);
+    } else if(item->tipo == ITEM_VIDA) {
+        desenharItemVida((ItemVida*) item->objeto);
     }
 
 }

@@ -14,6 +14,7 @@
 #include "Jogador.h"
 #include "Inimigo.h"
 #include "Mapa.h"
+#include "Utils.h"
 
 
 #include "raylib/raylib.h"
@@ -29,7 +30,7 @@ static void verificarMorteJogador(GameWorld *gw);
 static void verificarGameOver(GameWorld *gw);
 static void reiniciarJogo(GameWorld *gw);
 static void inicializarGW(GameWorld *gw);
-
+static void desenharHud(GameWorld *gw);
 
 /**
  * @brief Creates a dinamically allocated GameWorld struct instance.
@@ -61,10 +62,14 @@ void updateGameWorld( GameWorld *gw, float delta ) {
 
         case ESTADO_JOGO_GAMEPLAY:
 
+            if(IsKeyPressed(KEY_P)) {
+                gw->estado = ESTADO_JOGO_PAUSE;
+            }
+
             gw->timerJogo -= (int) (1000 * delta);
         
             if(gw->timerJogo <= 0) {
-                gw->mapa->jogador->vidas--;
+                gw->mapa->jogador->morto = true;
             }
         
             atualizarMapa(gw->mapa, gw, delta);
@@ -85,6 +90,31 @@ void updateGameWorld( GameWorld *gw, float delta ) {
             
             break;;
 
+        case ESTADO_JOGO_INICIO:
+
+            if(IsKeyPressed(KEY_ONE)) {
+                inicializarGW(gw);
+                gw->estado = ESTADO_JOGO_GAMEPLAY;
+            }
+
+            break;
+
+        case ESTADO_JOGO_PAUSE:
+
+            if(IsKeyPressed(KEY_P)) {
+                gw->estado = ESTADO_JOGO_GAMEPLAY;
+            }
+
+            break;
+
+        case ESTADO_JOGO_FIM:
+
+            if(IsKeyPressed(KEY_ENTER)){
+                gw->estado = ESTADO_JOGO_INICIO;
+            }
+
+            break;
+
         default:
             break;
     }
@@ -96,7 +126,8 @@ void updateGameWorld( GameWorld *gw, float delta ) {
  * @brief Draws the state of the game.
  */
 void drawGameWorld( GameWorld *gw ) {
-
+    
+    
     BeginDrawing();
 
     switch (gw->estado) {
@@ -112,33 +143,58 @@ void drawGameWorld( GameWorld *gw ) {
         
             EndMode2D();
         
-            char textoVidas[20];
-            sprintf(textoVidas, "Vidas: %d", gw->mapa->jogador->vidas);
-            DrawText(textoVidas,10, 10, 24, WHITE);
-        
-            char textoMoedas[20];
-            sprintf(textoMoedas, "Moedas: %d", gw->mapa->jogador->moedas);
-            DrawText(textoMoedas,150, 10, 24, WHITE);
-        
-            char textoTimer[20];
-            sprintf(textoTimer, "Tempo: %d", gw->timerJogo / 1000);
-            DrawText(textoTimer,300, 10, 24, WHITE);
-            
-            char posJogador[30];
-            sprintf(posJogador, "posicao: x: %d, y: %d", (int) gw->mapa->jogador->ret.x, (int) gw->mapa->jogador->ret.y);
-            DrawText(posJogador,10, 50, 20, BLACK);
+            desenharHud(gw);
 
             break;
         
         case ESTADO_JOGO_GAME_OVER:
 
             ClearBackground(BLACK);
-            DrawText("GAME OVER", 500, 200, 50, WHITE);
-            DrawText("Aperte ENTER para continuar", 420, 400, 32, WHITE);
+            drawTextAlinhado("GAME OVER", 200, 50, WHITE, CENTRO);
+            drawTextAlinhado("Aperte ENTER para continuar", 400, 25, WHITE, CENTRO);
+
+            break;
+
+        case ESTADO_JOGO_INICIO:
+
+            ClearBackground(WHITE);
+
+            DrawTexture(rm.texturaInicio, 0, 0, WHITE);
+
+            drawTextAlinhado("Mr. Guzão", 200, 72, WHITE, CENTRO);
+            drawTextAlinhado("[1] SinglePlayer", 500, 25, WHITE, CENTRO);
+            drawTextAlinhado("[2] SinglePlayer", 550, 25, GRAY, CENTRO);
+
+            break;
+
+        case ESTADO_JOGO_PAUSE:    
+
+            ClearBackground( (Color) {175, 231, 255, 255} );
+
+            drawTextAlinhado("Jogo Pausado", 200, 25, WHITE, CENTRO);
+            desenharHud(gw);
+
+            BeginMode2D(gw->camera);
+
+            desenharFundo(gw);
+            desenharMapa(gw->mapa);
+            
+            EndMode2D();
+
+            break;
+
+        case ESTADO_JOGO_FIM:
+
+            ClearBackground(BLACK);
+
+            drawTextAlinhado("Você Venceu!!!", 200, 50, WHITE, CENTRO);
+            drawTextAlinhado("Aperte ENTER para voltar para o início", 400, 25, WHITE, CENTRO);
 
             break;
 
         default:
+
+
             break;
 
 
@@ -226,6 +282,8 @@ static void reiniciarJogo(GameWorld *gw) {
 
     destruirMapa(gw->mapa);
     inicializarGW(gw);
+
+    gw->estado = ESTADO_JOGO_GAMEPLAY;
     
     gw->mapa->jogador->vidas = vidaAtual;
     gw->mapa->jogador->moedas = moedaAtual;
@@ -237,8 +295,8 @@ static void inicializarGW(GameWorld *gw) {
 
     gw->mapa = carregarMapa("resources/mapas/fase01.txt");
     gw->gravidade = 600;
-    gw->timerJogo = 300000;
-    gw->estado = ESTADO_JOGO_GAMEPLAY;
+    gw->timerJogo = 200000;
+    gw->estado = ESTADO_JOGO_INICIO;
 
     gw->camera = (Camera2D) {
         .offset = {0},
@@ -246,5 +304,13 @@ static void inicializarGW(GameWorld *gw) {
         .rotation = 0.0f,
         .zoom = 1.0f
     };
+
+}
+
+static void desenharHud(GameWorld *gw) {
+
+    char textoHud[100];
+    sprintf(textoHud, "Vidas: %d   Moedas: %d   Tempo: %ds", gw->mapa->jogador->vidas, gw->mapa->jogador->moedas, gw->timerJogo / 1000);
+    drawTextAlinhado(textoHud, 10, 25, WHITE, ESQUERDA);
 
 }

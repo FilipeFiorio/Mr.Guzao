@@ -4,11 +4,12 @@
 #include "raylib/raylib.h"
 
 typedef enum EstadoJogo {
-    ESTADO_JOGO_MENU,
+    ESTADO_JOGO_INICIO,
     ESTADO_JOGO_WORLD_MAP,
     ESTADO_JOGO_GAMEPLAY,
     ESTADO_JOGO_PAUSE,
-    ESTADO_JOGO_GAME_OVER
+    ESTADO_JOGO_GAME_OVER,
+    ESTADO_JOGO_FIM
 } EstadoJogo;
 
 typedef enum TipoElementoMapa {
@@ -20,7 +21,8 @@ typedef enum TipoElementoMapa {
 
 typedef enum TipoObstaculo {
     OBSTACULO_NORMAL,
-    OBSTACULO_MOVEL 
+    OBSTACULO_MOVEL,
+    OBSTACULO_CHEGADA 
 }TipoObstaculo;
 
 typedef enum TipoInimigo {
@@ -31,7 +33,8 @@ typedef enum TipoInimigo {
 
 typedef enum TipoItem {
     ITEM_MOEDA,
-    ITEM_MOEDA_ESPECIAL
+    ITEM_MOEDA_ESPECIAL,
+    ITEM_VIDA
 } TipoItem;
 
 typedef struct Jogador {
@@ -107,6 +110,13 @@ typedef struct ObstaculoMovel {
     bool retornando;
 } ObstaculoMovel;
 
+typedef struct ObstaculoChegada {
+    Rectangle ret;
+    Color cor;
+    Rectangle fonte;
+    Texture2D *textura;
+} ObstaculoChegada;
+
 typedef struct Item {
     void *objeto;
     TipoItem tipo;
@@ -125,6 +135,12 @@ typedef struct ItemMoedaEspecial {
     int valor;
     bool ativo;
 }ItemMoedaEspecial;
+
+typedef struct ItemVida{
+    Rectangle ret;
+    Color cor;
+    bool ativo;
+}ItemVida;
 
 typedef struct ElementoMapa ElementoMapa;
 struct ElementoMapa {

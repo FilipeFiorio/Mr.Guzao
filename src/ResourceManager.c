@@ -17,6 +17,7 @@ void loadResourcesResourceManager( void ) {
 
     rm.texturaTerreno = LoadTexture( "resources/images/tiles/terreno.png" );
     rm.texturaFundo = LoadTexture("resources/images/fundos/bg.png");
+    rm.texturaInicio = LoadTexture("resources/images/fundos/inicio.png");
 
 }
 
@@ -24,5 +25,6 @@ void unloadResourcesResourceManager( void ) {
 
     UnloadTexture( rm.texturaTerreno );
     UnloadTexture( rm.texturaFundo );
+    UnloadTexture(rm.texturaInicio);
 
 }

@@ -164,11 +164,13 @@ static void resolverColisaoJogadorMapaY(Jogador *j, Mapa *mapa, float delta) {
             ObstaculoNormal *o = (ObstaculoNormal*) obs->objeto;
 
             if (CheckCollisionRecs(j->ret, o->ret)) {
+
                 Rectangle retSobre = GetCollisionRec(j->ret, o->ret);
 
+                
                 if (retSobre.height < retSobre.width) {
                     if (j->ret.y + j->ret.height / 2 < o->ret.y + o->ret.height / 2) {
-                        j->ret.y = o->ret.y - j->ret.height;
+                        j->ret.y = o->ret.y - j->ret.height + 2;
                         j->noChao = true;
                     } else {
                         j->ret.y = o->ret.y + o->ret.height;
@@ -176,23 +178,26 @@ static void resolverColisaoJogadorMapaY(Jogador *j, Mapa *mapa, float delta) {
                     j->vel.y = 0;
                 }
             }
-
+            
         } else if (obs->tipo == OBSTACULO_MOVEL) {
-
+            
             ObstaculoMovel *o = (ObstaculoMovel*) obs->objeto;
-
+            
             if (CheckCollisionRecs(j->ret, o->ret)) {
-                Rectangle retSobre = GetCollisionRec(j->ret, o->ret);
 
+                Rectangle retSobre = GetCollisionRec(j->ret, o->ret);
+                
+                // Ficar de olho pra ver se funciona, correção meio meia boca
                 if (retSobre.height < retSobre.width) {
                     if (j->ret.y + j->ret.height / 2 < o->ret.y + o->ret.height / 2) {
-                        j->ret.y = o->ret.y - j->ret.height;
+                        j->ret.y = o->ret.y - j->ret.height + (o->vel.y * delta);
                         j->noChao = true;
-
+                        
                         if (o->retornando) {
                             j->ret.x -= o->vel.x * delta;
                         } else {
                             j->ret.x += o->vel.x * delta;
+                            
                         }
                     } else {
                         j->ret.y = o->ret.y + o->ret.height;
@@ -200,8 +205,8 @@ static void resolverColisaoJogadorMapaY(Jogador *j, Mapa *mapa, float delta) {
                     j->vel.y = 0;
                 }
             }
-        }
-
+        } 
+        
         el = el->proximo;
     }
 }
@@ -231,6 +236,14 @@ static void verificarColisaoJogadorItem(GameWorld *gw) {
             if(CheckCollisionRecs(j->ret, i->ret) && i->ativo) {
                 i->ativo = false;
                 j->moedas += i->valor;
+            }
+        } else if(item->tipo == ITEM_VIDA) {
+
+            ItemVida *i = (ItemVida*) item->objeto;
+
+            if(CheckCollisionRecs(j->ret, i->ret) && i->ativo) {
+                i->ativo = false;
+                j->vidas++;
             }
 
         }

@@ -2,7 +2,3 @@
 **/*.exe
 .vscode/
 todo.txt
-build.bat
-build.ps1
-build.sh
-README.md
