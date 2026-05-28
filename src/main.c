@@ -16,7 +16,7 @@ int main( void ) {
 
     GameWindow *gameWindow = createGameWindow(
         1280,             // width
-        720,             // height
+        600,             // height
         "Projeto Final",  // title
         60,              // target FPS
         false,            // antialiasing
