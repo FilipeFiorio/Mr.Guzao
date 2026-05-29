@@ -6,12 +6,17 @@
 #include "Tipos.h"
 #include "InimigoDash.h"
 #include "ResourceManager.h"
+#include "Animacao.h"
 
 static void resolverColisaoInimigoMapaX(InimigoDash *i, Mapa *m);
 static void resolverColisaoInimigoMapaY( InimigoDash *i, Mapa *m);
 static bool verificarSeTemChao(InimigoDash *i, Mapa *m);
 static float verificarDistanciaJogador(InimigoDash *i, Mapa *m);
 static void dash(InimigoDash *i, float distancia);
+
+static void desenharAnimacaoAndandoInimigoDash(InimigoDash *inimigo, QuadroAnimacao *quadro, Color tonalidade);
+static Animacao *getAnimacaoAtualInimigoDash(InimigoDash *inimigo);
+static QuadroAnimacao *getQuadroAnimacaoAtualInimigoDash(InimigoDash *inimigo);
 
 InimigoDash *criarInimigoDash(float x, float y, float largura, float altura, float tamanhoDash, Color cor) {
 
@@ -26,8 +31,36 @@ InimigoDash *criarInimigoDash(float x, float y, float largura, float altura, flo
     novoInimigoDash->tamanhoDash = tamanhoDash;
     novoInimigoDash->estaVivo = true;
     novoInimigoDash->noChao = false;
+    novoInimigoDash->paraDireita = false;
     novoInimigoDash->velMaxQueda = 600;
     novoInimigoDash->velXInicial = novoInimigoDash->vel.x;
+    novoInimigoDash->estado = INIMIGO_DASH_ANDANDO;
+
+    int quantidadeAnimacoes = 0;
+
+    novoInimigoDash->animacoAndando.quantidadeQuadros = 2;
+    novoInimigoDash->animacoAndando.quadroAtual = 0;
+    novoInimigoDash->animacoAndando.contadorTempoQuadro = 0;
+    novoInimigoDash->animacoAndando.executarUmaVez = false;
+    novoInimigoDash->animacoAndando.pararNoUltimoQuadro = false;
+    novoInimigoDash->animacoAndando.finalizada = false;
+    criarQuadroAnimacao(&novoInimigoDash->animacoAndando, novoInimigoDash->animacoAndando.quantidadeQuadros);
+    inicializarQuadroAnimacao(
+        novoInimigoDash->animacoAndando.quadros,
+        novoInimigoDash->animacoAndando.quantidadeQuadros,
+        200,
+        40, 
+        1,
+        28,
+        37,
+        false,
+        1
+    );
+
+    novoInimigoDash->animacoes[INIMIGO_DASH_ANDANDO] = &novoInimigoDash->animacoAndando;
+    quantidadeAnimacoes++;
+
+    novoInimigoDash->quantidadeAnimacoes = quantidadeAnimacoes;
 
     return novoInimigoDash;
 
@@ -35,6 +68,12 @@ InimigoDash *criarInimigoDash(float x, float y, float largura, float altura, flo
 void atualizarInimigoDash(InimigoDash *inimigo, GameWorld *gw, float delta) {
 
     if(inimigo->estaVivo) {
+
+        if(inimigo->estado == INIMIGO_DASH_ANDANDO) {
+            Animacao *animacaoAtual = getAnimacaoAtualInimigoDash(inimigo);
+            atualizarAnimacao(animacaoAtual, delta);
+
+        }
 
         dash(inimigo, verificarDistanciaJogador(inimigo, gw->mapa));
         
@@ -54,6 +93,8 @@ void atualizarInimigoDash(InimigoDash *inimigo, GameWorld *gw, float delta) {
             inimigo->vel.x = -inimigo->vel.x;
         }
 
+        inimigo->paraDireita = inimigo->vel.x > 0;
+
     }
 
 }
@@ -61,6 +102,9 @@ void atualizarInimigoDash(InimigoDash *inimigo, GameWorld *gw, float delta) {
 void destruirInimigoDash(InimigoDash *inimigo) {
 
     if(inimigo != NULL) {
+        for(int i = 0; i < inimigo->quantidadeAnimacoes; i++) {
+            destruirQuadroAnimacao(inimigo->animacoes[i]);
+        }
         free(inimigo);
     }
 
@@ -69,7 +113,11 @@ void destruirInimigoDash(InimigoDash *inimigo) {
 void desenharInimigoDash(InimigoDash *inimigo) {
     
     if(inimigo->estaVivo) {
-        DrawRectangleRec(inimigo->ret, inimigo->cor);
+        if(inimigo->estado == INIMIGO_DASH_ANDANDO) {
+            QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoDash(inimigo);
+            desenharAnimacaoAndandoInimigoDash(inimigo, quadro, WHITE);
+            TraceLog(LOG_INFO, "chegou");
+        }
     }
 
 }
@@ -231,4 +279,39 @@ static void dash(InimigoDash *i, float distancia) {
         int direcao = (i->vel.x >= 0) ? 1 : -1;
         i->vel.x = direcao * i->velXInicial;
     }
+}
+
+
+
+static void desenharAnimacaoAndandoInimigoDash(InimigoDash *inimigo, QuadroAnimacao *quadro, Color tonalidade) {
+
+    if(quadro != NULL) {
+
+        DrawTexturePro(
+            rm.texturaInimigoDash,
+            (Rectangle) {
+                quadro->fonte.x,
+                quadro->fonte.y,
+                inimigo->paraDireita ? -quadro->fonte.width : quadro->fonte.width,
+                quadro->fonte.height
+            },
+            inimigo->ret,
+            (Vector2) {0},
+            0.0f,
+            tonalidade
+        );
+
+    }
+}
+
+static Animacao *getAnimacaoAtualInimigoDash(InimigoDash *inimigo) {
+
+    return inimigo->animacoes[inimigo->estado];
+
+}
+
+static QuadroAnimacao *getQuadroAnimacaoAtualInimigoDash(InimigoDash *inimigo) {
+
+    return getQuadroAtualAnimacao(getAnimacaoAtualInimigoDash(inimigo));
+
 }

@@ -6,9 +6,14 @@
 #include "Tipos.h"
 #include "InimigoVoador.h"
 #include "ResourceManager.h"
+#include "Animacao.h"
 
 static void resolverColisaoInimigoMapaX(InimigoVoador *i, Mapa *m);
 static void resolverColisaoInimigoMapaY(InimigoVoador *i, Mapa *m);
+
+static void desenharAnimacaoVoandoInimigoVoador(InimigoVoador *inimigo, QuadroAnimacao *quadro, Color tonalidade);
+static Animacao *getAnimacaoAtualInimigoVoador(InimigoVoador *inimigo);
+static QuadroAnimacao *getQuadroAnimacaoAtualInimigoVoador(InimigoVoador *inimigo);
 
 InimigoVoador *criarInimigoVoador(float x, float y, float largura, float altura, Vector2 deslocamento, Vector2 vel, Color cor) {
 
@@ -23,8 +28,36 @@ InimigoVoador *criarInimigoVoador(float x, float y, float largura, float altura,
     novoInimigoVoador->vel = vel;
     novoInimigoVoador->posInicial = (Vector2) {x, y};
     novoInimigoVoador->estaVivo = true;
+    novoInimigoVoador->retornando = false;
 
     //incializando animacoes;
+
+    int quantidadeAnimacoes = 0;
+
+    novoInimigoVoador->animacaoVoando.quantidadeQuadros = 2;
+    novoInimigoVoador->animacaoVoando.quadroAtual = 0;
+    novoInimigoVoador->animacaoVoando.contadorTempoQuadro = 0;
+    novoInimigoVoador->animacaoVoando.executarUmaVez = false;
+    novoInimigoVoador->animacaoVoando.pararNoUltimoQuadro = false;
+    novoInimigoVoador->animacaoVoando.finalizada = false;
+    novoInimigoVoador->estado = INIMIGO_VOADOR_VOANDO;
+    criarQuadroAnimacao(&novoInimigoVoador->animacaoVoando, novoInimigoVoador->animacaoVoando.quantidadeQuadros);
+    inicializarQuadroAnimacao(
+        novoInimigoVoador->animacaoVoando.quadros,
+        novoInimigoVoador->animacaoVoando.quantidadeQuadros,
+        150,
+        1,
+        1,
+        25,
+        20,
+        false,
+        1
+    );
+
+    novoInimigoVoador->animacoes[INIMIGO_VOADOR_VOANDO] = &novoInimigoVoador->animacaoVoando;
+    quantidadeAnimacoes++;
+
+    novoInimigoVoador->quantidadeAnimacoes = quantidadeAnimacoes;
 
     return novoInimigoVoador;
 
@@ -33,6 +66,13 @@ InimigoVoador *criarInimigoVoador(float x, float y, float largura, float altura,
 void atualizarInimigoVoador(InimigoVoador *inimigo, GameWorld *gw, float delta) {
 
     if(inimigo->estaVivo) {
+
+
+        if(inimigo->estado == INIMIGO_VOADOR_VOANDO) {
+            Animacao *animacaoAtual = getAnimacaoAtualInimigoVoador(inimigo);
+            atualizarAnimacao(animacaoAtual, delta);
+
+        }
 
         Vector2 alvo;
         
@@ -91,6 +131,9 @@ void atualizarInimigoVoador(InimigoVoador *inimigo, GameWorld *gw, float delta) 
 void destruirInimigoVoador(InimigoVoador *inimigo) {
 
     if(inimigo != NULL) {
+        for(int i = 0; i < inimigo->quantidadeAnimacoes; i++) {
+            destruirQuadroAnimacao(inimigo->animacoes[i]);
+        }
         free(inimigo);
     }
 
@@ -99,7 +142,11 @@ void destruirInimigoVoador(InimigoVoador *inimigo) {
 void desenharInimigoVoador(InimigoVoador *inimigo) {
     
     if(inimigo->estaVivo) {
-        DrawRectangleRec(inimigo->ret, inimigo->cor);
+        if(inimigo->estado == INIMIGO_VOADOR_VOANDO) {
+            QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoVoador(inimigo);
+            desenharAnimacaoVoandoInimigoVoador(inimigo, quadro, WHITE);
+        }
+        
     }
 
 }
@@ -189,5 +236,37 @@ static void resolverColisaoInimigoMapaX(InimigoVoador *i, Mapa *m) {
 
     }
 
+
+}
+
+static void desenharAnimacaoVoandoInimigoVoador(InimigoVoador *inimigo, QuadroAnimacao *quadro, Color tonalidade) {
+
+    if(quadro != NULL) {
+
+        DrawTexturePro(
+            rm.texturaInimigoVoador,
+            (Rectangle) {
+                quadro->fonte.x,
+                quadro->fonte.y,
+                quadro->fonte.width,
+                quadro->fonte.height
+            },
+            inimigo->ret,
+            (Vector2) {0},
+            0.0f,
+            tonalidade
+        );
+
+    }
+}
+
+static Animacao *getAnimacaoAtualInimigoVoador(InimigoVoador *inimigo) {
+
+    return inimigo->animacoes[inimigo->estado];
+}
+
+static QuadroAnimacao *getQuadroAnimacaoAtualInimigoVoador(InimigoVoador *inimigo) {
+
+    return getQuadroAtualAnimacao(getAnimacaoAtualInimigoVoador(inimigo));
 
 }

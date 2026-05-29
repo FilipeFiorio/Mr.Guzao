@@ -116,6 +116,8 @@ typedef struct InimigoDash {
     float velXInicial;
     bool estaVivo;
     bool noChao;
+    bool paraDireita;
+    EstadoInimigoDash estado;
 
     Animacao *animacoes[3];
     int quantidadeAnimacoes;
@@ -134,6 +136,7 @@ typedef struct InimigoVoador {
     Vector2 deslocamento;
     bool estaVivo;
     bool retornando;
+    EstadoInimigoVoador estado;
 
     Animacao *animacoes[2];
     int quantidadeAnimacoes;
