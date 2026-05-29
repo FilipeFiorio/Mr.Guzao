@@ -37,6 +37,38 @@ typedef enum TipoItem {
     ITEM_VIDA
 } TipoItem;
 
+// Depois chegar se as colisoes estao certas
+typedef struct QuadroAnimacao {
+    Rectangle fonte;
+    int duracao;
+} QuadroAnimacao;
+
+typedef struct Animacao{
+    QuadroAnimacao *quadros;
+    int quantidadeQuadros;
+    int quadroAtual;
+    int contadorTempoQuadro;
+    bool finalizada;
+    bool pararNoUltimoQuadro;
+    bool executarUmaVez;
+} Animacao;
+
+typedef enum EstadoInimigoNormal {
+    INIMIGO_NORMAL_ANDANDO,
+    INIMIGO_NORMAL_MORRENDO
+} EstadoInimigoNormal;
+
+typedef enum EstadoInimigoDash {
+    INIMIGO_DASH_ANDANDO,
+    INIMIGO_DASH_DASHANDO,
+    INIMIGO_DASH_MORRENDO
+} EstadoInimigoDash;
+
+typedef enum EstadoInimigoVoador {
+    INIMIGO_VOADOR_VOANDO,
+    INIMIGO_VOADOR_MORRENDO
+} EstadoInimigoVoador;
+
 typedef struct Jogador {
     Rectangle ret;
     Vector2 vel;
@@ -64,8 +96,15 @@ typedef struct InimigoNormal {
     float velMaxQueda;
     bool estaVivo;
     bool noChao;
-    int frameAtual;
-    float tempoFrame;
+    bool paraDireita;
+    EstadoInimigoNormal estado;
+
+    Animacao *animacoes[2];
+    int quantidadeAnimacoes;
+
+    Animacao animacaoAndando;
+    //Animacao morrendo;
+
 } InimigoNormal;
 
 typedef struct InimigoDash {
@@ -77,8 +116,14 @@ typedef struct InimigoDash {
     float velXInicial;
     bool estaVivo;
     bool noChao;
-    int frameAtual;
-    float tempoFrame;
+
+    Animacao *animacoes[3];
+    int quantidadeAnimacoes;
+
+    Animacao animacoAndando;
+    //Animacao dashando;
+    //Animacao morrendo;
+
 } InimigoDash;
 
 typedef struct InimigoVoador {
@@ -89,8 +134,13 @@ typedef struct InimigoVoador {
     Vector2 deslocamento;
     bool estaVivo;
     bool retornando;
-    int frameAtual;
-    float tempoFrame;
+
+    Animacao *animacoes[2];
+    int quantidadeAnimacoes;
+
+    Animacao animacaoVoando;
+    //Animacao morrendo;
+
 }InimigoVoador;
 
 typedef struct Obstaculo {
@@ -154,6 +204,8 @@ struct ElementoMapa {
     TipoElementoMapa tipo;
     ElementoMapa *proximo;
 };
+
+
 
 typedef struct Mapa {
     ElementoMapa *obstaculos;

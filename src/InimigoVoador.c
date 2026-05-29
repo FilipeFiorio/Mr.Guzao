@@ -23,8 +23,8 @@ InimigoVoador *criarInimigoVoador(float x, float y, float largura, float altura,
     novoInimigoVoador->vel = vel;
     novoInimigoVoador->posInicial = (Vector2) {x, y};
     novoInimigoVoador->estaVivo = true;
-    novoInimigoVoador->frameAtual = 0;
-    novoInimigoVoador->tempoFrame = 0.0f;
+
+    //incializando animacoes;
 
     return novoInimigoVoador;
 
@@ -84,12 +84,6 @@ void atualizarInimigoVoador(InimigoVoador *inimigo, GameWorld *gw, float delta) 
         resolverColisaoInimigoMapaX(inimigo, gw->mapa);
         resolverColisaoInimigoMapaY(inimigo, gw->mapa);
 
-        // Animação: alterna entre Frame 0 e 1 (bater asas)
-        inimigo->tempoFrame += delta;
-        if (inimigo->tempoFrame >= 0.15f) {
-            inimigo->tempoFrame = 0.0f;
-            inimigo->frameAtual = (inimigo->frameAtual == 0) ? 1 : 0;
-        }
     }
     
 }
@@ -105,24 +99,7 @@ void destruirInimigoVoador(InimigoVoador *inimigo) {
 void desenharInimigoVoador(InimigoVoador *inimigo) {
     
     if(inimigo->estaVivo) {
-        float larguraFrame = (float) rm.texturaInimigoVoador.width / 3.0f;
-        Rectangle fonte = {
-            .x = inimigo->frameAtual * larguraFrame,
-            .y = 0,
-            .width = larguraFrame,
-            .height = (float) rm.texturaInimigoVoador.height
-        };
-        if (inimigo->deslocamento.x != 0 && inimigo->retornando) {
-            fonte.width = -fonte.width;
-        }
-        DrawTexturePro(
-            rm.texturaInimigoVoador,
-            fonte,
-            inimigo->ret,
-            (Vector2) {0},
-            0.0f,
-            WHITE
-        );
+        DrawRectangleRec(inimigo->ret, inimigo->cor);
     }
 
 }

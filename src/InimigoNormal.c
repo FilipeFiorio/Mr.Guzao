@@ -5,11 +5,16 @@
 #include "Tipos.h"
 #include "InimigoNormal.h"
 #include "ResourceManager.h"
+#include "Animacao.h"
 
 
 static void resolverColisaoInimigoMapaX(InimigoNormal *i, Mapa *m);
 static void resolverColisaoInimigoMapaY( InimigoNormal *i, Mapa *m);
 static bool verificarSeTemChao(InimigoNormal *i, Mapa *m);
+
+static void desenharAnimacaoAndandoInimigoNormal(InimigoNormal *inimigo, QuadroAnimacao *quadro, Color tonalidade);
+static Animacao *getAnimacaoAtualInimigoNormal(InimigoNormal *inimigo);
+static QuadroAnimacao *getQuadroAnimacaoAtualInimigoNormal(InimigoNormal *inimigo);
 
 InimigoNormal *criarInimigoNormal(float x, float y, float largura, float altura, Color cor) {
 
@@ -23,9 +28,36 @@ InimigoNormal *criarInimigoNormal(float x, float y, float largura, float altura,
     novoInimigoNormal->velMaxQueda = 600;
     novoInimigoNormal->estaVivo = true;
     novoInimigoNormal->noChao = false;
+    novoInimigoNormal->paraDireita = false;
     novoInimigoNormal->cor = cor;
-    novoInimigoNormal->frameAtual = 0;
-    novoInimigoNormal->tempoFrame = 0.0f;
+    novoInimigoNormal->estado = INIMIGO_NORMAL_ANDANDO;
+
+    int quantidadeAnimacoes = 0;
+
+    novoInimigoNormal->animacaoAndando.quantidadeQuadros = 4;
+    novoInimigoNormal->animacaoAndando.quadroAtual = 0;
+    novoInimigoNormal->animacaoAndando.contadorTempoQuadro = 0;
+    novoInimigoNormal->animacaoAndando.pararNoUltimoQuadro = false;
+    novoInimigoNormal->animacaoAndando.executarUmaVez = false;
+    novoInimigoNormal->animacaoAndando.finalizada = false;
+    criarQuadroAnimacao(&novoInimigoNormal->animacaoAndando, novoInimigoNormal->animacaoAndando.quantidadeQuadros);
+    inicializarQuadroAnimacao(
+        novoInimigoNormal->animacaoAndando.quadros,
+        novoInimigoNormal->animacaoAndando.quantidadeQuadros,
+        100,
+        1,
+        1,
+        20, 
+        15,
+        false,
+        1
+    );
+
+    novoInimigoNormal->animacoes[INIMIGO_NORMAL_ANDANDO] = &novoInimigoNormal->animacaoAndando;
+    quantidadeAnimacoes++;
+
+    novoInimigoNormal->quantidadeAnimacoes = quantidadeAnimacoes;
+
 
     return novoInimigoNormal;
 
@@ -34,6 +66,13 @@ InimigoNormal *criarInimigoNormal(float x, float y, float largura, float altura,
 void atualizarInimigoNormal(InimigoNormal *inimigo, GameWorld *gw, float delta) {
 
     if(inimigo->estaVivo) {
+
+        if(inimigo->estado == INIMIGO_NORMAL_ANDANDO) {
+            Animacao *animacaoAtual = getAnimacaoAtualInimigoNormal(inimigo);
+            atualizarAnimacao(animacaoAtual, delta);
+
+        }
+
         inimigo->ret.x += inimigo->vel.x * delta;
         resolverColisaoInimigoMapaX(inimigo, gw->mapa);
 
@@ -50,11 +89,8 @@ void atualizarInimigoNormal(InimigoNormal *inimigo, GameWorld *gw, float delta) 
             inimigo->vel.x = -inimigo->vel.x;
         }
 
-        inimigo->tempoFrame += delta;
-        if (inimigo->tempoFrame >= 0.15f) {
-            inimigo->tempoFrame = 0.0f;
-            inimigo->frameAtual = (inimigo->frameAtual + 1) % 4;
-        }
+        inimigo->paraDireita = inimigo->vel.x > 0;
+
     }
 
 
@@ -63,6 +99,9 @@ void atualizarInimigoNormal(InimigoNormal *inimigo, GameWorld *gw, float delta) 
 void destruirInimigoNormal(InimigoNormal *inimigo) {
 
     if(inimigo != NULL) {
+        for(int i = 0; i < inimigo->quantidadeAnimacoes; i++) {
+            destruirQuadroAnimacao(inimigo->animacoes[i]);
+        }
         free(inimigo);
     }
 
@@ -71,24 +110,11 @@ void destruirInimigoNormal(InimigoNormal *inimigo) {
 void desenharInimigoNormal(InimigoNormal *inimigo) {
 
     if(inimigo->estaVivo) {
-        float larguraFrame = (float) rm.texturaInimigoNormal.width / 4.0f;
-        Rectangle fonte = {
-            .x = inimigo->frameAtual * larguraFrame,
-            .y = 0,
-            .width = larguraFrame,
-            .height = (float) rm.texturaInimigoNormal.height
-        };
-        if (inimigo->vel.x > 0) {
-            fonte.width = -fonte.width;
-        }
-        DrawTexturePro(
-            rm.texturaInimigoNormal,
-            fonte,
-            inimigo->ret,
-            (Vector2) {0},
-            0.0f,
-            WHITE
-        );
+        if(inimigo->estado == INIMIGO_NORMAL_ANDANDO) {
+            QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoNormal(inimigo);
+            desenharAnimacaoAndandoInimigoNormal(inimigo, quadro, WHITE);
+        }   
+
     }
 
 }
@@ -222,4 +248,36 @@ static bool verificarSeTemChao(InimigoNormal *i, Mapa *m) {
     }
 
     return false;
+}
+
+static void desenharAnimacaoAndandoInimigoNormal(InimigoNormal *inimigo, QuadroAnimacao *quadro, Color tonalidade) {
+
+    if(quadro != NULL) {
+
+        DrawTexturePro(
+            rm.texturaInimigoNormal,
+            (Rectangle) {
+                quadro->fonte.x,
+                quadro->fonte.y,
+                inimigo->paraDireita ? -quadro->fonte.width : quadro->fonte.width,
+                quadro->fonte.height
+            },
+            inimigo->ret,
+            (Vector2) {0},
+            0.0f,
+            tonalidade
+        );
+
+    }
+
+}
+
+static Animacao *getAnimacaoAtualInimigoNormal(InimigoNormal *inimigo) {
+
+    return inimigo->animacoes[inimigo->estado];
+
+}
+
+static QuadroAnimacao *getQuadroAnimacaoAtualInimigoNormal(InimigoNormal *inimigo) {
+    return getQuadroAtualAnimacao(getAnimacaoAtualInimigoNormal(inimigo));
 }

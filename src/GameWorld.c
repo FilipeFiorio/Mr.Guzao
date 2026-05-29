@@ -312,10 +312,3 @@ static void desenharHud(GameWorld *gw) {
     drawTextAlinhado(textoHud, 10, 25, WHITE, ESQUERDA);
 
 }
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-
-=======
->>>>>>> c2d184d9bf10e05527e65a3c52210347a7aa6d55
->>>>>>> 88de534429fc85e23738578705c7392e73f58904
