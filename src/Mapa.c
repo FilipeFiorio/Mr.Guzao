@@ -70,6 +70,7 @@ Mapa *carregarMapa( const char *caminhoArquivo ) {
 
                     Obstaculo *obs = NULL;
 
+                    //plataforma vertical
                     if(*caractereAtual == 'S') {
 
                         obs = criarObstaculo(OBSTACULO_MOVEL);
@@ -93,6 +94,31 @@ Mapa *carregarMapa( const char *caminhoArquivo ) {
                             &rm.texturaTerreno
                         );
 
+                        
+                        //plataform ahorizontal
+                    } else if(*caractereAtual == 'T') {
+                        
+                        obs = criarObstaculo(OBSTACULO_MOVEL);
+                        
+                        obs->objeto = criarObstaculoMovel(
+                            (Rectangle) {
+                                .x = colunaAtual * novoMapa->tamanhoElemento,
+                                .y = linhaAtual * novoMapa->tamanhoElemento,
+                                .width = novoMapa->tamanhoElemento,
+                                .height = novoMapa->tamanhoElemento
+                            },
+                            (Rectangle) {
+                                1 + (novoMapa->tamanhoElemento + 1) * deslocamento,
+                                1,
+                                novoMapa->tamanhoElemento,
+                                novoMapa->tamanhoElemento
+                            },
+                            (Vector2) {(float) (novoMapa->tamanhoElemento * 7), 0},
+                            (Vector2) {50.0, 0},
+                            YELLOW,
+                            &rm.texturaTerreno
+                        );
+                        
                     } else if(*caractereAtual == 'Z') {
 
                         printf("ta certo");
@@ -116,32 +142,8 @@ Mapa *carregarMapa( const char *caminhoArquivo ) {
                             WHITE,
                             &rm.texturaTerreno
                         );
-
-                    } else if(*caractereAtual == 'T') {
-
-                        obs = criarObstaculo(OBSTACULO_MOVEL);
-                        
-                        obs->objeto = criarObstaculoMovel(
-                            (Rectangle) {
-                                .x = colunaAtual * novoMapa->tamanhoElemento,
-                                .y = linhaAtual * novoMapa->tamanhoElemento,
-                                .width = novoMapa->tamanhoElemento,
-                                .height = novoMapa->tamanhoElemento
-                            },
-                            (Rectangle) {
-                                1 + (novoMapa->tamanhoElemento + 1) * deslocamento,
-                                1,
-                                novoMapa->tamanhoElemento,
-                                novoMapa->tamanhoElemento
-                            },
-                            (Vector2) {(float) (novoMapa->tamanhoElemento * 7), 0},
-                            (Vector2) {50.0, 0},
-                            YELLOW,
-                            &rm.texturaTerreno
-                        );
-                            
                     } else {
-
+                        
                         obs = criarObstaculo(OBSTACULO_NORMAL);
                         
                         obs->objeto = criarObstaculoNormal(
