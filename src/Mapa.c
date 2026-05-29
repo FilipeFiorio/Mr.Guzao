@@ -70,6 +70,7 @@ Mapa *carregarMapa( const char *caminhoArquivo ) {
 
                     Obstaculo *obs = NULL;
 
+                    //plataforma vertical
                     if(*caractereAtual == 'S') {
 
                         obs = criarObstaculo(OBSTACULO_MOVEL);
@@ -92,33 +93,8 @@ Mapa *carregarMapa( const char *caminhoArquivo ) {
                             YELLOW,
                             &rm.texturaTerreno
                         );
-
-                    } else if(*caractereAtual == 'Z') {
-
-                        printf("ta certo");
-                        obs = criarObstaculo(OBSTACULO_CHEGADA);
-                        
-                        obs->objeto = criarObstaculoChegada(
-                            (Rectangle) {
-                                .x = colunaAtual * novoMapa->tamanhoElemento,
-                                .y = linhaAtual * novoMapa->tamanhoElemento,
-                                .width = novoMapa->tamanhoElemento,
-                                .height = novoMapa->tamanhoElemento
-                            },
-
-                            (Rectangle) {
-                                1 + (novoMapa->tamanhoElemento + 1) * deslocamento,
-                                1,
-                                novoMapa->tamanhoElemento,
-                                novoMapa->tamanhoElemento
-                            },
-
-                            WHITE,
-                            &rm.texturaTerreno
-                        );
-
                     } else if(*caractereAtual == 'T') {
-
+                        
                         obs = criarObstaculo(OBSTACULO_MOVEL);
                         
                         obs->objeto = criarObstaculoMovel(
@@ -139,9 +115,9 @@ Mapa *carregarMapa( const char *caminhoArquivo ) {
                             YELLOW,
                             &rm.texturaTerreno
                         );
-                            
+                        
                     } else {
-
+                        
                         obs = criarObstaculo(OBSTACULO_NORMAL);
                         
                         obs->objeto = criarObstaculoNormal(
