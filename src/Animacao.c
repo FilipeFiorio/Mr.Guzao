@@ -47,7 +47,7 @@ void inicializarQuadroAnimacao(
 void destruirQuadroAnimacao(Animacao *animacao) {
 
     if(animacao != NULL) {
-        free(animacao);
+        free(animacao->quadros);
     }
 
 }

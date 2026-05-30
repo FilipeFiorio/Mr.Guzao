@@ -4,6 +4,12 @@
 
 #include "Tipos.h"
 #include "ItemMoeda.h"
+#include "Animacao.h"
+#include "ResourceManager.h"
+
+static void desenharAnimacaoItemMoeda(ItemMoeda *item, QuadroAnimacao *quadro, Color tonalidade);
+static Animacao *getAnimacaoAtualItemMoeda(ItemMoeda *item);
+static QuadroAnimacao *getQuadroAnimacaoAtualItemMoeda(ItemMoeda *item);
 
 
 ItemMoeda *criarItemMoeda(float x, float y, float largura, float altura, Color cor) {
@@ -17,6 +23,33 @@ ItemMoeda *criarItemMoeda(float x, float y, float largura, float altura, Color c
     novoItem->ret.width = largura;
     novoItem->ret.height = altura;
     novoItem->valor = 1;
+    novoItem->estado = ITEM_GIRANDO;
+
+    int quantidadeAnimacoes = 0;
+
+    novoItem->animacaoGirando.quantidadeQuadros = 4;
+    novoItem->animacaoGirando.quadroAtual = 0;
+    novoItem->animacaoGirando.contadorTempoQuadro = 0;
+    novoItem->animacaoGirando.pararNoUltimoQuadro = false;
+    novoItem->animacaoGirando.executarUmaVez = false;
+    novoItem->animacaoGirando.finalizada = false;
+    criarQuadroAnimacao(&novoItem->animacaoGirando, novoItem->animacaoGirando.quantidadeQuadros);
+    inicializarQuadroAnimacao(
+        novoItem->animacaoGirando.quadros,
+        novoItem->animacaoGirando.quantidadeQuadros,
+        200,
+        1, 
+        1,
+        15,
+        15,
+        false, 
+        1
+    );
+
+    novoItem->animacoes[ITEM_GIRANDO] = &novoItem->animacaoGirando;
+    quantidadeAnimacoes++;
+    novoItem->quantidadeAnimacoes = quantidadeAnimacoes;
+    
 
     return novoItem;
 }
@@ -24,14 +57,22 @@ ItemMoeda *criarItemMoeda(float x, float y, float largura, float altura, Color c
 void atualizarItemMoeda(ItemMoeda *item, GameWorld *gw, float delta) {
 
     if(item->ativo) {
-        // Depois
-    }
 
+        if(item->estado == ITEM_GIRANDO) {
+            Animacao *animacao = getAnimacaoAtualItemMoeda(item);
+            atualizarAnimacao(animacao, delta);
+        }
+
+    }
+    
 }
 
 void destruirItemMoeda(ItemMoeda *item) {
-
+    
     if(item != NULL) {
+        for(int i = 0; i <item->quantidadeAnimacoes; i++) {
+            destruirQuadroAnimacao(item->animacoes[i]);
+        }
         free(item);
     }
 
@@ -40,7 +81,42 @@ void destruirItemMoeda(ItemMoeda *item) {
 void desenharItemMoeda(ItemMoeda *item) {
 
     if(item->ativo) {
-        DrawRectangleRec(item->ret, item->cor);
+        QuadroAnimacao *quadro = getQuadroAnimacaoAtualItemMoeda(item);
+        desenharAnimacaoItemMoeda(item, quadro, WHITE);
     }
+
+}
+
+static void desenharAnimacaoItemMoeda(ItemMoeda *item, QuadroAnimacao *quadro, Color tonalidade) {
+
+
+    if(quadro != NULL) {
+
+        DrawTexturePro(
+            rm.texturaItens,
+            (Rectangle) {
+                quadro->fonte.x,
+                quadro->fonte.y,
+                quadro->fonte.width,
+                quadro->fonte.height
+            },
+            item->ret,
+            (Vector2) {0},
+            0.0f,
+            tonalidade
+        );
+
+    }
+}
+
+static Animacao *getAnimacaoAtualItemMoeda(ItemMoeda *item) {
+
+    return item->animacoes[item->estado];
+
+}
+
+static QuadroAnimacao *getQuadroAnimacaoAtualItemMoeda(ItemMoeda *item) {
+
+    return getQuadroAtualAnimacao(getAnimacaoAtualItemMoeda(item));
 
 }

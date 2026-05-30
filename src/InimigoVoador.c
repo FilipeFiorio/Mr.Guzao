@@ -11,7 +11,7 @@
 static void resolverColisaoInimigoMapaX(InimigoVoador *i, Mapa *m);
 static void resolverColisaoInimigoMapaY(InimigoVoador *i, Mapa *m);
 
-static void desenharAnimacaoVoandoInimigoVoador(InimigoVoador *inimigo, QuadroAnimacao *quadro, Color tonalidade);
+static void desenharAnimacaoInimigoVoador(InimigoVoador *inimigo, QuadroAnimacao *quadro, Color tonalidade);
 static Animacao *getAnimacaoAtualInimigoVoador(InimigoVoador *inimigo);
 static QuadroAnimacao *getQuadroAnimacaoAtualInimigoVoador(InimigoVoador *inimigo);
 
@@ -144,7 +144,7 @@ void desenharInimigoVoador(InimigoVoador *inimigo) {
     if(inimigo->estaVivo) {
         if(inimigo->estado == INIMIGO_VOADOR_VOANDO) {
             QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoVoador(inimigo);
-            desenharAnimacaoVoandoInimigoVoador(inimigo, quadro, WHITE);
+            desenharAnimacaoInimigoVoador(inimigo, quadro, WHITE);
         }
         
     }
@@ -239,7 +239,7 @@ static void resolverColisaoInimigoMapaX(InimigoVoador *i, Mapa *m) {
 
 }
 
-static void desenharAnimacaoVoandoInimigoVoador(InimigoVoador *inimigo, QuadroAnimacao *quadro, Color tonalidade) {
+static void desenharAnimacaoInimigoVoador(InimigoVoador *inimigo, QuadroAnimacao *quadro, Color tonalidade) {
 
     if(quadro != NULL) {
 

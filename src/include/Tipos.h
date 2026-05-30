@@ -37,22 +37,6 @@ typedef enum TipoItem {
     ITEM_VIDA
 } TipoItem;
 
-// Depois chegar se as colisoes estao certas
-typedef struct QuadroAnimacao {
-    Rectangle fonte;
-    int duracao;
-} QuadroAnimacao;
-
-typedef struct Animacao{
-    QuadroAnimacao *quadros;
-    int quantidadeQuadros;
-    int quadroAtual;
-    int contadorTempoQuadro;
-    bool finalizada;
-    bool pararNoUltimoQuadro;
-    bool executarUmaVez;
-} Animacao;
-
 typedef enum EstadoInimigoNormal {
     INIMIGO_NORMAL_ANDANDO,
     INIMIGO_NORMAL_MORRENDO
@@ -68,6 +52,28 @@ typedef enum EstadoInimigoVoador {
     INIMIGO_VOADOR_VOANDO,
     INIMIGO_VOADOR_MORRENDO
 } EstadoInimigoVoador;
+
+typedef enum EstadoItem {
+    ITEM_GIRANDO,
+    ITEM_COLETANDO
+} EstadoItem;
+ 
+// Depois chegar se as colisoes estao certas
+typedef struct QuadroAnimacao {
+    Rectangle fonte;
+    int duracao;
+    Rectangle colisao;
+} QuadroAnimacao;
+
+typedef struct Animacao{
+    QuadroAnimacao *quadros;
+    int quantidadeQuadros;
+    int quadroAtual;
+    int contadorTempoQuadro;
+    bool finalizada;
+    bool pararNoUltimoQuadro;
+    bool executarUmaVez;
+} Animacao;
 
 typedef struct Jogador {
     Rectangle ret;
@@ -186,6 +192,13 @@ typedef struct ItemMoeda {
     Color cor;
     int valor;
     bool ativo;
+    EstadoItem estado;
+
+    Animacao *animacoes[1];
+    int quantidadeAnimacoes;
+
+    Animacao animacaoGirando;
+
 } ItemMoeda;
 
 typedef struct ItemMoedaEspecial {
@@ -193,6 +206,14 @@ typedef struct ItemMoedaEspecial {
     Color cor;
     int valor;
     bool ativo;
+    EstadoItem estado;
+
+    //Colocar animacao ao pegar moeda dps
+    Animacao *animacoes[1];
+    int quantidadeAnimacoes;
+
+    Animacao animacaoGirando;
+    
 }ItemMoedaEspecial;
 
 typedef struct ItemVida{

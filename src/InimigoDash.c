@@ -14,7 +14,7 @@ static bool verificarSeTemChao(InimigoDash *i, Mapa *m);
 static float verificarDistanciaJogador(InimigoDash *i, Mapa *m);
 static void dash(InimigoDash *i, float distancia);
 
-static void desenharAnimacaoAndandoInimigoDash(InimigoDash *inimigo, QuadroAnimacao *quadro, Color tonalidade);
+static void desenharAnimacaoInimigoDash(InimigoDash *inimigo, QuadroAnimacao *quadro, Color tonalidade);
 static Animacao *getAnimacaoAtualInimigoDash(InimigoDash *inimigo);
 static QuadroAnimacao *getQuadroAnimacaoAtualInimigoDash(InimigoDash *inimigo);
 
@@ -115,8 +115,7 @@ void desenharInimigoDash(InimigoDash *inimigo) {
     if(inimigo->estaVivo) {
         if(inimigo->estado == INIMIGO_DASH_ANDANDO) {
             QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoDash(inimigo);
-            desenharAnimacaoAndandoInimigoDash(inimigo, quadro, WHITE);
-            TraceLog(LOG_INFO, "chegou");
+            desenharAnimacaoInimigoDash(inimigo, quadro, WHITE);
         }
     }
 
@@ -283,7 +282,7 @@ static void dash(InimigoDash *i, float distancia) {
 
 
 
-static void desenharAnimacaoAndandoInimigoDash(InimigoDash *inimigo, QuadroAnimacao *quadro, Color tonalidade) {
+static void desenharAnimacaoInimigoDash(InimigoDash *inimigo, QuadroAnimacao *quadro, Color tonalidade) {
 
     if(quadro != NULL) {
 

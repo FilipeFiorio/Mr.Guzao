@@ -21,6 +21,7 @@ void loadResourcesResourceManager( void ) {
     rm.texturaInimigoNormal = LoadTexture("resources/images/inimigoNormal.png");
     rm.texturaInimigoDash = LoadTexture("resources/images/inimigoDash.png");
     rm.texturaInimigoVoador = LoadTexture("resources/images/inimigoVoador.png");
+    rm.texturaItens = LoadTexture("resources/images/itens.png");
 
 }
 
@@ -32,5 +33,6 @@ void unloadResourcesResourceManager( void ) {
     UnloadTexture(rm.texturaInimigoNormal);
     UnloadTexture(rm.texturaInimigoDash);
     UnloadTexture(rm.texturaInimigoVoador);
+    UnloadTexture(rm.texturaItens);
 
 }

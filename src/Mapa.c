@@ -341,7 +341,7 @@ void destruirMapa(Mapa *m) {
 
     el = m->inimigos;
     while(el != NULL) {
-        desenharInimigo((Inimigo*) el->objeto);
+        destruirInimigo((Inimigo*) el->objeto);
         el = el->proximo;
     }
 

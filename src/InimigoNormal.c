@@ -12,7 +12,7 @@ static void resolverColisaoInimigoMapaX(InimigoNormal *i, Mapa *m);
 static void resolverColisaoInimigoMapaY( InimigoNormal *i, Mapa *m);
 static bool verificarSeTemChao(InimigoNormal *i, Mapa *m);
 
-static void desenharAnimacaoAndandoInimigoNormal(InimigoNormal *inimigo, QuadroAnimacao *quadro, Color tonalidade);
+static void desenharAnimacaoInimigoNormal(InimigoNormal *inimigo, QuadroAnimacao *quadro, Color tonalidade);
 static Animacao *getAnimacaoAtualInimigoNormal(InimigoNormal *inimigo);
 static QuadroAnimacao *getQuadroAnimacaoAtualInimigoNormal(InimigoNormal *inimigo);
 
@@ -44,10 +44,10 @@ InimigoNormal *criarInimigoNormal(float x, float y, float largura, float altura,
     inicializarQuadroAnimacao(
         novoInimigoNormal->animacaoAndando.quadros,
         novoInimigoNormal->animacaoAndando.quantidadeQuadros,
-        100,
+        200,
         1,
         1,
-        20, 
+        21, 
         15,
         false,
         1
@@ -112,7 +112,7 @@ void desenharInimigoNormal(InimigoNormal *inimigo) {
     if(inimigo->estaVivo) {
         if(inimigo->estado == INIMIGO_NORMAL_ANDANDO) {
             QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoNormal(inimigo);
-            desenharAnimacaoAndandoInimigoNormal(inimigo, quadro, WHITE);
+            desenharAnimacaoInimigoNormal(inimigo, quadro, WHITE);
         }   
 
     }
@@ -250,7 +250,7 @@ static bool verificarSeTemChao(InimigoNormal *i, Mapa *m) {
     return false;
 }
 
-static void desenharAnimacaoAndandoInimigoNormal(InimigoNormal *inimigo, QuadroAnimacao *quadro, Color tonalidade) {
+static void desenharAnimacaoInimigoNormal(InimigoNormal *inimigo, QuadroAnimacao *quadro, Color tonalidade) {
 
     if(quadro != NULL) {
 
