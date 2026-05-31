@@ -55,7 +55,7 @@ typedef enum EstadoInimigoVoador {
 
 typedef enum EstadoItem {
     ITEM_GIRANDO,
-    ITEM_COLETANDO
+    ITEM_COLETADO
 } EstadoItem;
  
 // Depois chegar se as colisoes estao certas
@@ -193,10 +193,11 @@ typedef struct ItemMoeda {
     bool ativo;
     EstadoItem estado;
 
-    Animacao *animacoes[1];
+    Animacao *animacoes[2];
     int quantidadeAnimacoes;
 
     Animacao animacaoGirando;
+    Animacao animacaoColetado;
 
 } ItemMoeda;
 
@@ -208,10 +209,11 @@ typedef struct ItemMoedaEspecial {
     EstadoItem estado;
 
     //Colocar animacao ao pegar moeda dps
-    Animacao *animacoes[1];
+    Animacao *animacoes[2];
     int quantidadeAnimacoes;
 
     Animacao animacaoGirando;
+    Animacao animacaoColetado;
     
 }ItemMoedaEspecial;
 

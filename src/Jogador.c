@@ -73,6 +73,8 @@ void entradaJogador(Jogador *j) {
 
 void atualizarJogador(Jogador *j, GameWorld *gw, float delta) {
 
+    verificarColisaoJogadorItem(gw);
+    
     j->ret.x += j->vel.x * delta;
     resolverColisaoJogadorMapaX(gw);
 
@@ -86,7 +88,6 @@ void atualizarJogador(Jogador *j, GameWorld *gw, float delta) {
     resolverColisaoJogadorMapaY(gw, delta);
 
     verificarColisaoJogadorInimigo(gw);
-    verificarColisaoJogadorItem(gw);
 
     if(j->moedas >= 100) {
         j->moedas -= 100;
@@ -273,8 +274,13 @@ static void verificarColisaoJogadorItem(GameWorld *gw) {
 
             ItemMoeda *i = (ItemMoeda*) item->objeto;
 
+            if(!i->ativo || i->estado == ITEM_COLETADO) {
+                el = el->proximo;
+                continue;
+            }
+
             if(CheckCollisionRecs(j->ret, i->ret) && i->ativo) {
-                i->ativo = false;
+                i->estado = ITEM_COLETADO;
                 j->moedas += i->valor;
             }
 
@@ -282,8 +288,13 @@ static void verificarColisaoJogadorItem(GameWorld *gw) {
 
             ItemMoedaEspecial *i = (ItemMoedaEspecial*) item->objeto;
 
+            if(!i->ativo || i->estado == ITEM_COLETADO) {
+                el = el->proximo;
+                continue;
+            }
+
             if(CheckCollisionRecs(j->ret, i->ret) && i->ativo) {
-                i->ativo = false;
+                i->estado = ITEM_COLETADO;
                 j->moedas += i->valor;
             }
         } else if(item->tipo == ITEM_VIDA) {

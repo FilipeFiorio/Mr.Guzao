@@ -386,6 +386,10 @@ void atualizarMapa(Mapa *m,GameWorld *gw, float delta ) {
 
     ElementoMapa *el = NULL;
 
+    if(m->jogador != NULL) {
+        entradaJogador(m->jogador);
+        atualizarJogador(m->jogador, gw, delta);
+    }
     el = m->inimigos;
     while(el != NULL) {
         atualizarInimigo((Inimigo*) el->objeto, gw, delta);
@@ -407,10 +411,6 @@ void atualizarMapa(Mapa *m,GameWorld *gw, float delta ) {
         el = el->proximo;
     }
 
-    if(m->jogador != NULL) {
-        atualizarJogador(m->jogador, gw, delta);
-        entradaJogador(m->jogador);
-    }
 
 }
 

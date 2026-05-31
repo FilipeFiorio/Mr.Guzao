@@ -46,23 +46,44 @@ ItemMoedaEspecial *criarItemMoedaEspecial(float x, float y, float largura, float
         1
     );
 
+    novoItem->animacaoColetado.quantidadeQuadros = 4;
+    novoItem->animacaoColetado.quadroAtual = 0;
+    novoItem->animacaoColetado.contadorTempoQuadro = 0;
+    novoItem->animacaoColetado.pararNoUltimoQuadro = false;
+    novoItem->animacaoColetado.finalizada = false;
+    novoItem->animacaoColetado.executarUmaVez = true;
+    criarQuadroAnimacao(&novoItem->animacaoColetado, novoItem->animacaoColetado.quantidadeQuadros);
+    inicializarQuadroAnimacao(
+        novoItem->animacaoColetado.quadros,
+        novoItem->animacaoColetado.quantidadeQuadros,
+        50,
+        1,
+        65,
+        13,
+        14,
+        false,
+        1
+    );
+
     novoItem->animacoes[ITEM_GIRANDO] = &novoItem->animacaoGirando;
     quantidadeAnimacoes++;
+
+    novoItem->animacoes[ITEM_COLETADO] = &novoItem->animacaoColetado;
+    quantidadeAnimacoes++;
+
     novoItem->quantidadeAnimacoes = quantidadeAnimacoes;
     
-
     return novoItem;
 }
 
 void atualizarItemMoedaEspecial(ItemMoedaEspecial *item, GameWorld *gw, float delta) {
 
     if(item->ativo) {
-
-        if(item->estado == ITEM_GIRANDO) {
-            Animacao *animacao = getAnimacaoAtualItemMoedaEspecial(item);
-            atualizarAnimacao(animacao, delta);
+        Animacao *animacaoAtual = getAnimacaoAtualItemMoedaEspecial(item);
+        atualizarAnimacao(animacaoAtual, delta);
+        if(item->estado == ITEM_COLETADO && animacaoAtual->finalizada) {
+            item->ativo = false;
         }
-
     }
     
 }
