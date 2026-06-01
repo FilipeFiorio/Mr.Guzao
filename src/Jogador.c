@@ -333,13 +333,13 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
 
             InimigoNormal *i = (InimigoNormal*) inimigo->objeto;
 
-            if (CheckCollisionRecs(j->ret, i->ret) && i->estaVivo) {
+            if (CheckCollisionRecs(j->ret, i->ret) && i->estado == INIMIGO_NORMAL_ANDANDO) {
 
                 Rectangle retSobreposicao = GetCollisionRec(j->ret, i->ret);
 
                 if(retSobreposicao.height < retSobreposicao.width + 5) {
                     if (j->vel.y > 0 && j->ret.y + j->ret.height / 2 < i->ret.y + i->ret.height / 2) {
-                        i->estaVivo = false;
+                        i->estado = INIMIGO_NORMAL_MORRENDO;
                         j->vel.y = -j->vel.y * 0.75f;
                     } else {
                         j->ret.y = i->ret.y + j->ret.height;
@@ -364,13 +364,13 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
 
             InimigoDash *i = (InimigoDash*) inimigo->objeto;
 
-            if (CheckCollisionRecs(j->ret, i->ret) && i->estaVivo) {
+            if (CheckCollisionRecs(j->ret, i->ret) && i->estado == INIMIGO_DASH_ANDANDO) {
 
                 Rectangle retSobreposicao = GetCollisionRec(j->ret, i->ret);
 
                 if(retSobreposicao.height < retSobreposicao.width + 5) {
                     if (j->vel.y > 0 && j->ret.y + j->ret.height / 2 < i->ret.y + i->ret.height / 2) {
-                        i->estaVivo = false;
+                        i->estado = INIMIGO_DASH_MORRENDO;
                         j->vel.y = -j->vel.y * 0.75f;
                     } else {
                         j->ret.y = i->ret.y + j->ret.height;
@@ -395,14 +395,14 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
 
             InimigoVoador *i = (InimigoVoador*) inimigo->objeto;
 
-            if (CheckCollisionRecs(j->ret, i->ret) && i->estaVivo) {
+            if (CheckCollisionRecs(j->ret, i->ret) && i->estado == INIMIGO_VOADOR_VOANDO) {
 
                 Rectangle retSobreposicao = GetCollisionRec(j->ret, i->ret);
 
                 //talvez melhorar
                 if(retSobreposicao.height < retSobreposicao.width + 5) {
                     if (j->ret.y + j->ret.height / 2 < i->ret.y + i->ret.height / 2) {
-                        i->estaVivo = false;
+                        i->estado = INIMIGO_VOADOR_MORRENDO;
                         j->vel.y = -j->vel.y * 0.75f;
                     } else {
                         j->ret.y = i->ret.y + j->ret.height;

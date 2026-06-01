@@ -59,8 +59,8 @@ ItemMoeda *criarItemMoeda(float x, float y, float largura, float altura, Color c
         50,
         1,
         49,
-        13,
-        14,
+        15,
+        15,
         false,
         1
     );

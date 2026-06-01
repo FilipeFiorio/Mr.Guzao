@@ -14,7 +14,7 @@ static void resolverColisaoInimigoMapaY(InimigoVoador *i, Mapa *m);
 static void desenharAnimacaoInimigoVoador(InimigoVoador *inimigo, QuadroAnimacao *quadro, Color tonalidade);
 static Animacao *getAnimacaoAtualInimigoVoador(InimigoVoador *inimigo);
 
-static bool MOSTRAR_RETANGULO_COLISAO = true;
+static bool MOSTRAR_RETANGULO_COLISAO = false;
 
 InimigoVoador *criarInimigoVoador(float x, float y, float largura, float altura, Vector2 deslocamento, Vector2 vel, Color cor) {
 
@@ -55,7 +55,29 @@ InimigoVoador *criarInimigoVoador(float x, float y, float largura, float altura,
         1
     );
 
+    novoInimigoVoador->animacaoMorrendo.quantidadeQuadros = 3;
+    novoInimigoVoador->animacaoMorrendo.quadroAtual = 0;
+    novoInimigoVoador->animacaoMorrendo.contadorTempoQuadro = 0;
+    novoInimigoVoador->animacaoMorrendo.pararNoUltimoQuadro = false;
+    novoInimigoVoador->animacaoMorrendo.executarUmaVez = true;
+    novoInimigoVoador->animacaoMorrendo.finalizada = false;
+    criarQuadroAnimacao(&novoInimigoVoador->animacaoMorrendo, novoInimigoVoador->animacaoMorrendo.quantidadeQuadros);
+    inicializarQuadroAnimacao(
+        novoInimigoVoador->animacaoMorrendo.quadros,
+        novoInimigoVoador->animacaoMorrendo.quantidadeQuadros,
+        200,
+        1,
+        1,
+        15,
+        15,
+        false,
+        1
+    );
+
     novoInimigoVoador->animacoes[INIMIGO_VOADOR_VOANDO] = &novoInimigoVoador->animacaoVoando;
+    quantidadeAnimacoes++;
+
+    novoInimigoVoador->animacoes[INIMIGO_VOADOR_MORRENDO] = &novoInimigoVoador->animacaoMorrendo;
     quantidadeAnimacoes++;
 
     novoInimigoVoador->quantidadeAnimacoes = quantidadeAnimacoes;
@@ -69,10 +91,10 @@ void atualizarInimigoVoador(InimigoVoador *inimigo, GameWorld *gw, float delta) 
     if(inimigo->estaVivo) {
 
 
-        if(inimigo->estado == INIMIGO_VOADOR_VOANDO) {
-            Animacao *animacaoAtual = getAnimacaoAtualInimigoVoador(inimigo);
-            atualizarAnimacao(animacaoAtual, delta);
-
+        Animacao *animacaoAtual = getAnimacaoAtualInimigoVoador(inimigo);
+        atualizarAnimacao(animacaoAtual, delta);
+        if(inimigo->estado == INIMIGO_VOADOR_MORRENDO && animacaoAtual->finalizada) {
+            inimigo->estaVivo = false;
         }
 
         Vector2 alvo;
@@ -144,6 +166,9 @@ void desenharInimigoVoador(InimigoVoador *inimigo) {
     
     if(inimigo->estaVivo) {
         if(inimigo->estado == INIMIGO_VOADOR_VOANDO) {
+            QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoVoador(inimigo);
+            desenharAnimacaoInimigoVoador(inimigo, quadro, WHITE);
+        }else if(inimigo->estado == INIMIGO_VOADOR_MORRENDO) {
             QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoVoador(inimigo);
             desenharAnimacaoInimigoVoador(inimigo, quadro, WHITE);
         }
@@ -244,19 +269,37 @@ static void desenharAnimacaoInimigoVoador(InimigoVoador *inimigo, QuadroAnimacao
 
     if(quadro != NULL) {
 
-        DrawTexturePro(
-            rm.texturaInimigoVoador,
-            (Rectangle) {
-                quadro->fonte.x,
-                quadro->fonte.y,
-                quadro->fonte.width,
-                quadro->fonte.height
-            },
-            inimigo->ret,
-            (Vector2) {0},
-            0.0f,
-            tonalidade
-        );
+        if(inimigo->estado == INIMIGO_VOADOR_VOANDO) {
+            
+            DrawTexturePro(
+                rm.texturaInimigoVoador,
+                (Rectangle) {
+                    quadro->fonte.x,
+                    quadro->fonte.y,
+                    quadro->fonte.width,
+                    quadro->fonte.height
+                },
+                inimigo->ret,
+                (Vector2) {0},
+                0.0f,
+                tonalidade
+            );
+
+        } else if(inimigo->estado == INIMIGO_VOADOR_MORRENDO) {
+            DrawTexturePro(
+                rm.texturaInimigoMorrendo,
+                (Rectangle) {
+                    quadro->fonte.x,
+                    quadro->fonte.y,
+                    quadro->fonte.width,
+                    quadro->fonte.height
+                },
+                inimigo->ret,
+                (Vector2) {0},
+                0.0f,
+                tonalidade
+            );
+        }
 
         if(MOSTRAR_RETANGULO_COLISAO) {
             DrawRectangleRec(inimigo->ret, Fade(GREEN, 0.5f));

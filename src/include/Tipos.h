@@ -44,7 +44,7 @@ typedef enum EstadoInimigoNormal {
 
 typedef enum EstadoInimigoDash {
     INIMIGO_DASH_ANDANDO,
-    INIMIGO_DASH_DASHANDO,
+    //INIMIGO_DASH_DASHANDO,
     INIMIGO_DASH_MORRENDO
 } EstadoInimigoDash;
 
@@ -108,7 +108,7 @@ typedef struct InimigoNormal {
     int quantidadeAnimacoes;
 
     Animacao animacaoAndando;
-    //Animacao morrendo;
+    Animacao animacaoMorrendo;
 
 } InimigoNormal;
 
@@ -129,7 +129,7 @@ typedef struct InimigoDash {
 
     Animacao animacoAndando;
     //Animacao dashando;
-    //Animacao morrendo;
+    Animacao animacaoMorrendo;
 
 } InimigoDash;
 
@@ -147,7 +147,7 @@ typedef struct InimigoVoador {
     int quantidadeAnimacoes;
 
     Animacao animacaoVoando;
-    //Animacao morrendo;
+    Animacao animacaoMorrendo;
 
 }InimigoVoador;
 

@@ -17,7 +17,7 @@ static void dash(InimigoDash *i, float distancia);
 static void desenharAnimacaoInimigoDash(InimigoDash *inimigo, QuadroAnimacao *quadro, Color tonalidade);
 static Animacao *getAnimacaoAtualInimigoDash(InimigoDash *inimigo);
 
-static bool MOSTRAR_RETANGULO_COLISAO = true;
+static bool MOSTRAR_RETANGULO_COLISAO = false;
 
 InimigoDash *criarInimigoDash(float x, float y, float largura, float altura, float tamanhoDash, Color cor) {
 
@@ -58,9 +58,31 @@ InimigoDash *criarInimigoDash(float x, float y, float largura, float altura, flo
         1
     );
 
+    novoInimigoDash->animacaoMorrendo.quantidadeQuadros = 3;
+    novoInimigoDash->animacaoMorrendo.quadroAtual = 0;
+    novoInimigoDash->animacaoMorrendo.contadorTempoQuadro = 0;
+    novoInimigoDash->animacaoMorrendo.pararNoUltimoQuadro = false;
+    novoInimigoDash->animacaoMorrendo.executarUmaVez = true;
+    novoInimigoDash->animacaoMorrendo.finalizada = false;
+    criarQuadroAnimacao(&novoInimigoDash->animacaoMorrendo, novoInimigoDash->animacaoMorrendo.quantidadeQuadros);
+    inicializarQuadroAnimacao(
+        novoInimigoDash->animacaoMorrendo.quadros,
+        novoInimigoDash->animacaoMorrendo.quantidadeQuadros,
+        200,
+        1,
+        1,
+        15,
+        15,
+        false,
+        1
+    );
+
     novoInimigoDash->animacoes[INIMIGO_DASH_ANDANDO] = &novoInimigoDash->animacoAndando;
     quantidadeAnimacoes++;
 
+    novoInimigoDash->animacoes[INIMIGO_DASH_MORRENDO] = &novoInimigoDash->animacaoMorrendo;
+    quantidadeAnimacoes++;
+    
     novoInimigoDash->quantidadeAnimacoes = quantidadeAnimacoes;
 
     return novoInimigoDash;
@@ -70,10 +92,10 @@ void atualizarInimigoDash(InimigoDash *inimigo, GameWorld *gw, float delta) {
 
     if(inimigo->estaVivo) {
 
-        if(inimigo->estado == INIMIGO_DASH_ANDANDO) {
-            Animacao *animacaoAtual = getAnimacaoAtualInimigoDash(inimigo);
-            atualizarAnimacao(animacaoAtual, delta);
-
+        Animacao *animacaoAtual = getAnimacaoAtualInimigoDash(inimigo);
+        atualizarAnimacao(animacaoAtual, delta);
+        if(inimigo->estado == INIMIGO_DASH_MORRENDO && animacaoAtual->finalizada) {
+            inimigo->estaVivo = false;
         }
 
         dash(inimigo, verificarDistanciaJogador(inimigo, gw->mapa));
@@ -115,6 +137,9 @@ void desenharInimigoDash(InimigoDash *inimigo) {
     
     if(inimigo->estaVivo) {
         if(inimigo->estado == INIMIGO_DASH_ANDANDO) {
+            QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoDash(inimigo);
+            desenharAnimacaoInimigoDash(inimigo, quadro, WHITE);
+        } else if(inimigo->estado == INIMIGO_DASH_MORRENDO) {
             QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoDash(inimigo);
             desenharAnimacaoInimigoDash(inimigo, quadro, WHITE);
         }
@@ -287,19 +312,37 @@ static void desenharAnimacaoInimigoDash(InimigoDash *inimigo, QuadroAnimacao *qu
 
     if(quadro != NULL) {
 
-        DrawTexturePro(
-            rm.texturaInimigoDash,
-            (Rectangle) {
-                quadro->fonte.x,
-                quadro->fonte.y,
-                inimigo->paraDireita ? -quadro->fonte.width : quadro->fonte.width,
-                quadro->fonte.height
-            },
-            inimigo->ret,
-            (Vector2) {0},
-            0.0f,
-            tonalidade
-        );
+        if(inimigo->estado == INIMIGO_DASH_ANDANDO) {
+            
+            DrawTexturePro(
+                rm.texturaInimigoDash,
+                (Rectangle) {
+                    quadro->fonte.x,
+                    quadro->fonte.y,
+                    inimigo->paraDireita ? -quadro->fonte.width : quadro->fonte.width,
+                    quadro->fonte.height
+                },
+                inimigo->ret,
+                (Vector2) {0},
+                0.0f,
+                tonalidade
+            );
+
+        } else if(inimigo->estado == INIMIGO_DASH_MORRENDO) {
+            DrawTexturePro(
+                rm.texturaInimigoMorrendo,
+                (Rectangle) {
+                    quadro->fonte.x,
+                    quadro->fonte.y,
+                    quadro->fonte.width,
+                    quadro->fonte.height
+                },
+                inimigo->ret,
+                (Vector2) {0},
+                0.0f,
+                tonalidade
+            );
+        }
 
         if ( MOSTRAR_RETANGULO_COLISAO) {
             DrawRectangleRec(inimigo->ret ,Fade(GREEN, 0.5f));

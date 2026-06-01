@@ -59,8 +59,8 @@ ItemMoedaEspecial *criarItemMoedaEspecial(float x, float y, float largura, float
         50,
         1,
         65,
-        13,
-        14,
+        15,
+        15,
         false,
         1
     );
