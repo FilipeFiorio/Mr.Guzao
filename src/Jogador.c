@@ -279,7 +279,7 @@ static void verificarColisaoJogadorItem(GameWorld *gw) {
                 continue;
             }
 
-            if(CheckCollisionRecs(j->ret, i->ret) && i->ativo) {
+            if(CheckCollisionRecs(j->ret, i->ret) && i->estado == ITEM_GIRANDO) {
                 i->estado = ITEM_COLETADO;
                 j->moedas += i->valor;
             }
@@ -293,16 +293,22 @@ static void verificarColisaoJogadorItem(GameWorld *gw) {
                 continue;
             }
 
-            if(CheckCollisionRecs(j->ret, i->ret) && i->ativo) {
+            if(CheckCollisionRecs(j->ret, i->ret) && i->estado == ITEM_GIRANDO) {
                 i->estado = ITEM_COLETADO;
                 j->moedas += i->valor;
             }
+            
         } else if(item->tipo == ITEM_VIDA) {
 
             ItemVida *i = (ItemVida*) item->objeto;
 
-            if(CheckCollisionRecs(j->ret, i->ret) && i->ativo) {
-                i->ativo = false;
+            if(!i->ativo || i->estado == ITEM_COLETADO) {
+                el = el->proximo;
+                continue;
+            }
+
+            if(CheckCollisionRecs(j->ret, i->ret) && i->estado == ITEM_GIRANDO) {
+                i->estado = ITEM_COLETADO;
                 j->vidas++;
             }
 

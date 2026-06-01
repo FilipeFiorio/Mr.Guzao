@@ -26,7 +26,7 @@ ItemMoedaEspecial *criarItemMoedaEspecial(float x, float y, float largura, float
     novoItem->estado = ITEM_GIRANDO;
 
     int quantidadeAnimacoes = 0;
-
+    
     novoItem->animacaoGirando.quantidadeQuadros = 4;
     novoItem->animacaoGirando.quadroAtual = 0;
     novoItem->animacaoGirando.contadorTempoQuadro = 0;

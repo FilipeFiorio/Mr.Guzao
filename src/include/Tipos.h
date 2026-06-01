@@ -208,7 +208,6 @@ typedef struct ItemMoedaEspecial {
     bool ativo;
     EstadoItem estado;
 
-    //Colocar animacao ao pegar moeda dps
     Animacao *animacoes[2];
     int quantidadeAnimacoes;
 
@@ -221,6 +220,14 @@ typedef struct ItemVida{
     Rectangle ret;
     Color cor;
     bool ativo;
+    EstadoItem estado;
+
+    Animacao *animacoes[2];
+    int quantidadeAnimacoes;
+
+    Animacao animacaoGirando;
+    Animacao animacaoColetado;
+
 }ItemVida;
 
 typedef struct ElementoMapa ElementoMapa;
