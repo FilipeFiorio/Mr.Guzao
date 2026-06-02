@@ -4,12 +4,19 @@
 #include "Tipos.h"
 #include "Inimigo.h"
 #include "Mapa.h"
-#include "InimigoNormal.h"
+#include "Animacao.h"
+#include "ResourceManager.h"
 
 static void resolverColisaoJogadorMapaX(GameWorld *gw);
 static void resolverColisaoJogadorMapaY(GameWorld *gw, float delta);
 static void verificarColisaoJogadorItem(GameWorld *gw);
 static void verificarColisaoJogadorInimigo(GameWorld *gw);
+
+static void desenharAnimacaoJogador(Jogador *j, QuadroAnimacao *quadro, Color tonalidade);
+static Animacao *getAnimacaoAtualJogador(Jogador *j);
+static QuadroAnimacao *getQuadroAnimacaoAtualJogador(Jogador *j);
+
+static bool MOSTRAR_RETANGULO_COLISAO = false;
 
 Jogador *criarJogador(float x, float y, float largura, float altura, Color cor) {
 
@@ -35,12 +42,110 @@ Jogador *criarJogador(float x, float y, float largura, float altura, Color cor) 
 
     novoJogador->noChao = false;
     novoJogador->morto = false;
+    novoJogador->paraDireita = false;
 
+    novoJogador->estado = JOGADOR_PARADO;
+
+    int quantidadeAnimacoes = 0;
+
+    novoJogador->animacaoParado.quantidadeQuadros = 1;
+    novoJogador->animacaoParado.quadroAtual = 0;
+    novoJogador->animacaoParado.contadorTempoQuadro = 0;
+    novoJogador->animacaoParado.finalizada = false;
+    novoJogador->animacaoParado.pararNoUltimoQuadro = false;
+    novoJogador->animacaoParado.executarUmaVez = false;
+    criarQuadroAnimacao(&novoJogador->animacaoParado, novoJogador->animacaoParado.quantidadeQuadros);
+    inicializarQuadroAnimacao(
+        novoJogador->animacaoParado.quadros,
+        novoJogador->animacaoParado.quantidadeQuadros,
+        1000,
+        0,
+        0,
+        16,
+        16,
+        false,
+        0
+    );
+
+    novoJogador->animacaoAndando.quantidadeQuadros = 4;
+    novoJogador->animacaoAndando.quadroAtual = 0;
+    novoJogador->animacaoAndando.contadorTempoQuadro = 0;
+    novoJogador->animacaoAndando.finalizada = false;
+    novoJogador->animacaoAndando.executarUmaVez = false;
+    novoJogador->animacaoAndando.pararNoUltimoQuadro = false;
+    criarQuadroAnimacao(&novoJogador->animacaoAndando, novoJogador->animacaoAndando.quantidadeQuadros);
+    inicializarQuadroAnimacao(
+        novoJogador->animacaoAndando.quadros,
+        novoJogador->animacaoAndando.quantidadeQuadros,
+        90,
+        0,
+        16,
+        16,
+        16,
+        false,
+        0
+    );
+
+    novoJogador->animacaoCorrendo.quantidadeQuadros = 4;
+    novoJogador->animacaoCorrendo.quadroAtual = 0;
+    novoJogador->animacaoCorrendo.contadorTempoQuadro = 0;
+    novoJogador->animacaoCorrendo.finalizada = false;
+    novoJogador->animacaoCorrendo.executarUmaVez = false;
+    novoJogador->animacaoCorrendo.pararNoUltimoQuadro = false;
+    criarQuadroAnimacao(&novoJogador->animacaoCorrendo, novoJogador->animacaoCorrendo.quantidadeQuadros);
+    inicializarQuadroAnimacao(
+        novoJogador->animacaoCorrendo.quadros,
+        novoJogador->animacaoCorrendo.quantidadeQuadros,
+        60,
+        0,
+        16,
+        16,
+        16,
+        false,
+        0
+    );
+
+    novoJogador->animacaoPulando.quantidadeQuadros = 1;
+    novoJogador->animacaoPulando.quadroAtual = 0;
+    novoJogador->animacaoPulando.contadorTempoQuadro = 0;
+    novoJogador->animacaoPulando.finalizada = false;
+    novoJogador->animacaoPulando.pararNoUltimoQuadro = false;
+    novoJogador->animacaoPulando.executarUmaVez = false;
+    criarQuadroAnimacao(&novoJogador->animacaoPulando, novoJogador->animacaoPulando.quantidadeQuadros);
+    inicializarQuadroAnimacao(
+        novoJogador->animacaoPulando.quadros,
+        novoJogador->animacaoPulando.quantidadeQuadros,
+        1000,
+        0,
+        32,
+        16,
+        16,
+        false,
+        0
+    );
+
+    novoJogador->animacoes[JOGADOR_PARADO] = &novoJogador->animacaoParado;
+    quantidadeAnimacoes++;
+
+    novoJogador->animacoes[JOGADOR_ANDANDO] = &novoJogador->animacaoAndando;
+    quantidadeAnimacoes++;
+
+    novoJogador->animacoes[JOGADOR_CORRENDO] = &novoJogador->animacaoCorrendo;
+    quantidadeAnimacoes++;
+
+    novoJogador->animacoes[JOGADOR_PULANDO] = &novoJogador->animacaoPulando;
+    quantidadeAnimacoes++;
+
+    novoJogador->quantidadeAnimacoes = quantidadeAnimacoes;
+    
     return novoJogador;
 }
 
 void destruirJogador(Jogador *j) {
     if(j != NULL) {
+        for(int i = 0; i < j->quantidadeAnimacoes; i++) {
+            destruirQuadroAnimacao(j->animacoes[i]);
+        }
         free(j);
     }
 }
@@ -55,12 +160,22 @@ void entradaJogador(Jogador *j) {
     
     if(esquerda) {
         j->vel.x = correr ? -j->velCorrendo : -j->velAndando;
+        j->paraDireita = true;
     } else if (direita) {
         j->vel.x = correr ? j->velCorrendo : j->velAndando;
+        j->paraDireita = false;
     } else {
         j->vel.x = 0;
     }
     
+    if(j->vel.x != 0 && j->noChao) {
+        if(correr) {
+            j->estado = JOGADOR_CORRENDO;
+        } else {
+            j->estado = JOGADOR_ANDANDO;
+        }
+    } 
+
     bool pular = IsKeyPressed(KEY_SPACE) || (IsGamepadAvailable(0) && IsGamepadButtonPressed(0, GAMEPAD_BUTTON_RIGHT_FACE_DOWN));
 
     if(pular && j->noChao) {
@@ -68,10 +183,21 @@ void entradaJogador(Jogador *j) {
         j->noChao = false;
     }
 
+    if(j->vel.y != 0) {
+        j->estado = JOGADOR_PULANDO;
+    }
+
+    if(!direita && !esquerda && j->noChao) {
+        j->estado = JOGADOR_PARADO;
+    }
+
     j->noChao = false;
 }
 
 void atualizarJogador(Jogador *j, GameWorld *gw, float delta) {
+
+    Animacao *animacaoAtual = getAnimacaoAtualJogador(j);
+    atualizarAnimacao(animacaoAtual, delta);
 
     verificarColisaoJogadorItem(gw);
     
@@ -96,7 +222,21 @@ void atualizarJogador(Jogador *j, GameWorld *gw, float delta) {
 }
 
 void desenharJogador(Jogador *j) {
-    DrawRectangleRec(j->ret, j->cor);
+    
+    if(j->estado == JOGADOR_PARADO) {
+        QuadroAnimacao *quadro = getQuadroAnimacaoAtualJogador(j);
+        desenharAnimacaoJogador(j, quadro, WHITE);
+    } else if(j->estado == JOGADOR_ANDANDO) {
+        QuadroAnimacao *quadro = getQuadroAnimacaoAtualJogador(j);
+        desenharAnimacaoJogador(j, quadro, WHITE);
+    } else if(j->estado == JOGADOR_CORRENDO) {
+        QuadroAnimacao *quadro = getQuadroAnimacaoAtualJogador(j);
+        desenharAnimacaoJogador(j, quadro, WHITE);
+    } else if(j->estado == JOGADOR_PULANDO) {
+        QuadroAnimacao *quadro = getQuadroAnimacaoAtualJogador(j);
+        desenharAnimacaoJogador(j, quadro, WHITE);
+    }
+        
 }
 
 /**
@@ -433,5 +573,43 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
 
         el = el->proximo;
     }
+
+}
+
+static void desenharAnimacaoJogador(Jogador *j, QuadroAnimacao *quadro, Color tonalidade) {
+
+    if(quadro != NULL) {
+
+        DrawTexturePro(
+            rm.texturaJogador,
+            (Rectangle) {
+                quadro->fonte.x,
+                quadro->fonte.y,
+                j->paraDireita ? -quadro->fonte.width : quadro->fonte.width,
+                quadro->fonte.height
+            },
+            j->ret,
+            (Vector2) {0},
+            0.0f,
+            tonalidade
+        );
+
+        if ( MOSTRAR_RETANGULO_COLISAO) {
+            DrawRectangleRec(j->ret, Fade(GREEN, 0.5f));
+        }
+
+    }
+
+}
+
+static Animacao *getAnimacaoAtualJogador(Jogador *j) {
+
+    return j->animacoes[j->estado];
+
+}
+
+static QuadroAnimacao *getQuadroAnimacaoAtualJogador(Jogador *j) {
+
+    return getQuadroAtualAnimacao(getAnimacaoAtualJogador(j));
 
 }

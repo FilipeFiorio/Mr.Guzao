@@ -12,6 +12,14 @@ typedef enum EstadoJogo {
     ESTADO_JOGO_FIM
 } EstadoJogo;
 
+typedef enum EstadoJogador {
+    JOGADOR_PARADO,
+    JOGADOR_ANDANDO,
+    JOGADOR_CORRENDO,
+    JOGADOR_PULANDO,
+    // JOGADOR_MORRENDO
+} EstadoJogador;
+
 typedef enum TipoElementoMapa {
     ELEMENTO_MAPA_OBSTACULO,
     ELEMENTO_MAPA_INIMIGO,
@@ -87,6 +95,18 @@ typedef struct Jogador {
     float velMaxQueda;
     bool noChao;
     bool morto;
+    bool paraDireita;
+    EstadoJogador estado;
+
+    // Dps adicionar animacao do jogador morrendo
+    Animacao *animacoes[5];
+    int quantidadeAnimacoes;
+
+    Animacao animacaoParado;
+    Animacao animacaoAndando;
+    Animacao animacaoCorrendo;
+    Animacao animacaoPulando;
+
 } Jogador;
 
 typedef struct Inimigo {
