@@ -390,25 +390,29 @@ void atualizarMapa(Mapa *m,GameWorld *gw, float delta ) {
         entradaJogador(m->jogador);
         atualizarJogador(m->jogador, gw, delta);
     }
-    el = m->inimigos;
-    while(el != NULL) {
-        atualizarInimigo((Inimigo*) el->objeto, gw, delta);
-        el = el->proximo;
-    }
 
-    el = m->itens;
-    while(el != NULL) {
-        atualizarItem((Item*) el->objeto, gw, delta);
-        el = el->proximo;
-    }
-
-    el = m->obstaculos;
-    while(el != NULL) {
-        Obstaculo *o = (Obstaculo*) el->objeto;
-        if(o->tipo == OBSTACULO_MOVEL) {
-            atualizarObstaculoMovel((ObstaculoMovel*) o->objeto, gw, delta);
+    if(m->jogador->estado != JOGADOR_MORRENDO) {
+        
+        el = m->inimigos;
+        while(el != NULL) {
+            atualizarInimigo((Inimigo*) el->objeto, gw, delta);
+            el = el->proximo;
         }
-        el = el->proximo;
+    
+        el = m->itens;
+        while(el != NULL) {
+            atualizarItem((Item*) el->objeto, gw, delta);
+            el = el->proximo;
+        }
+    
+        el = m->obstaculos;
+        while(el != NULL) {
+            Obstaculo *o = (Obstaculo*) el->objeto;
+            if(o->tipo == OBSTACULO_MOVEL) {
+                atualizarObstaculoMovel((ObstaculoMovel*) o->objeto, gw, delta);
+            }
+            el = el->proximo;
+        }
     }
 
 

@@ -548,7 +548,7 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
 
             InimigoDash *i = (InimigoDash*) inimigo->objeto;
 
-            if (CheckCollisionRecs(j->ret, i->ret) && i->estado == INIMIGO_DASH_ANDANDO) {
+            if (CheckCollisionRecs(j->ret, i->ret) && (i->estado == INIMIGO_DASH_ANDANDO || i->estado == INIMIGO_DASH_DASHANDO)) {
 
                 Rectangle retSobreposicao = GetCollisionRec(j->ret, i->ret);
 

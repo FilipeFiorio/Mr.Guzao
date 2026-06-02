@@ -39,7 +39,7 @@ InimigoDash *criarInimigoDash(float x, float y, float largura, float altura, flo
 
     int quantidadeAnimacoes = 0;
 
-    novoInimigoDash->animacoAndando.quantidadeQuadros = 2;
+    novoInimigoDash->animacoAndando.quantidadeQuadros = 3;
     novoInimigoDash->animacoAndando.quadroAtual = 0;
     novoInimigoDash->animacoAndando.contadorTempoQuadro = 0;
     novoInimigoDash->animacoAndando.executarUmaVez = false;
@@ -50,12 +50,12 @@ InimigoDash *criarInimigoDash(float x, float y, float largura, float altura, flo
         novoInimigoDash->animacoAndando.quadros,
         novoInimigoDash->animacoAndando.quantidadeQuadros,
         200,
-        40, 
+        1, 
         1,
-        28,
-        37,
+        39,
+        39,
         false,
-        1
+        0
     );
 
     novoInimigoDash->animacaoMorrendo.quantidadeQuadros = 3;
@@ -77,10 +77,32 @@ InimigoDash *criarInimigoDash(float x, float y, float largura, float altura, flo
         1
     );
 
+    novoInimigoDash->animacaoDashando.quantidadeQuadros = 3;
+    novoInimigoDash->animacaoDashando.quadroAtual = 0;
+    novoInimigoDash->animacaoDashando.contadorTempoQuadro = 0;
+    novoInimigoDash->animacaoDashando.finalizada = false;
+    novoInimigoDash->animacaoDashando.executarUmaVez = false;
+    novoInimigoDash->animacaoDashando.pararNoUltimoQuadro = false;
+    criarQuadroAnimacao(&novoInimigoDash->animacaoDashando, novoInimigoDash->animacaoDashando.quantidadeQuadros);
+    inicializarQuadroAnimacao(
+        novoInimigoDash->animacaoDashando.quadros,
+        novoInimigoDash->animacaoDashando.quantidadeQuadros,
+        100,
+        1,
+        1,
+        39,
+        39,
+        false,
+        0
+    );
+
     novoInimigoDash->animacoes[INIMIGO_DASH_ANDANDO] = &novoInimigoDash->animacoAndando;
     quantidadeAnimacoes++;
 
     novoInimigoDash->animacoes[INIMIGO_DASH_MORRENDO] = &novoInimigoDash->animacaoMorrendo;
+    quantidadeAnimacoes++;
+
+    novoInimigoDash->animacoes[INIMIGO_DASH_DASHANDO] = &novoInimigoDash->animacaoDashando;
     quantidadeAnimacoes++;
     
     novoInimigoDash->quantidadeAnimacoes = quantidadeAnimacoes;
@@ -142,7 +164,10 @@ void desenharInimigoDash(InimigoDash *inimigo) {
         } else if(inimigo->estado == INIMIGO_DASH_MORRENDO) {
             QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoDash(inimigo);
             desenharAnimacaoInimigoDash(inimigo, quadro, WHITE);
-        }
+        } else if(inimigo->estado == INIMIGO_DASH_DASHANDO) {
+            QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoDash(inimigo);
+            desenharAnimacaoInimigoDash(inimigo, quadro, WHITE);
+        } 
     }
 
 }
@@ -288,8 +313,11 @@ static float verificarDistanciaJogador(InimigoDash *i, Mapa *m) {
     Jogador *j = m->jogador;
 
     if(CheckCollisionRecs(ret, j->ret)) {
+        i->estado = INIMIGO_DASH_DASHANDO;
         return j->ret.x - i->ret.x;
     }
+
+    i->estado = INIMIGO_DASH_ANDANDO;
 
     return 0;
 
@@ -312,7 +340,7 @@ static void desenharAnimacaoInimigoDash(InimigoDash *inimigo, QuadroAnimacao *qu
 
     if(quadro != NULL) {
 
-        if(inimigo->estado == INIMIGO_DASH_ANDANDO) {
+        if(inimigo->estado == INIMIGO_DASH_ANDANDO || inimigo->estado == INIMIGO_DASH_DASHANDO) {
             
             DrawTexturePro(
                 rm.texturaInimigoDash,

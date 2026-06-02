@@ -52,7 +52,7 @@ typedef enum EstadoInimigoNormal {
 
 typedef enum EstadoInimigoDash {
     INIMIGO_DASH_ANDANDO,
-    //INIMIGO_DASH_DASHANDO,
+    INIMIGO_DASH_DASHANDO,
     INIMIGO_DASH_MORRENDO
 } EstadoInimigoDash;
 
@@ -66,7 +66,6 @@ typedef enum EstadoItem {
     ITEM_COLETADO
 } EstadoItem;
  
-// Depois chegar se as colisoes estao certas
 typedef struct QuadroAnimacao {
     Rectangle fonte;
     int duracao;
@@ -98,7 +97,6 @@ typedef struct Jogador {
     bool paraDireita;
     EstadoJogador estado;
 
-    // Dps adicionar animacao do jogador morrendo
     Animacao *animacoes[5];
     int quantidadeAnimacoes;
 
@@ -149,7 +147,7 @@ typedef struct InimigoDash {
     int quantidadeAnimacoes;
 
     Animacao animacoAndando;
-    //Animacao dashando;
+    Animacao animacaoDashando;
     Animacao animacaoMorrendo;
 
 } InimigoDash;
