@@ -17,7 +17,7 @@ typedef enum EstadoJogador {
     JOGADOR_ANDANDO,
     JOGADOR_CORRENDO,
     JOGADOR_PULANDO,
-    // JOGADOR_MORRENDO
+    JOGADOR_MORRENDO
 } EstadoJogador;
 
 typedef enum TipoElementoMapa {
@@ -106,6 +106,7 @@ typedef struct Jogador {
     Animacao animacaoAndando;
     Animacao animacaoCorrendo;
     Animacao animacaoPulando;
+    Animacao animacaoMorrendo;
 
 } Jogador;
 

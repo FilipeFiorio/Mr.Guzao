@@ -68,7 +68,7 @@ Jogador *criarJogador(float x, float y, float largura, float altura, Color cor) 
     );
 
     
-    novoJogador->animacaoAndando.quantidadeQuadros = 4;
+    novoJogador->animacaoAndando.quantidadeQuadros = 3;
     novoJogador->animacaoAndando.quadroAtual = 0;
     novoJogador->animacaoAndando.contadorTempoQuadro = 0;
     novoJogador->animacaoAndando.finalizada = false;
@@ -87,7 +87,7 @@ Jogador *criarJogador(float x, float y, float largura, float altura, Color cor) 
         0
     );
 
-    novoJogador->animacaoCorrendo.quantidadeQuadros = 4;
+    novoJogador->animacaoCorrendo.quantidadeQuadros = 3;
     novoJogador->animacaoCorrendo.quadroAtual = 0;
     novoJogador->animacaoCorrendo.contadorTempoQuadro = 0;
     novoJogador->animacaoCorrendo.finalizada = false;
@@ -125,6 +125,25 @@ Jogador *criarJogador(float x, float y, float largura, float altura, Color cor) 
         0
     );
 
+    novoJogador->animacaoMorrendo.quantidadeQuadros = 1;
+    novoJogador->animacaoMorrendo.quadroAtual = 0;
+    novoJogador->animacaoMorrendo.contadorTempoQuadro = 0;
+    novoJogador->animacaoMorrendo.finalizada = false;
+    novoJogador->animacaoMorrendo.executarUmaVez = true;
+    novoJogador->animacaoMorrendo.pararNoUltimoQuadro = false;
+    criarQuadroAnimacao(&novoJogador->animacaoMorrendo, novoJogador->animacaoMorrendo.quantidadeQuadros);
+    inicializarQuadroAnimacao(
+        novoJogador->animacaoMorrendo.quadros,
+        novoJogador->animacaoMorrendo.quantidadeQuadros,
+        500,
+        0,
+        48,
+        16,
+        16,
+        false,
+        0
+    );
+
     novoJogador->animacoes[JOGADOR_PARADO] = &novoJogador->animacaoParado;
     quantidadeAnimacoes++;
 
@@ -135,6 +154,9 @@ Jogador *criarJogador(float x, float y, float largura, float altura, Color cor) 
     quantidadeAnimacoes++;
 
     novoJogador->animacoes[JOGADOR_PULANDO] = &novoJogador->animacaoPulando;
+    quantidadeAnimacoes++;
+
+    novoJogador->animacoes[JOGADOR_MORRENDO] = &novoJogador->animacaoMorrendo;
     quantidadeAnimacoes++;
 
     novoJogador->quantidadeAnimacoes = quantidadeAnimacoes;
@@ -155,71 +177,83 @@ void destruirJogador(Jogador *j) {
 // Implementado para WASD, setinhas e controle(n sei se funciona)
 void entradaJogador(Jogador *j) {
     
-    bool correr = IsKeyDown(KEY_LEFT_SHIFT) || (IsGamepadAvailable(0) && IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT));
-    bool esquerda = IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT) || (IsGamepadAvailable(0) && IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_LEFT));
-    bool direita = IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT) || (IsGamepadAvailable(0) && IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_RIGHT));
-    
-    if(esquerda) {
-        j->vel.x = correr ? -j->velCorrendo : -j->velAndando;
-        j->paraDireita = true;
-    } else if (direita) {
-        j->vel.x = correr ? j->velCorrendo : j->velAndando;
-        j->paraDireita = false;
-    } else {
-        j->vel.x = 0;
+    if(j->estado != JOGADOR_MORRENDO) {
+
+            bool correr = IsKeyDown(KEY_LEFT_SHIFT) || (IsGamepadAvailable(0) && IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT));
+            bool esquerda = IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT) || (IsGamepadAvailable(0) && IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_LEFT));
+            bool direita = IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT) || (IsGamepadAvailable(0) && IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_RIGHT));
+            
+            if(esquerda) {
+                j->vel.x = correr ? -j->velCorrendo : -j->velAndando;
+                j->paraDireita = true;
+            } else if (direita) {
+                j->vel.x = correr ? j->velCorrendo : j->velAndando;
+                j->paraDireita = false;
+            } else {
+                j->vel.x = 0;
+            }
+            
+            if(j->vel.x != 0 && j->noChao) {
+                if(correr) {
+                    j->estado = JOGADOR_CORRENDO;
+                } else {
+                    j->estado = JOGADOR_ANDANDO;
+                }
+            } 
+        
+            bool pular = IsKeyPressed(KEY_SPACE) || (IsGamepadAvailable(0) && IsGamepadButtonPressed(0, GAMEPAD_BUTTON_RIGHT_FACE_DOWN));
+        
+            if(pular && j->noChao) {
+                j->vel.y = correr ? j->velPuloCorrendo : j->velPulo;
+                j->noChao = false;
+            }
+        
+            if(j->vel.y != 0) {
+                j->estado = JOGADOR_PULANDO;
+            }
+        
+            if(!direita && !esquerda && j->noChao) {
+                j->estado = JOGADOR_PARADO;
+            }
+        
+            j->noChao = false;
+
     }
-    
-    if(j->vel.x != 0 && j->noChao) {
-        if(correr) {
-            j->estado = JOGADOR_CORRENDO;
-        } else {
-            j->estado = JOGADOR_ANDANDO;
-        }
-    } 
-
-    bool pular = IsKeyPressed(KEY_SPACE) || (IsGamepadAvailable(0) && IsGamepadButtonPressed(0, GAMEPAD_BUTTON_RIGHT_FACE_DOWN));
-
-    if(pular && j->noChao) {
-        j->vel.y = correr ? j->velPuloCorrendo : j->velPulo;
-        j->noChao = false;
-    }
-
-    if(j->vel.y != 0) {
-        j->estado = JOGADOR_PULANDO;
-    }
-
-    if(!direita && !esquerda && j->noChao) {
-        j->estado = JOGADOR_PARADO;
-    }
-
-    j->noChao = false;
 }
 
 void atualizarJogador(Jogador *j, GameWorld *gw, float delta) {
 
-    Animacao *animacaoAtual = getAnimacaoAtualJogador(j);
-    atualizarAnimacao(animacaoAtual, delta);
-
-    verificarColisaoJogadorItem(gw);
+    if(!j->morto) {
+        
+        Animacao *animacaoAtual = getAnimacaoAtualJogador(j);
+        atualizarAnimacao(animacaoAtual, delta);
+        if(j->estado == JOGADOR_MORRENDO && animacaoAtual->finalizada) {
+            j->morto = true;
+        }
     
-    j->ret.x += j->vel.x * delta;
-    resolverColisaoJogadorMapaX(gw);
+        verificarColisaoJogadorItem(gw);
+        
+        j->ret.x += j->vel.x * delta;
+        resolverColisaoJogadorMapaX(gw);
+    
+        j->vel.y += gw->gravidade * delta;
+    
+        if(j->vel.y > j->velMaxQueda) {
+            j->vel.y = j->velMaxQueda;
+        }
+    
+        j->ret.y += j->vel.y * delta;
+        resolverColisaoJogadorMapaY(gw, delta);
+    
+        verificarColisaoJogadorInimigo(gw);
+    
+        if(j->moedas >= 100) {
+            j->moedas -= 100;
+            j->vidas++;
+        }
 
-    j->vel.y += gw->gravidade * delta;
-
-    if(j->vel.y > j->velMaxQueda) {
-        j->vel.y = j->velMaxQueda;
     }
 
-    j->ret.y += j->vel.y * delta;
-    resolverColisaoJogadorMapaY(gw, delta);
-
-    verificarColisaoJogadorInimigo(gw);
-
-    if(j->moedas >= 100) {
-        j->moedas -= 100;
-        j->vidas++;
-    }
 }
 
 void desenharJogador(Jogador *j) {
@@ -234,6 +268,9 @@ void desenharJogador(Jogador *j) {
         QuadroAnimacao *quadro = getQuadroAnimacaoAtualJogador(j);
         desenharAnimacaoJogador(j, quadro, WHITE);
     } else if(j->estado == JOGADOR_PULANDO) {
+        QuadroAnimacao *quadro = getQuadroAnimacaoAtualJogador(j);
+        desenharAnimacaoJogador(j, quadro, WHITE);
+    } else if(j->estado == JOGADOR_MORRENDO) {
         QuadroAnimacao *quadro = getQuadroAnimacaoAtualJogador(j);
         desenharAnimacaoJogador(j, quadro, WHITE);
     }
@@ -491,7 +528,7 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
                     } else {
                         j->ret.y = i->ret.y + j->ret.height;
                         j->vel.y = i->vel.y;
-                        j->morto = true;
+                        j->estado = JOGADOR_MORRENDO;
                     }
                 } else {
 
@@ -500,7 +537,7 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
                     } else {
                         j->ret.x = i->ret.x - j->ret.width;
                     }
-                    j->morto = true;
+                    j->estado = JOGADOR_MORRENDO;
 
                 }
 
@@ -522,7 +559,7 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
                     } else {
                         j->ret.y = i->ret.y + j->ret.height;
                         j->vel.y = i->vel.y;
-                        j->morto = true;
+                        j->estado = JOGADOR_MORRENDO;
                     }
                 } else {
 
@@ -531,7 +568,7 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
                     } else {
                         j->ret.x = i->ret.x - j->ret.width;
                     }
-                    j->morto = true;
+                    j->estado = JOGADOR_MORRENDO;
 
                 }
 
@@ -554,7 +591,7 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
                     } else {
                         j->ret.y = i->ret.y + j->ret.height;
                         j->vel.y = i->vel.y;
-                        j->morto = true;
+                        j->estado = JOGADOR_MORRENDO;
                     }
                 } else {
 
@@ -563,7 +600,7 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
                     } else {
                         j->ret.x = i->ret.x - j->ret.width;
                     }
-                    j->morto = true;
+                    j->estado = JOGADOR_MORRENDO;
 
                 }
 
