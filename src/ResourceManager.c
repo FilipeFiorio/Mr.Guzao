@@ -18,12 +18,14 @@ void loadResourcesResourceManager( void ) {
     rm.texturaTerreno = LoadTexture( "resources/images/tiles/terreno.png" );
     rm.texturaFundo = LoadTexture("resources/images/fundos/bg.png");
     rm.texturaInicio = LoadTexture("resources/images/fundos/inicio.png");
-    rm.texturaInimigoNormal = LoadTexture("resources/images/inimigoNormal.png");
-    rm.texturaInimigoDash = LoadTexture("resources/images/inimigoDash.png");
-    rm.texturaInimigoVoador = LoadTexture("resources/images/inimigoVoador.png");
-    rm.texturaItens = LoadTexture("resources/images/itens.png");
-    rm.texturaInimigoMorrendo = LoadTexture("resources/images/morteInimigo.png");
-    rm.texturaJogador = LoadTexture("resources/images/jogador.png");
+    rm.texturaInimigoNormal = LoadTexture("resources/images/sprites/inimigoNormal.png");
+    rm.texturaInimigoDash = LoadTexture("resources/images/sprites/inimigoDash.png");
+    rm.texturaInimigoVoador = LoadTexture("resources/images/sprites/inimigoVoador.png");
+    rm.texturaItens = LoadTexture("resources/images/sprites/itens.png");
+    rm.texturaInimigoMorrendo = LoadTexture("resources/images/sprites/morteInimigo.png");
+    rm.texturaJogador = LoadTexture("resources/images/sprites/jogador.png");
+
+    rm.fonte = LoadFontEx("resources/fontes/PressStart2P-Regular.ttf", 32, 0, 250);
 
 }
 
@@ -38,5 +40,6 @@ void unloadResourcesResourceManager( void ) {
     UnloadTexture(rm.texturaItens);
     UnloadTexture(rm.texturaInimigoMorrendo);
     UnloadTexture(rm.texturaJogador);
+    UnloadFont(rm.fonte);
 
 }

@@ -307,8 +307,12 @@ static void inicializarGW(GameWorld *gw) {
 
 static void desenharHud(GameWorld *gw) {
 
-    char textoHud[100];
-    sprintf(textoHud, "Vidas: %d   Moedas: %d   Tempo: %ds", gw->mapa->jogador->vidas, gw->mapa->jogador->moedas, gw->timerJogo / 1000);
-    drawTextAlinhado(textoHud, 10, 25, WHITE, ESQUERDA);
+    char textoHudJogador[50];
+    char textoHudTempo[50];
+    sprintf(textoHudJogador, "Vidas: %d   Moedas: %d", gw->mapa->jogador->vidas, gw->mapa->jogador->moedas);
+    sprintf(textoHudTempo, "Tempo: %ds", gw->timerJogo / 1000);
+    drawTextAlinhado(textoHudJogador, 10, 20, WHITE, ESQUERDA);
+    drawTextAlinhado(textoHudJogador, 10, 20, WHITE, DIREITA);
+    drawTextAlinhado(textoHudTempo, 10, 20, WHITE, CENTRO);
 
 }
