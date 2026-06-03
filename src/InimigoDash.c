@@ -303,6 +303,10 @@ static bool verificarSeTemChao(InimigoDash *i, Mapa *m) {
 
 static float verificarDistanciaJogador(InimigoDash *i, Mapa *m) {
 
+    if(i->estado == INIMIGO_DASH_MORRENDO) {
+        return 0;
+    }
+
     Rectangle ret = {
         .x = i->ret.x - 150,
         .y = i->ret.y,

@@ -648,7 +648,7 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
 
                 //talvez melhorar
                 if(retSobreposicao.height < retSobreposicao.width + 5) {
-                    if (j->ret.y + j->ret.height / 2 < i->ret.y + i->ret.height / 2) {
+                    if (j->vel.y > 0 && j->ret.y + j->ret.height / 2 < i->ret.y + i->ret.height / 2) {
                         i->estado = INIMIGO_VOADOR_MORRENDO;
                         j->vel.y = -j->vel.y * 0.75f;
                     } else {
