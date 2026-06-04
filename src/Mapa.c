@@ -116,6 +116,29 @@ Mapa *carregarMapa( const char *caminhoArquivo ) {
                             &rm.texturaTerreno
                         );
                         
+                    } else if(*caractereAtual == 'Z') {
+
+                        obs = criarObstaculo(OBSTACULO_CHEGADA);
+
+                        obs->objeto = criarObstaculoChegada(
+                            (Rectangle) {
+                                .x = colunaAtual * novoMapa->tamanhoElemento,
+                                .y = linhaAtual * novoMapa->tamanhoElemento,
+                                .width = novoMapa->tamanhoElemento,
+                                .height = novoMapa->tamanhoElemento
+                            },
+
+                            (Rectangle) {
+                                1 + (novoMapa->tamanhoElemento + 1) * deslocamento,
+                                1,
+                                novoMapa->tamanhoElemento,
+                                novoMapa->tamanhoElemento
+                            },
+                            YELLOW,
+                            &rm.texturaTerreno
+                        );
+
+
                     } else {
                         
                         obs = criarObstaculo(OBSTACULO_NORMAL);
