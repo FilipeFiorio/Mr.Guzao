@@ -670,11 +670,14 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
                 return;
             }
 
+
+            //A partir daqui não é possivel matar inimigos entao verificamos apenas se ha colisao
+            //nao importando o estado do inimigo
         } else if (inimigo->tipo == INIMIGO_ESPINHO) {
 
             InimigoEspinho *i = (InimigoEspinho*) inimigo->objeto;
 
-            if (CheckCollisionRecs(j->ret, i->ret) && i->estado == INIMIGO_ESPINHO_ANDANDO) {
+            if (CheckCollisionRecs(j->ret, i->ret)) {
 
                 Rectangle retSobreposicao = GetCollisionRec(j->ret, i->ret);
 
@@ -706,7 +709,39 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
 
             InimigoFantasma *i = (InimigoFantasma*) inimigo->objeto;
 
-            if (CheckCollisionRecs(j->ret, i->ret) && (i->estado == INIMIGO_FANTASMA_PARADO || i->estado == INIMIGO_FANTASMA_VOANDO)) {
+            if (CheckCollisionRecs(j->ret, i->ret)) {
+
+                Rectangle retSobreposicao = GetCollisionRec(j->ret, i->ret);
+
+                //talvez melhorar
+                if(retSobreposicao.height < retSobreposicao.width + 5) {
+                    if (j->vel.y > 0 && j->ret.y + j->ret.height / 2 < i->ret.y + i->ret.height / 2) {
+                        j->ret.y = i->ret.y - j->ret.height;
+                        j->estado = JOGADOR_MORRENDO;
+                    } else {
+                        j->ret.y = i->ret.y + j->ret.height;
+                        j->vel.y = i->vel.y;
+                        j->estado = JOGADOR_MORRENDO;
+                    }
+                } else {
+
+                    if (j->ret.x + j->ret.width / 2 > i->ret.x + i->ret.width / 2) {
+                        j->ret.x = i->ret.x + i->ret.width;
+                    } else {
+                        j->ret.x = i->ret.x - j->ret.width;
+                    }
+                    j->estado = JOGADOR_MORRENDO;
+
+                }
+
+                return;
+            }
+
+        } else if (inimigo->tipo == INIMIGO_PEDRA) {
+
+            InimigoPedra *i = (InimigoPedra*) inimigo->objeto;
+
+            if (CheckCollisionRecs(j->ret, i->ret)) {
 
                 Rectangle retSobreposicao = GetCollisionRec(j->ret, i->ret);
 

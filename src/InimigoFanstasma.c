@@ -184,37 +184,53 @@ QuadroAnimacao *getQuadroAnimacaoAtualInimigoFantasma(InimigoFantasma *inimigo) 
 
 static void perseguirJogador(InimigoFantasma *inimigo, Jogador *jogador, float delta) {
 
-    //Fantasma a esquerda do jogador e jogador olhando para a esquerda
-    if(jogador->ret.x < inimigo->ret.x && !jogador->paraDireita ) {
+    Rectangle ret = {
+        inimigo->ret.x - 500,
+        inimigo->ret.y - 300,
+        1050,
+        650
+    };
 
-        inimigo->estado = INIMIGO_FANTASMA_VOANDO;
-        inimigo->ret.x -= inimigo->vel.x * delta;
+    // Ver se fica bom com um raio de Visualização
+    if(CheckCollisionRecs(jogador->ret, ret)) {
 
-        if(jogador->ret.y > inimigo->ret.y) {
-
-            inimigo->ret.y += inimigo->vel.y * delta;
-
+        //Fantasma a esquerda do jogador e jogador olhando para a esquerda
+        if(jogador->ret.x < inimigo->ret.x && !jogador->paraDireita ) {
+        
+            inimigo->estado = INIMIGO_FANTASMA_VOANDO;
+            inimigo->ret.x -= inimigo->vel.x * delta;
+        
+            if(jogador->ret.y > inimigo->ret.y) {
+        
+                inimigo->ret.y += inimigo->vel.y * delta;
+        
+            } else {
+        
+                inimigo->ret.y -= inimigo->vel.y * delta;
+        
+            }
+                
+                
+        } else if(jogador->ret.x > inimigo->ret.x && jogador->paraDireita) {
+                
+                
+            inimigo->estado = INIMIGO_FANTASMA_VOANDO;
+            inimigo->ret.x += inimigo->vel.x * delta;
+                
+            if(jogador->ret.y > inimigo->ret.y) {
+        
+                inimigo->ret.y += inimigo->vel.y * delta;
+        
+            } else {
+        
+                inimigo->ret.y -= inimigo->vel.y * delta;
+        
+            }
+        
         } else {
-
-            inimigo->ret.y -= inimigo->vel.y * delta;
-
-        }
         
-        
-    } else if(jogador->ret.x > inimigo->ret.x && jogador->paraDireita) {
-        
-        
-        inimigo->estado = INIMIGO_FANTASMA_VOANDO;
-        inimigo->ret.x += inimigo->vel.x * delta;
-        
-        if(jogador->ret.y > inimigo->ret.y) {
-
-            inimigo->ret.y += inimigo->vel.y * delta;
-
-        } else {
-
-            inimigo->ret.y -= inimigo->vel.y * delta;
-
+            inimigo->estado = INIMIGO_FANTASMA_PARADO;
+                
         }
 
     } else {

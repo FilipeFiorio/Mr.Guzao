@@ -279,6 +279,25 @@ Mapa *carregarMapa( const char *caminhoArquivo ) {
                             el->tipo = ELEMENTO_MAPA_INIMIGO;
                             inserirInimigo(novoMapa, el);
                             break;
+
+                        
+                        //Ocupa 4 obstaculos de tamanho, tomar cuidado ao colocar    
+                        case '7':
+                            
+                            inimigo = criarInimigo(INIMIGO_PEDRA);
+
+                            inimigo->objeto = criarInimigoPedra(
+                                colunaAtual * novoMapa->tamanhoElemento,
+                                linhaAtual * novoMapa->tamanhoElemento,
+                                2 * novoMapa->tamanhoElemento,
+                                2 * novoMapa->tamanhoElemento,
+                                RED
+                            );
+
+                            el->objeto = inimigo;
+                            el->tipo = ELEMENTO_MAPA_INIMIGO;
+                            inserirInimigo(novoMapa, el);
+                            break;
                             
                         default:
                             free(el);

@@ -39,6 +39,8 @@ void atualizarInimigo(Inimigo *inimigo, GameWorld *gw, float delta) {
         atualizarInimigoEspinho((InimigoEspinho*) inimigo->objeto, gw, delta);
     } else if(inimigo->tipo == INIMIGO_FANTASMA) {
         atualizarInimigoFantasma((InimigoFantasma*) inimigo->objeto, gw, delta);
+    } else if(inimigo->tipo == INIMIGO_PEDRA) {
+        atualizarInimigoPedra((InimigoPedra*) inimigo->objeto, gw, delta);
     }
 
 }
@@ -59,6 +61,8 @@ void destruirInimigo(Inimigo *inimigo) {
         destruirInimigoEspinho((InimigoEspinho*) inimigo->objeto);
     } else if(inimigo->tipo == INIMIGO_FANTASMA) {
         destruirInimigoFantasma((InimigoFantasma*) inimigo->objeto);
+    } else if(inimigo->tipo == INIMIGO_PEDRA) {
+        destruirInimigoPedra((InimigoPedra*) inimigo->objeto);
     }
     
 }
@@ -79,6 +83,8 @@ void desenharInimigo(Inimigo *inimigo) {
         desenharInimigoEspinho((InimigoEspinho*) inimigo->objeto);
     } else if(inimigo->tipo == INIMIGO_FANTASMA) {
         desenharInimigoFantasma((InimigoFantasma*) inimigo->objeto);
+    } else if(inimigo->tipo == INIMIGO_PEDRA) {
+        desenharInimigoPedra((InimigoPedra*) inimigo->objeto);
     }
 
 }

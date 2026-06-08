@@ -75,6 +75,13 @@ typedef enum EstadoInimigoFantasma {
     INIMIGO_FANTASMA_PARADO
 } EstadoInimigoFantasma;
 
+typedef enum EstadoInimigoPedra {
+    INIMIGO_PEDRA_PARADO,
+    INIMIGO_PEDRA_OLHO_ESQUERDO,
+    INIMIGO_PEDRA_OLHO_DIREITO,
+    INIMIGO_PEDRA_DESCENDO
+} EstadoInimigoPedra;
+
 typedef enum EstadoItem {
     ITEM_GIRANDO,
     ITEM_COLETADO
@@ -221,7 +228,28 @@ typedef struct InimigoFantasma {
 
     Animacao animacaoVoando;
     Animacao animacaoParado;
+
 } InimigoFantasma;
+
+typedef struct InimigoPedra {
+    Rectangle ret;
+    Color cor;
+    Vector2 vel;
+    Vector2 posInicial;
+    float velAtual;
+    bool estaVivo;
+    bool retornando;
+    EstadoInimigoPedra estado;
+
+    Animacao *animacoes[4];
+    int quantidadeAnimacoes;
+
+    Animacao animacaoParado;
+    Animacao animacaoOlhoEsquerdo;
+    Animacao animacaoOlhoDireito;
+    Animacao animacaoDescendo;
+
+} InimigoPedra;
 
 typedef struct Obstaculo {
     void *objeto;
