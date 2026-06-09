@@ -134,14 +134,8 @@ void destruirInimigoNormal(InimigoNormal *inimigo) {
 void desenharInimigoNormal(InimigoNormal *inimigo) {
 
     if(inimigo->estaVivo) {
-        if(inimigo->estado == INIMIGO_NORMAL_ANDANDO) {
-            QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoNormal(inimigo);
-            desenharAnimacaoInimigoNormal(inimigo, quadro, WHITE);
-        } else if(inimigo->estado == INIMIGO_NORMAL_MORRENDO) {
-            QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoNormal(inimigo);
-            desenharAnimacaoInimigoNormal(inimigo, quadro, WHITE);
-        }
-
+        QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoNormal(inimigo);
+        desenharAnimacaoInimigoNormal(inimigo, quadro, WHITE);
     } 
 
 }

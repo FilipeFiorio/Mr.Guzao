@@ -294,7 +294,7 @@ static void reiniciarJogo(GameWorld *gw) {
 
 static void inicializarGW(GameWorld *gw) {
 
-    gw->mapa = carregarMapa("resources/mapas/fase01.txt");
+    gw->mapa = carregarMapa("resources/mapas/inimigos.txt");
     gw->gravidade = 600;
     gw->timerJogo = 200000;
     gw->estado = ESTADO_JOGO_INICIO;

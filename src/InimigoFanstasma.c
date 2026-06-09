@@ -24,7 +24,6 @@ InimigoFantasma *criarInimigoFantasma(float x, float y, float largura, float alt
     novoInimigoFantasma->ret.width = largura;
     novoInimigoFantasma->ret.height = altura;
     novoInimigoFantasma->vel = (Vector2) {125, 75};
-    novoInimigoFantasma->estaVivo = true;
     novoInimigoFantasma->paraDireita = false;
     novoInimigoFantasma->cor = cor;
     novoInimigoFantasma->estado = INIMIGO_FANTASMA_PARADO;
@@ -84,18 +83,16 @@ InimigoFantasma *criarInimigoFantasma(float x, float y, float largura, float alt
 //Por ser um fantasma nao ha necessidade de implementar colisao
 void atualizarInimigoFantasma(InimigoFantasma *inimigo, GameWorld *gw, float delta) {
 
-    if(inimigo->estaVivo) {
 
-        Animacao *animacaoAtual = getAnimacaoAtualInimigoFantasma(inimigo);
-        atualizarAnimacao(animacaoAtual, delta);
+    Animacao *animacaoAtual = getAnimacaoAtualInimigoFantasma(inimigo);
+    atualizarAnimacao(animacaoAtual, delta);
 
-        perseguirJogador(inimigo, gw->mapa->jogador, delta);
+    perseguirJogador(inimigo, gw->mapa->jogador, delta);
 
-        inimigo->ret.y += GetRandomValue(-20, 20) * delta;
+    inimigo->ret.y += GetRandomValue(-20, 20) * delta;
 
-        inimigo->paraDireita = (gw->mapa->jogador->ret.x > inimigo->ret.x);
+    inimigo->paraDireita = (gw->mapa->jogador->ret.x > inimigo->ret.x);
 
-    }
 
 
 }
@@ -111,17 +108,11 @@ void destruirInimigoFantasma(InimigoFantasma *inimigo) {
 
 }
 
+
 void desenharInimigoFantasma(InimigoFantasma *inimigo) {
 
-    if(inimigo->estaVivo) {
-        if(inimigo->estado == INIMIGO_FANTASMA_PARADO) {
-            QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoFantasma(inimigo);
-            desenharAnimacaoInimigoFantasma(inimigo, quadro, WHITE);        
-        } else if(inimigo->estado == INIMIGO_FANTASMA_VOANDO) {
-            QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoFantasma(inimigo);
-            desenharAnimacaoInimigoFantasma(inimigo, quadro, WHITE);        
-        }
-    } 
+    QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoFantasma(inimigo);
+    desenharAnimacaoInimigoFantasma(inimigo, quadro, WHITE);        
 
 }
 
@@ -129,40 +120,19 @@ static void desenharAnimacaoInimigoFantasma(InimigoFantasma *inimigo, QuadroAnim
 
     if(quadro != NULL) {
 
-
-        if(inimigo->estado == INIMIGO_FANTASMA_VOANDO) {
-            
-            DrawTexturePro(
-                rm.texturaInimigoFantasma,
-                (Rectangle) {
-                    quadro->fonte.x,
-                    quadro->fonte.y,
-                    inimigo->paraDireita ? -quadro->fonte.width : quadro->fonte.width,
-                    quadro->fonte.height
-                },
-                inimigo->ret,
-                (Vector2) {0},
-                0.0f,
-                tonalidade
-            );
-            
-        } else if(inimigo->estado == INIMIGO_FANTASMA_PARADO) {
-            
-            DrawTexturePro(
-                rm.texturaInimigoFantasma,
-                (Rectangle) {
-                    quadro->fonte.x,
-                    quadro->fonte.y,
-                    inimigo->paraDireita ? -quadro->fonte.width : quadro->fonte.width,
-                    quadro->fonte.height
-                },
-                inimigo->ret,
-                (Vector2) {0},
-                0.0f,
-                tonalidade
-            );
-            
-        }
+        DrawTexturePro(
+            rm.texturaInimigoFantasma,
+            (Rectangle) {
+                quadro->fonte.x,
+                quadro->fonte.y,
+                inimigo->paraDireita ? -quadro->fonte.width : quadro->fonte.width,
+                quadro->fonte.height
+            },
+            inimigo->ret,
+            (Vector2) {0},
+            0.0f,
+            tonalidade
+        );
 
        if ( MOSTRAR_RETANGULO_COLISAO) {
             DrawRectangleRec(inimigo->ret, Fade(GREEN, 0.5f));

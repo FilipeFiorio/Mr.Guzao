@@ -221,7 +221,6 @@ typedef struct InimigoEspinho {
     Color cor;
     Vector2 vel;
     float velMaxQueda;
-    bool estaVivo;
     bool paraDireita;
     bool noChao;
 
@@ -237,7 +236,6 @@ typedef struct InimigoFantasma {
     Rectangle ret;
     Color cor;
     Vector2 vel;
-    bool estaVivo;
     bool paraDireita;
     EstadoInimigoFantasma estado;
 
@@ -255,7 +253,6 @@ typedef struct InimigoPedra {
     Vector2 vel;
     Vector2 posInicial;
     float velAtual;
-    bool estaVivo;
     bool retornando;
     EstadoInimigoPedra estado;
     

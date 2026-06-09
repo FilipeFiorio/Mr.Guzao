@@ -27,7 +27,6 @@ InimigoPedra *criarInimigoPedra(float x, float y, float largura, float altura, C
     novoInimigoPedra->vel = (Vector2) {0, 500};
     novoInimigoPedra->velAtual = 0;
     novoInimigoPedra->retornando = false;
-    novoInimigoPedra->estaVivo = true;
     novoInimigoPedra->cor = cor;
     novoInimigoPedra->estado = INIMIGO_PEDRA_PARADO;
 
@@ -128,51 +127,46 @@ InimigoPedra *criarInimigoPedra(float x, float y, float largura, float altura, C
 
 void atualizarInimigoPedra(InimigoPedra *inimigo, GameWorld *gw, float delta) {
 
-    if(inimigo->estaVivo) {
+    Animacao *animacaoAtual = getAnimacaoAtualInimigoPedra(inimigo);
+    atualizarAnimacao(animacaoAtual, delta);
 
-        Animacao *animacaoAtual = getAnimacaoAtualInimigoPedra(inimigo);
-        atualizarAnimacao(animacaoAtual, delta);
+    inimigo->ret.y += inimigo->velAtual * delta;
 
-        inimigo->ret.y += inimigo->velAtual * delta;
+    Rectangle retJogador = gw->mapa->jogador->ret;
+    Rectangle ret = {
+        inimigo->ret.x - 400,
+        inimigo->ret.y,
+        900,
+        2000
+    };
 
-        Rectangle retJogador = gw->mapa->jogador->ret;
-        Rectangle ret = {
-            inimigo->ret.x - 400,
-            inimigo->ret.y,
-            900,
-            2000
-        };
-
-        if(verificarToqueChao(gw->mapa, inimigo)) {
-            
-            inimigo->velAtual = -inimigo->vel.y / 3;
-            inimigo->estado = INIMIGO_PEDRA_PARADO;
-            inimigo->retornando = true;
-            
-        }
+    if(verificarToqueChao(gw->mapa, inimigo)) {
         
-        if(inimigo->ret.y <= inimigo->posInicial.y && inimigo->retornando) {
-            inimigo->ret.y = inimigo->posInicial.y;
-            inimigo->velAtual = 0;
-            inimigo->retornando = false;
-        }
-
-        if(CheckCollisionRecs(ret, retJogador) && !inimigo->retornando) {
-            if(jogadorEmbaixo(gw->mapa->jogador, inimigo)) {
-                inimigo->estado = INIMIGO_PEDRA_DESCENDO;
-                inimigo->velAtual = inimigo->vel.y;
-            } else if(retJogador.x < inimigo->ret.x) {
-                inimigo->estado = INIMIGO_PEDRA_OLHO_ESQUERDO;
-            } else if(retJogador.x > inimigo->ret.x) {
-                inimigo->estado = INIMIGO_PEDRA_OLHO_DIREITO;
-            }
-        } else {
-            inimigo->estado = INIMIGO_PEDRA_PARADO;
-        }
-
+        inimigo->velAtual = -inimigo->vel.y / 3;
+        inimigo->estado = INIMIGO_PEDRA_PARADO;
+        inimigo->retornando = true;
+        
+    }
+    
+    if(inimigo->ret.y <= inimigo->posInicial.y && inimigo->retornando) {
+        inimigo->ret.y = inimigo->posInicial.y;
+        inimigo->velAtual = 0;
+        inimigo->retornando = false;
     }
 
-
+    if(CheckCollisionRecs(ret, retJogador) && !inimigo->retornando) {
+        if(jogadorEmbaixo(gw->mapa->jogador, inimigo)) {
+            inimigo->estado = INIMIGO_PEDRA_DESCENDO;
+            inimigo->velAtual = inimigo->vel.y;
+        } else if(retJogador.x < inimigo->ret.x) {
+            inimigo->estado = INIMIGO_PEDRA_OLHO_ESQUERDO;
+        } else if(retJogador.x > inimigo->ret.x) {
+            inimigo->estado = INIMIGO_PEDRA_OLHO_DIREITO;
+        }
+    } else {
+        inimigo->estado = INIMIGO_PEDRA_PARADO;
+    }
+  
 }
 
 void destruirInimigoPedra(InimigoPedra *inimigo) {
@@ -188,22 +182,8 @@ void destruirInimigoPedra(InimigoPedra *inimigo) {
 
 void desenharInimigoPedra(InimigoPedra *inimigo) {
 
-    if(inimigo->estaVivo) {
-        if(inimigo->estado == INIMIGO_PEDRA_PARADO) {
-            QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoPedra(inimigo);
-            desenharAnimacaoInimigoPedra(inimigo, quadro, WHITE);
-        } else if(inimigo->estado == INIMIGO_PEDRA_OLHO_ESQUERDO) {
-            QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoPedra(inimigo);
-            desenharAnimacaoInimigoPedra(inimigo, quadro, WHITE);
-        } else if(inimigo->estado == INIMIGO_PEDRA_OLHO_DIREITO) {
-            QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoPedra(inimigo);
-            desenharAnimacaoInimigoPedra(inimigo, quadro, WHITE);
-        } else if(inimigo->estado == INIMIGO_PEDRA_DESCENDO) {
-            QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoPedra(inimigo);
-            desenharAnimacaoInimigoPedra(inimigo, quadro, WHITE);
-        } 
-
-    } 
+    QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoPedra(inimigo);
+    desenharAnimacaoInimigoPedra(inimigo, quadro, WHITE);
 
 }
 

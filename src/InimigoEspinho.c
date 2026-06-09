@@ -28,7 +28,6 @@ InimigoEspinho *criarInimigoEspinho(float x, float y, float largura, float altur
     novoInimigoEspinho->ret.height = altura;
     novoInimigoEspinho->vel = (Vector2) {100, 0};
     novoInimigoEspinho->velMaxQueda = 600;
-    novoInimigoEspinho->estaVivo = true;
     novoInimigoEspinho->noChao = false;
     novoInimigoEspinho->paraDireita = false;
     novoInimigoEspinho->cor = cor;
@@ -66,31 +65,26 @@ InimigoEspinho *criarInimigoEspinho(float x, float y, float largura, float altur
 
 void atualizarInimigoEspinho(InimigoEspinho *inimigo, GameWorld *gw, float delta) {
 
-    if(inimigo->estaVivo) {
+    Animacao *animacaoAtual = getAnimacaoAtualInimigoEspinho(inimigo);
+    atualizarAnimacao(animacaoAtual, delta);
 
-        Animacao *animacaoAtual = getAnimacaoAtualInimigoEspinho(inimigo);
-        atualizarAnimacao(animacaoAtual, delta);
+    inimigo->ret.x += inimigo->vel.x * delta;
+    resolverColisaoInimigoMapaX(inimigo, gw->mapa);
 
-        inimigo->ret.x += inimigo->vel.x * delta;
-        resolverColisaoInimigoMapaX(inimigo, gw->mapa);
+    inimigo->vel.y += gw->gravidade * delta;
 
-        inimigo->vel.y += gw->gravidade * delta;
+    inimigo->ret.y += inimigo->vel.y * delta;
+    resolverColisaoInimigoMapaY(inimigo, gw->mapa);
 
-        inimigo->ret.y += inimigo->vel.y * delta;
-        resolverColisaoInimigoMapaY(inimigo, gw->mapa);
-
-        if(inimigo->vel.y > inimigo->velMaxQueda) {
-            inimigo->vel.y = inimigo->velMaxQueda;
-        }
-
-        if(inimigo->noChao && !verificarSeTemChao(inimigo, gw->mapa)) {
-            inimigo->vel.x = -inimigo->vel.x;
-        }
-
-        inimigo->paraDireita = inimigo->vel.x > 0;
-
+    if(inimigo->vel.y > inimigo->velMaxQueda) {
+        inimigo->vel.y = inimigo->velMaxQueda;
     }
 
+    if(inimigo->noChao && !verificarSeTemChao(inimigo, gw->mapa)) {
+        inimigo->vel.x = -inimigo->vel.x;
+    }
+
+    inimigo->paraDireita = inimigo->vel.x > 0;
 
 }
 
@@ -107,13 +101,9 @@ void destruirInimigoEspinho(InimigoEspinho *inimigo) {
 
 void desenharInimigoEspinho(InimigoEspinho *inimigo) {
 
-    if(inimigo->estaVivo) {
-        if(inimigo->estado == INIMIGO_ESPINHO_ANDANDO) {
-            QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoEspinho(inimigo);
-            desenharAnimacaoInimigoEspinho(inimigo, quadro, WHITE);
-        } 
-
-    } 
+    QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoEspinho(inimigo);
+    desenharAnimacaoInimigoEspinho(inimigo, quadro, WHITE);
+    
 
 }
 

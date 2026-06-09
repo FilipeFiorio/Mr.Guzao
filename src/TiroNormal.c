@@ -126,13 +126,8 @@ void destruirTiroNormal(TiroNormal *tiro) {
 
 void desenharTiroNormal(TiroNormal *tiro) {
     
-    if(tiro->estado == TIRO_VIAJANDO) {
-        QuadroAnimacao *quadro = getQuadroAnimacaoAtualTiroNormal(tiro);
-        desenharAnimacaoTiroNormal(tiro, quadro, WHITE);
-    } else if(tiro->estado == TIRO_DISPERSADO) {
-        QuadroAnimacao *quadro = getQuadroAnimacaoAtualTiroNormal(tiro);
-        desenharAnimacaoTiroNormal(tiro, quadro, WHITE);
-    }
+    QuadroAnimacao *quadro = getQuadroAnimacaoAtualTiroNormal(tiro);
+    desenharAnimacaoTiroNormal(tiro, quadro, WHITE);
     
 }
 

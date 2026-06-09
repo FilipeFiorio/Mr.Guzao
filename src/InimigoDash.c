@@ -158,16 +158,8 @@ void destruirInimigoDash(InimigoDash *inimigo) {
 void desenharInimigoDash(InimigoDash *inimigo) {
     
     if(inimigo->estaVivo) {
-        if(inimigo->estado == INIMIGO_DASH_ANDANDO) {
-            QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoDash(inimigo);
-            desenharAnimacaoInimigoDash(inimigo, quadro, WHITE);
-        } else if(inimigo->estado == INIMIGO_DASH_MORRENDO) {
-            QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoDash(inimigo);
-            desenharAnimacaoInimigoDash(inimigo, quadro, WHITE);
-        } else if(inimigo->estado == INIMIGO_DASH_DASHANDO) {
-            QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoDash(inimigo);
-            desenharAnimacaoInimigoDash(inimigo, quadro, WHITE);
-        } 
+        QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoDash(inimigo);
+        desenharAnimacaoInimigoDash(inimigo, quadro, WHITE);
     }
 
 }

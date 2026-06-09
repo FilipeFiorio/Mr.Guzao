@@ -350,25 +350,9 @@ void atualizarJogador(Jogador *j, GameWorld *gw, float delta) {
 
 void desenharJogador(Jogador *j) {
     
-    if(j->estado == JOGADOR_PARADO) {
-        QuadroAnimacao *quadro = getQuadroAnimacaoAtualJogador(j);
-        desenharAnimacaoJogador(j, quadro, WHITE);
-    } else if(j->estado == JOGADOR_ANDANDO) {
-        QuadroAnimacao *quadro = getQuadroAnimacaoAtualJogador(j);
-        desenharAnimacaoJogador(j, quadro, WHITE);
-    } else if(j->estado == JOGADOR_CORRENDO) {
-        QuadroAnimacao *quadro = getQuadroAnimacaoAtualJogador(j);
-        desenharAnimacaoJogador(j, quadro, WHITE);
-    } else if(j->estado == JOGADOR_PULANDO) {
-        QuadroAnimacao *quadro = getQuadroAnimacaoAtualJogador(j);
-        desenharAnimacaoJogador(j, quadro, WHITE);
-    } else if(j->estado == JOGADOR_MORRENDO) {
-        QuadroAnimacao *quadro = getQuadroAnimacaoAtualJogador(j);
-        desenharAnimacaoJogador(j, quadro, WHITE);
-    } else if(j->estado == JOGADOR_FREANDO) {
-        QuadroAnimacao *quadro = getQuadroAnimacaoAtualJogador(j);
-        desenharAnimacaoJogador(j, quadro, WHITE);
-    }
+    QuadroAnimacao *quadro = getQuadroAnimacaoAtualJogador(j);
+    desenharAnimacaoJogador(j, quadro, WHITE);
+
         
 }
 

@@ -165,14 +165,8 @@ void destruirInimigoVoador(InimigoVoador *inimigo) {
 void desenharInimigoVoador(InimigoVoador *inimigo) {
     
     if(inimigo->estaVivo) {
-        if(inimigo->estado == INIMIGO_VOADOR_VOANDO) {
-            QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoVoador(inimigo);
-            desenharAnimacaoInimigoVoador(inimigo, quadro, WHITE);
-        }else if(inimigo->estado == INIMIGO_VOADOR_MORRENDO) {
-            QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoVoador(inimigo);
-            desenharAnimacaoInimigoVoador(inimigo, quadro, WHITE);
-        }
-        
+        QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoVoador(inimigo);
+        desenharAnimacaoInimigoVoador(inimigo, quadro, WHITE);
     }
 
 }
