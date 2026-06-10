@@ -31,7 +31,8 @@ typedef enum TipoElementoMapa {
 typedef enum TipoObstaculo {
     OBSTACULO_NORMAL,
     OBSTACULO_MOVEL,
-    OBSTACULO_CHEGADA 
+    OBSTACULO_CHEGADA,
+    OBSTACULO_GELO,
 }TipoObstaculo;
 
 typedef enum TipoInimigo {
@@ -374,6 +375,13 @@ typedef struct ObstaculoChegada {
     Texture2D *textura;
 } ObstaculoChegada;
 
+typedef struct ObstaculoGelo {
+    Rectangle ret;
+    Color cor;
+    Rectangle fonte;
+    Texture2D *textura;
+} ObstaculoGelo;
+
 typedef struct Item {
     void *objeto;
     TipoItem tipo;
@@ -445,6 +453,7 @@ typedef struct Mapa {
     float tamanhoElemento;
     int linhas;
     int colunas;
+    bool faseCompleta;
 } Mapa;
 
 typedef struct GameWorld {
@@ -453,5 +462,6 @@ typedef struct GameWorld {
     EstadoJogo estado;
     float gravidade;
     int timerJogo;
+    int faseAtual;
 }GameWorld;
 

@@ -6,6 +6,18 @@
 #include "ObstaculoNormal.h"
 #include "ObstaculoMovel.h"
 #include "ObstaculoChegada.h"
+#include "ObstaculoGelo.h"
+
+
+Obstaculo *criarObstaculo(TipoObstaculo tipo) {
+    
+    Obstaculo *novoObstaculo = (Obstaculo*) malloc(sizeof(Obstaculo));
+    
+    novoObstaculo->objeto = NULL;
+    novoObstaculo->tipo = tipo;
+    
+    return novoObstaculo;
+}
 
 void desenharObstaculo(Obstaculo *obstaculo) {
 
@@ -19,17 +31,9 @@ void desenharObstaculo(Obstaculo *obstaculo) {
         desenharObstaculoMovel((ObstaculoMovel*) obstaculo->objeto);
     } else if(obstaculo->tipo == OBSTACULO_CHEGADA) {
         desenharObstaculoChegada((ObstaculoChegada*) obstaculo->objeto);
+    } else if(obstaculo->tipo == OBSTACULO_GELO) {
+        desenharObstaculoGelo((ObstaculoGelo*) obstaculo->objeto);
     }
-}
-
-Obstaculo *criarObstaculo(TipoObstaculo tipo) {
-
-    Obstaculo *novoObstaculo = (Obstaculo*) malloc(sizeof(Obstaculo));
-
-    novoObstaculo->objeto = NULL;
-    novoObstaculo->tipo = tipo;
-
-    return novoObstaculo;
 }
 
 void destruirObstaculo(Obstaculo *obstaculo) {
@@ -44,6 +48,8 @@ void destruirObstaculo(Obstaculo *obstaculo) {
         destruirObstaculoMovel((ObstaculoMovel*) obstaculo->objeto);
     } else if(obstaculo->tipo == OBSTACULO_CHEGADA) {
         destruirObstaculoChegada((ObstaculoChegada*) obstaculo->objeto);
+    } else if(obstaculo->tipo == OBSTACULO_GELO) {
+        destruirObstaculoGelo((ObstaculoGelo*) obstaculo->objeto);
     }
     
 }

@@ -17,6 +17,8 @@ void loadResourcesResourceManager( void ) {
 
     rm.texturaTerreno = LoadTexture( "resources/images/tiles/terreno.png" );
     rm.texturaFundo = LoadTexture("resources/images/fundos/bg.png");
+    rm.texturaFundoNeve = LoadTexture("resources/images/fundos/bg-snow.png");
+    rm.texturaFundoDeserto = LoadTexture("resources/images/fundos/bg-desert.png");
     rm.texturaInicio = LoadTexture("resources/images/fundos/inicio.png");
     
     rm.texturaInimigoNormal = LoadTexture("resources/images/sprites/inimigoNormal.png");
@@ -42,6 +44,8 @@ void unloadResourcesResourceManager( void ) {
 
     UnloadTexture(rm.texturaTerreno );
     UnloadTexture(rm.texturaFundo );
+    UnloadTexture(rm.texturaFundoNeve );
+    UnloadTexture(rm.texturaFundoDeserto );
     UnloadTexture(rm.texturaInicio);
 
     UnloadTexture(rm.texturaInimigoNormal);

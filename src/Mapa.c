@@ -10,6 +10,7 @@
 #include "ObstaculoNormal.h"
 #include "ObstaculoMovel.h"
 #include "ObstaculoChegada.h"
+#include "ObstaculoGelo.h"
 #include "Obstaculo.h"
 #include "Inimigo.h"
 #include "InimigoNormal.h"
@@ -48,6 +49,7 @@ Mapa *carregarMapa( const char *caminhoArquivo ) {
     novoMapa->tamanhoElemento = 48;
     novoMapa->linhas = 0;
     novoMapa->colunas = 0;
+    novoMapa->faseCompleta = false;
     
     char *dadosMapa = LoadFileText( caminhoArquivo );
     char *caractereAtual = dadosMapa;
@@ -143,6 +145,27 @@ Mapa *carregarMapa( const char *caminhoArquivo ) {
                             &rm.texturaTerreno
                         );
 
+                    } else if(*caractereAtual == 'L') {
+
+                        obs = criarObstaculo(OBSTACULO_GELO);
+
+                        obs->objeto = criarObstaculoGelo(
+                            (Rectangle) {
+                                .x = colunaAtual * novoMapa->tamanhoElemento,
+                                .y = linhaAtual * novoMapa->tamanhoElemento,
+                                .width = novoMapa->tamanhoElemento,
+                                .height = novoMapa->tamanhoElemento
+                            },
+                            (Rectangle) {
+                                1 + (novoMapa->tamanhoElemento + 1) * deslocamento,
+                                1,
+                                novoMapa->tamanhoElemento,
+                                novoMapa->tamanhoElemento
+                            },
+                            YELLOW,
+                            &rm.texturaTerreno
+
+                        );
 
                     } else {
                         

@@ -31,6 +31,7 @@ static void verificarGameOver(GameWorld *gw);
 static void reiniciarJogo(GameWorld *gw);
 static void inicializarGW(GameWorld *gw);
 static void desenharHud(GameWorld *gw);
+static void passarFase(GameWorld *gw);
 
 /**
  * @brief Creates a dinamically allocated GameWorld struct instance.
@@ -76,6 +77,10 @@ void updateGameWorld( GameWorld *gw, float delta ) {
             verificarMorteJogador(gw);
             atualizarCamera(gw);
             verificarGameOver(gw);
+
+            if(gw->mapa->faseCompleta) {
+                passarFase(gw);
+            }
 
             break;
         
@@ -208,7 +213,23 @@ void drawGameWorld( GameWorld *gw ) {
 
 static void desenharFundo( GameWorld *gw ) {
 
-    int larguraFundo = rm.texturaFundo.width;
+    Texture2D fundo = {0};
+
+    switch (gw->faseAtual) {
+        case 1:
+            fundo = rm.texturaFundo;
+            break;
+        case 2:
+            fundo = rm.texturaFundoNeve;
+            break;
+        case 3:
+            fundo = rm.texturaFundoDeserto;
+            break;
+        default:
+            break;
+    }
+
+    int larguraFundo = fundo.width;
     int larguraMapa = calcularLarguraMapa( gw->mapa );
     int alturaMapa = calcularAlturaMapa( gw->mapa );
     int repeticoes = larguraMapa / larguraFundo;
@@ -216,7 +237,7 @@ static void desenharFundo( GameWorld *gw ) {
     int deslocamentoParallax = (int) ( ( gw->camera.target.x / (float) larguraMapa ) * 200 );
 
     for ( int i = 0; i <= repeticoes + 1; i++ ) {
-        DrawTexture( rm.texturaFundo, larguraFundo * i - deslocamentoParallax, alturaMapa - rm.texturaFundo.height, WHITE );
+        DrawTexture( fundo, larguraFundo * i - deslocamentoParallax, alturaMapa - fundo.height, WHITE );
     }
 
 }
@@ -280,10 +301,17 @@ static void reiniciarJogo(GameWorld *gw) {
 
     int vidaAtual = j->vidas;
     int moedaAtual = j->moedas;
+    int faseAtual = gw->faseAtual;
 
     destruirMapa(gw->mapa);
-    inicializarGW(gw);
 
+    char caminhoMapa[100];
+    sprintf(caminhoMapa, "resources/mapas/fase%d.txt", faseAtual);
+    gw->mapa = carregarMapa(caminhoMapa);
+
+    gw->gravidade = 600;
+    gw->timerJogo = 200000;
+    gw->faseAtual = faseAtual;
     gw->estado = ESTADO_JOGO_GAMEPLAY;
     
     gw->mapa->jogador->vidas = vidaAtual;
@@ -294,7 +322,8 @@ static void reiniciarJogo(GameWorld *gw) {
 
 static void inicializarGW(GameWorld *gw) {
 
-    gw->mapa = carregarMapa("resources/mapas/inimigos.txt");
+    gw->faseAtual = 1;
+    gw->mapa = carregarMapa("resources/mapas/fase1.txt");
     gw->gravidade = 600;
     gw->timerJogo = 200000;
     gw->estado = ESTADO_JOGO_INICIO;
@@ -316,5 +345,30 @@ static void desenharHud(GameWorld *gw) {
     sprintf(textoHudTempo, "Tempo: %ds", gw->timerJogo / 1000);
     drawTextAlinhado(textoHudJogador, 10, 20, WHITE, ESQUERDA);
     drawTextAlinhado(textoHudTempo, 10, 20, WHITE, CENTRO);
+
+}
+
+static void passarFase(GameWorld *gw) {
+
+    gw->faseAtual++;
+
+    //3 é o total de fases, talvez mude
+    if(gw->faseAtual > 3) {
+        gw->estado = ESTADO_JOGO_FIM;
+        return;
+    }
+
+    int vidas = gw->mapa->jogador->vidas;
+    int moedas = gw->mapa->jogador->moedas;
+
+    destruirMapa(gw->mapa);
+
+    char caminhoMapa[100];
+    sprintf(caminhoMapa, "resources/mapas/fase%d.txt", gw->faseAtual);
+    gw->mapa = carregarMapa(caminhoMapa);
+
+    gw->timerJogo = 200000;
+    gw->mapa->jogador->vidas = vidas;
+    gw->mapa->jogador->moedas = moedas;
 
 }

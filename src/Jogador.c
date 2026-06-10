@@ -311,6 +311,13 @@ void atualizarJogador(Jogador *j, GameWorld *gw, float delta) {
 
     if(!j->morto) {
 
+        Animacao *animacaoAtual = getAnimacaoAtualJogador(j);
+        atualizarAnimacao(animacaoAtual, delta);
+
+        if(j->estado == JOGADOR_MORRENDO && animacaoAtual->finalizada) {
+            j->morto = true;
+        }
+
         if(j->congelado) {
             j->velAcelerar = 100;
             j->velDesacelarar = 100;
@@ -327,11 +334,6 @@ void atualizarJogador(Jogador *j, GameWorld *gw, float delta) {
             }
         }
         
-        Animacao *animacaoAtual = getAnimacaoAtualJogador(j);
-        atualizarAnimacao(animacaoAtual, delta);
-        if(j->estado == JOGADOR_MORRENDO && animacaoAtual->finalizada) {
-            j->morto = true;
-        }
 
         if(j->freando && animacaoAtual->finalizada) {
             j->freando = false;
@@ -446,10 +448,29 @@ static void resolverColisaoJogadorMapaX(GameWorld *gw) {
                     j->vel.x = 0;
                 }
 
-                gw->estado = ESTADO_JOGO_FIM;
+                gw->mapa->faseCompleta = true;
+            }
+
+        } else if (obs->tipo == OBSTACULO_GELO) {
+
+            ObstaculoGelo *o = (ObstaculoGelo*) obs->objeto;
+
+            if (CheckCollisionRecs(j->ret, o->ret)) {
+
+                Rectangle retSobre = GetCollisionRec(j->ret, o->ret);
+
+                if (retSobre.width <= retSobre.height - 2) {
+                    if (j->ret.x + j->ret.width / 2 < o->ret.x + o->ret.width / 2) {
+                        j->ret.x = o->ret.x - j->ret.width;
+                    } else {
+                        j->ret.x = o->ret.x + o->ret.width;
+                    }
+                    j->vel.x = 0;
+                }
+
             }
         } 
-
+            
         el = el->proximo;
     }
 }
@@ -503,7 +524,28 @@ static void resolverColisaoJogadorMapaY(GameWorld *gw, float delta) {
                     j->vel.y = 0;
                 }
 
-                gw->estado = ESTADO_JOGO_FIM;
+                gw->mapa->faseCompleta = true;
+            }
+
+        } else if (obs->tipo == OBSTACULO_GELO) {
+
+            ObstaculoGelo *o = (ObstaculoGelo*) obs->objeto;
+
+            if (CheckCollisionRecs(j->ret, o->ret)) {
+
+                Rectangle retSobre = GetCollisionRec(j->ret, o->ret);
+                
+                if (retSobre.height < retSobre.width + 2) {
+                    if (j->ret.y + j->ret.height / 2 < o->ret.y + o->ret.height / 2) {
+                        j->ret.y = o->ret.y - j->ret.height + 2;
+                        j->noChao = true;
+                        j->congelado = true;
+                    } else {
+                        j->ret.y = o->ret.y + o->ret.height;
+                    }
+                    j->vel.y = 0;
+                }
+
             }
             
         } else if (obs->tipo == OBSTACULO_MOVEL) {

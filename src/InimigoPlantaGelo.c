@@ -98,7 +98,7 @@ void atualizarInimigoPlantaGelo(InimigoPlantaGelo *inimigo, GameWorld *gw, float
         100
     };
 
-    if(CheckCollisionRecs(ret, gw->mapa->jogador->ret) && inimigo->coolDownTiro >= 2500) {            
+    if(CheckCollisionRecs(ret, gw->mapa->jogador->ret) && inimigo->coolDownTiro >= 2000) {            
         
         inimigo->estado = INIMIGO_PLANTA_ATIRANDO;
 

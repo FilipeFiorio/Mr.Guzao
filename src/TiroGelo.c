@@ -29,7 +29,7 @@ TiroGelo *criarTiroGelo(InimigoPlantaGelo *inimigo) {
     novoTiro->ativo = false;
     novoTiro->paraDireita = inimigo->paraDireita;
     
-    novoTiro->velX = 150;
+    novoTiro->velX = 200;
     novoTiro->distanciaMax = 500;
 
     novoTiro->estado = TIRO_VIAJANDO;
