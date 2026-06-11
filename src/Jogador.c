@@ -353,6 +353,7 @@ void atualizarJogador(Jogador *j, GameWorld *gw, float delta) {
             }
         
             j->ret.y += j->vel.y * delta;
+            j->noChao = false;
             resolverColisaoJogadorMapaY(gw, delta);
         
             verificarColisaoJogadorInimigo(gw);
@@ -385,7 +386,6 @@ static void resolverColisaoJogadorMapaX(GameWorld *gw) {
     Jogador *j = gw->mapa->jogador;
     Mapa *mapa = gw->mapa;
 
-
     ElementoMapa *el = mapa->obstaculos;
 
     while (el != NULL) {
@@ -398,21 +398,17 @@ static void resolverColisaoJogadorMapaX(GameWorld *gw) {
 
             if (CheckCollisionRecs(j->ret, o->ret)) {
 
-                Rectangle retSobre = GetCollisionRec(j->ret, o->ret);
-
-                // por algum motivo, a colisao do jogador é 1 pixel pra baixo, assim todo vez sua velocidade
-                // é zerado todo frame, entao subtrai -2
-                if (retSobre.width <= retSobre.height - 2) {
-                    if (j->ret.x + j->ret.width / 2 < o->ret.x + o->ret.width / 2) {
-                        j->ret.x = o->ret.x - j->ret.width;
-                    } else {
-                        j->ret.x = o->ret.x + o->ret.width;
-                    }
-                    j->vel.x = 0;
+                if (j->ret.x + j->ret.width / 2 < o->ret.x + o->ret.width / 2) {
+                    j->ret.x = o->ret.x - j->ret.width;
+                } else {
+                    j->ret.x = o->ret.x + o->ret.width;
                 }
-            }
+                j->vel.x = 0;
 
-        } else if (obs->tipo == OBSTACULO_MOVEL) {
+            }
+        
+
+        }else if (obs->tipo == OBSTACULO_MOVEL) {
 
             ObstaculoMovel *o = (ObstaculoMovel*) obs->objeto;
 
@@ -436,18 +432,8 @@ static void resolverColisaoJogadorMapaX(GameWorld *gw) {
 
             if (CheckCollisionRecs(j->ret, o->ret)) {
 
-                Rectangle retSobre = GetCollisionRec(j->ret, o->ret);
-
-                if (retSobre.width <= retSobre.height - 2) {
-                    if (j->ret.x + j->ret.width / 2 < o->ret.x + o->ret.width / 2) {
-                        j->ret.x = o->ret.x - j->ret.width;
-                    } else {
-                        j->ret.x = o->ret.x + o->ret.width;
-                    }
-                    j->vel.x = 0;
-                }
-
                 gw->mapa->faseCompleta = true;
+
             }
 
         } else if (obs->tipo == OBSTACULO_GELO) {
@@ -456,16 +442,12 @@ static void resolverColisaoJogadorMapaX(GameWorld *gw) {
 
             if (CheckCollisionRecs(j->ret, o->ret)) {
 
-                Rectangle retSobre = GetCollisionRec(j->ret, o->ret);
-
-                if (retSobre.width <= retSobre.height - 2) {
-                    if (j->ret.x + j->ret.width / 2 < o->ret.x + o->ret.width / 2) {
-                        j->ret.x = o->ret.x - j->ret.width;
-                    } else {
-                        j->ret.x = o->ret.x + o->ret.width;
-                    }
-                    j->vel.x = 0;
+                if (j->ret.x + j->ret.width / 2 < o->ret.x + o->ret.width / 2) {
+                    j->ret.x = o->ret.x - j->ret.width;
+                } else {
+                    j->ret.x = o->ret.x + o->ret.width;
                 }
+                j->vel.x = 0;
 
             }
         } 
@@ -478,7 +460,6 @@ static void resolverColisaoJogadorMapaY(GameWorld *gw, float delta) {
 
     Jogador *j = gw->mapa->jogador;
     Mapa *mapa = gw->mapa;
-
     ElementoMapa *el = mapa->obstaculos;
 
     while (el != NULL) {
@@ -491,18 +472,14 @@ static void resolverColisaoJogadorMapaY(GameWorld *gw, float delta) {
 
             if (CheckCollisionRecs(j->ret, o->ret)) {
 
-                Rectangle retSobre = GetCollisionRec(j->ret, o->ret);
-
-                
-                if (retSobre.height < retSobre.width + 2) {
-                    if (j->ret.y + j->ret.height / 2 < o->ret.y + o->ret.height / 2) {
-                        j->ret.y = o->ret.y - j->ret.height + 2;
-                        j->noChao = true;
-                    } else {
-                        j->ret.y = o->ret.y + o->ret.height;
-                    }
-                    j->vel.y = 0;
+                if (j->ret.y + j->ret.height / 2 < o->ret.y + o->ret.height / 2) {
+                    j->ret.y = o->ret.y - j->ret.height;
+                    j->noChao = true;
+                } else {
+                    j->ret.y = o->ret.y + o->ret.height;
                 }
+                j->vel.y = 0;
+                
             }
             
         } else if (obs->tipo == OBSTACULO_CHEGADA) {
@@ -511,19 +488,8 @@ static void resolverColisaoJogadorMapaY(GameWorld *gw, float delta) {
 
             if (CheckCollisionRecs(j->ret, o->ret)) {
 
-                Rectangle retSobre = GetCollisionRec(j->ret, o->ret);
-                
-                if (retSobre.height < retSobre.width + 2) {
-                    if (j->ret.y + j->ret.height / 2 < o->ret.y + o->ret.height / 2) {
-                        j->ret.y = o->ret.y - j->ret.height + 2;
-                        j->noChao = true;
-                    } else {
-                        j->ret.y = o->ret.y + o->ret.height;
-                    }
-                    j->vel.y = 0;
-                }
-
                 gw->mapa->faseCompleta = true;
+
             }
 
         } else if (obs->tipo == OBSTACULO_GELO) {
@@ -532,22 +498,19 @@ static void resolverColisaoJogadorMapaY(GameWorld *gw, float delta) {
 
             if (CheckCollisionRecs(j->ret, o->ret)) {
 
-                Rectangle retSobre = GetCollisionRec(j->ret, o->ret);
-                
-                if (retSobre.height < retSobre.width + 2) {
-                    if (j->ret.y + j->ret.height / 2 < o->ret.y + o->ret.height / 2) {
-                        j->ret.y = o->ret.y - j->ret.height + 2;
-                        j->noChao = true;
+                if (j->ret.y + j->ret.height / 2 < o->ret.y + o->ret.height / 2) {
+                    j->ret.y = o->ret.y - j->ret.height;
+                    j->noChao = true;
 
-                        if(!j->congelado) {
-                            j->congelado = true;
-                        }
-                        
-                    } else {
-                        j->ret.y = o->ret.y + o->ret.height;
+                    if(!j->congelado) {
+                        j->congelado = true;
                     }
-                    j->vel.y = 0;
+                        
+                } else {
+                    j->ret.y = o->ret.y + o->ret.height;
                 }
+                j->vel.y = 0;
+                
 
             }
             
