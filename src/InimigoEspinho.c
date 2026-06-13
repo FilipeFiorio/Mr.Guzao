@@ -146,6 +146,20 @@ static void resolverColisaoInimigoMapaX(InimigoEspinho *i, Mapa *m) {
                 i->vel.x = -i->vel.x;
                 
             }
+        } else if(obs->tipo == OBSTACULO_ACELERADO) {
+
+            ObstaculoAcelerado *o = (ObstaculoAcelerado*) obs->objeto;
+
+            if(CheckCollisionRecs(i->ret, o->ret)) {
+                if(i->ret.x + i->ret.width / 2 < o->ret.x + o->ret.width / 2) {
+                    i->ret.x = o->ret.x - i->ret.width;
+                } else {
+                    i->ret.x = o->ret.x + o->ret.width;
+                }
+                    
+                i->vel.x = -i->vel.x;
+                
+            }
             
         }
 
@@ -192,6 +206,19 @@ static void resolverColisaoInimigoMapaY( InimigoEspinho *i, Mapa *m ) {
                 }
                 i->vel.y = 0;
             }
+        } else if(obs->tipo == OBSTACULO_ACELERADO)  {
+
+            ObstaculoAcelerado *o = (ObstaculoAcelerado*) obs->objeto;
+            
+            if ( CheckCollisionRecs( i->ret, o->ret ) ) {
+                if ( i->ret.y + i->ret.height / 2 < o->ret.y + o->ret.height / 2 ) {
+                    i->ret.y = o->ret.y - i->ret.height;
+                    i->noChao = true;
+                } else { //não precisa
+                    i->ret.y = o->ret.y + o->ret.height;
+                }
+                i->vel.y = 0;
+            }
          }
 
         el = el->proximo;
@@ -226,6 +253,13 @@ static bool verificarSeTemChao(InimigoEspinho *i, Mapa *m) {
         } else if(obs->tipo == OBSTACULO_MOVEL) {
 
             ObstaculoMovel *o = (ObstaculoMovel*) obs->objeto;
+            
+            if(CheckCollisionRecs(ret, o->ret)) {
+                return true;
+            }
+        } else if(obs->tipo == OBSTACULO_ACELERADO) {
+
+            ObstaculoAcelerado *o = (ObstaculoAcelerado*) obs->objeto;
             
             if(CheckCollisionRecs(ret, o->ret)) {
                 return true;

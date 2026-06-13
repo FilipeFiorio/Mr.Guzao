@@ -11,6 +11,7 @@
 #include "ObstaculoMovel.h"
 #include "ObstaculoChegada.h"
 #include "ObstaculoGelo.h"
+#include "ObstaculoAcelerado.h"
 #include "Obstaculo.h"
 #include "Inimigo.h"
 #include "InimigoNormal.h"
@@ -167,6 +168,28 @@ Mapa *carregarMapa( const char *caminhoArquivo ) {
 
                         );
 
+                    } else if(*caractereAtual == 'K') {
+
+                        obs = criarObstaculo(OBSTACULO_ACELERADO);
+
+                        obs->objeto = criarObstaculoAcelerado(
+                            (Rectangle) {
+                                .x = colunaAtual * novoMapa->tamanhoElemento,
+                                .y = linhaAtual * novoMapa->tamanhoElemento,
+                                .width = novoMapa->tamanhoElemento,
+                                .height = novoMapa->tamanhoElemento
+                            },
+                            (Rectangle) {
+                                1 + (novoMapa->tamanhoElemento + 1) * deslocamento,
+                                1,
+                                novoMapa->tamanhoElemento,
+                                novoMapa->tamanhoElemento
+                            },
+                            YELLOW,
+                            &rm.texturaTerreno
+
+                        );
+                        
                     } else {
                         
                         obs = criarObstaculo(OBSTACULO_NORMAL);

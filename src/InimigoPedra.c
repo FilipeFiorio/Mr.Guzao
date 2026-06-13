@@ -260,6 +260,13 @@ static bool verificarToqueChao(Mapa *m, InimigoPedra* i) {
             if(CheckCollisionRecs(o->ret, i->ret)) {
                 return true;
             }
+        } else if(obs->tipo == OBSTACULO_ACELERADO) {
+
+            ObstaculoAcelerado *o = (ObstaculoAcelerado*) obs->objeto;
+
+            if(CheckCollisionRecs(o->ret, i->ret)) {
+                return true;
+            }
         }
 
         el = el->proximo;

@@ -35,6 +35,7 @@ typedef enum TipoObstaculo {
     OBSTACULO_MOVEL,
     OBSTACULO_CHEGADA,
     OBSTACULO_GELO,
+    OBSTACULO_ACELERADO
 }TipoObstaculo;
 
 typedef enum TipoInimigo {
@@ -143,6 +144,8 @@ typedef struct Jogador {
     bool paraDireita;
     bool freando;
 
+    bool acelerado;
+    int contadorTempoAcelerado;
     bool congelado;
     int contadorTempoCongelado;
 
@@ -383,6 +386,13 @@ typedef struct ObstaculoGelo {
     Rectangle fonte;
     Texture2D *textura;
 } ObstaculoGelo;
+
+typedef struct ObstaculoAcelerado {
+    Rectangle ret;
+    Color cor;
+    Rectangle fonte;
+    Texture2D *textura;
+} ObstaculoAcelerado;
 
 typedef struct Item {
     void *objeto;

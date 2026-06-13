@@ -55,6 +55,9 @@ Jogador *criarJogador(float x, float y, float largura, float altura, Color cor) 
     novoJogador->congelado = false;
     novoJogador->contadorTempoCongelado = 0;
 
+    novoJogador->acelerado = false;
+    novoJogador->contadorTempoAcelerado = 0;
+
     novoJogador->estado = JOGADOR_PARADO;
 
     int quantidadeAnimacoes = 0;
@@ -219,7 +222,9 @@ void entradaJogador(Jogador *j) {
         bool direita = IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT) || (IsGamepadAvailable(0) && IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_RIGHT));
             
 
-        j->velMax = correr? j->velCorrendo : j->velAndando;
+        if(!j->acelerado) {
+            j->velMax = correr? j->velCorrendo : j->velAndando;
+        }
 
         if(esquerda) {
             j->paraDireita = false;
@@ -325,9 +330,26 @@ void atualizarJogador(Jogador *j, GameWorld *gw, float delta) {
 
             j->contadorTempoCongelado += delta * 1000;
 
-            if(j->contadorTempoCongelado >= 2000) {
+            if(j->contadorTempoCongelado >= 1500) {
                 j->congelado = false;
                 j->contadorTempoCongelado = 0;
+                j->velFreio = 1100;
+                j->velDesacelarar = 800;
+                j->velAcelerar = 600;
+            }
+        }
+
+        if(j->acelerado) {
+            j->velAcelerar = 1000;
+            j->velDesacelarar = 1200;
+            j->velFreio = 1500;
+            j->velMax = 600;
+
+            j->contadorTempoAcelerado += delta * 1000;
+
+            if(j->contadorTempoAcelerado >= 1500) {
+                j->acelerado = false;
+                j->contadorTempoAcelerado = 0;
                 j->velFreio = 1100;
                 j->velDesacelarar = 800;
                 j->velAcelerar = 600;
@@ -370,9 +392,19 @@ void atualizarJogador(Jogador *j, GameWorld *gw, float delta) {
 }
 
 void desenharJogador(Jogador *j) {
-    
+
+    Color cor = {0};
+
+    if(j->acelerado) {
+        cor = RED;
+    } else if (j->congelado) {
+        cor = BLUE;
+    } else {
+        cor = WHITE;
+    }
+ 
     QuadroAnimacao *quadro = getQuadroAnimacaoAtualJogador(j);
-    desenharAnimacaoJogador(j, quadro, j->congelado ? BLUE : WHITE);
+    desenharAnimacaoJogador(j, quadro, cor);
 
 }
 
@@ -450,6 +482,20 @@ static void resolverColisaoJogadorMapaX(GameWorld *gw) {
                 j->vel.x = 0;
 
             }
+        }  else if (obs->tipo == OBSTACULO_ACELERADO) {
+
+            ObstaculoAcelerado *o = (ObstaculoAcelerado*) obs->objeto;
+
+            if (CheckCollisionRecs(j->ret, o->ret)) {
+
+                if (j->ret.x + j->ret.width / 2 < o->ret.x + o->ret.width / 2) {
+                    j->ret.x = o->ret.x - j->ret.width;
+                } else {
+                    j->ret.x = o->ret.x + o->ret.width;
+                }
+                j->vel.x = 0;
+
+            }
         } 
             
         el = el->proximo;
@@ -502,10 +548,34 @@ static void resolverColisaoJogadorMapaY(GameWorld *gw, float delta) {
                     j->ret.y = o->ret.y - j->ret.height;
                     j->noChao = true;
 
-                    if(!j->congelado) {
+                    if(j->congelado) {
+                        j->contadorTempoCongelado = 0;
+                    } else {
                         j->congelado = true;
                     }
                         
+                } else {
+                    j->ret.y = o->ret.y + o->ret.height;
+                }
+                j->vel.y = 0;
+            
+            }
+        } else if (obs->tipo == OBSTACULO_ACELERADO) {
+
+            ObstaculoAcelerado *o = (ObstaculoAcelerado*) obs->objeto;
+
+            if (CheckCollisionRecs(j->ret, o->ret)) {
+
+                if (j->ret.y + j->ret.height / 2 < o->ret.y + o->ret.height / 2) {
+                    j->ret.y = o->ret.y - j->ret.height;
+                    j->noChao = true;
+
+                    if(j->acelerado) {
+                        j->contadorTempoAcelerado = 0;
+                    } else {
+                        j->acelerado = true;
+                    }
+                    
                 } else {
                     j->ret.y = o->ret.y + o->ret.height;
                 }

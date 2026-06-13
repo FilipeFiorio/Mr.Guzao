@@ -109,7 +109,7 @@ void updateGameWorld( GameWorld *gw, float delta ) {
 
             if(IsKeyPressed(KEY_ENTER)) {
                 inicializarGW(gw);
-                gw->estado = ESTADO_JOGO_GAMEPLAY;
+                gw->estado = ESTADO_JOGO_INICIO;
             }
             
             break;

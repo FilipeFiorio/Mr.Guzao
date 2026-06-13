@@ -7,7 +7,7 @@
 #include "ObstaculoMovel.h"
 #include "ObstaculoChegada.h"
 #include "ObstaculoGelo.h"
-
+#include "ObstaculoAcelerado.h"
 
 Obstaculo *criarObstaculo(TipoObstaculo tipo) {
     
@@ -33,6 +33,8 @@ void desenharObstaculo(Obstaculo *obstaculo) {
         desenharObstaculoChegada((ObstaculoChegada*) obstaculo->objeto);
     } else if(obstaculo->tipo == OBSTACULO_GELO) {
         desenharObstaculoGelo((ObstaculoGelo*) obstaculo->objeto);
+    } else if(obstaculo->tipo == OBSTACULO_ACELERADO) {
+        desenharObstaculoAcelerado((ObstaculoAcelerado*) obstaculo->objeto);
     }
 }
 
@@ -50,6 +52,8 @@ void destruirObstaculo(Obstaculo *obstaculo) {
         destruirObstaculoChegada((ObstaculoChegada*) obstaculo->objeto);
     } else if(obstaculo->tipo == OBSTACULO_GELO) {
         destruirObstaculoGelo((ObstaculoGelo*) obstaculo->objeto);
+    } else if(obstaculo->tipo == OBSTACULO_ACELERADO) {
+        destruirObstaculoAcelerado((ObstaculoAcelerado*) obstaculo->objeto);
     }
     
 }
