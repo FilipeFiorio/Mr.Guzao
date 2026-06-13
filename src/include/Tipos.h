@@ -5,7 +5,7 @@
 
 typedef enum EstadoJogo {
     ESTADO_JOGO_INICIO,
-    ESTADO_JOGO_WORLD_MAP,
+    ESTADO_JOGO_MAPA_MUNDO,
     ESTADO_JOGO_GAMEPLAY,
     ESTADO_JOGO_PAUSE,
     ESTADO_JOGO_GAME_OVER,
@@ -458,13 +458,34 @@ typedef struct Mapa {
     bool faseCompleta;
 } Mapa;
 
+typedef struct NodeMapa {
+    Vector2 pos;
+    bool liberado;
+    bool finalizado;
+    int fase;
+} NodeMapa;
+
+typedef struct MapaMundo {
+
+    NodeMapa *fases;
+    int quantidadeFases;
+
+    int faseAtual;
+
+    Rectangle jogador;
+
+} MapaMundo;
+
 typedef struct GameWorld {
     Mapa *mapa;
+    MapaMundo *mapaMundo;
     Camera2D camera;
     EstadoJogo estado;
     float gravidade;
     int timerJogo;
     int faseAtual;
     float alphaTransicao;
+    int vidasSalvas;
+    int moedasSalvas;
 }GameWorld;
 

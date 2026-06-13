@@ -492,7 +492,7 @@ void destruirMapa(Mapa *m) {
 }
 
 void desenharMapa(Mapa *m) {
-    
+
     if(m->jogador != NULL) {
         desenharJogador(m->jogador);
     }
@@ -517,7 +517,6 @@ void desenharMapa(Mapa *m) {
         el = el->proximo;
     }
 
-    
 }
 
 void atualizarMapa(Mapa *m,GameWorld *gw, float delta ) {

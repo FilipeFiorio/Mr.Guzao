@@ -14,6 +14,7 @@
 #include "Jogador.h"
 #include "Inimigo.h"
 #include "Mapa.h"
+#include "MapaMundo.h"
 #include "Utils.h"
 
 
@@ -32,7 +33,6 @@ static void reiniciarJogo(GameWorld *gw);
 static void inicializarGW(GameWorld *gw);
 static void desenharHud(GameWorld *gw);
 static void passarFase(GameWorld *gw);
-
 
 /**
  * @brief Creates a dinamically allocated GameWorld struct instance.
@@ -75,13 +75,24 @@ void updateGameWorld( GameWorld *gw, float delta ) {
             }
         
             atualizarMapa(gw->mapa, gw, delta);
+
+            if (gw->mapa->faseCompleta) {
+                gw->mapaMundo->fases[gw->faseAtual - 1].finalizado = true; // faseAtual é 1-based
+            }
+
             verificarMorteJogador(gw);
             atualizarCamera(gw);
             verificarGameOver(gw);
 
-            if(gw->mapa->faseCompleta) {
+            if(gw->mapaMundo->fases[gw->faseAtual - 1].finalizado) {
                 passarFase(gw);
             }
+
+            break;
+
+        case ESTADO_JOGO_MAPA_MUNDO:
+
+            atualizarMapaMundo(gw, delta);
 
             break;
         
@@ -98,7 +109,7 @@ void updateGameWorld( GameWorld *gw, float delta ) {
 
             if(IsKeyPressed(KEY_ONE)) {
                 inicializarGW(gw);
-                gw->estado = ESTADO_JOGO_GAMEPLAY;
+                gw->estado = ESTADO_JOGO_MAPA_MUNDO;
             }
 
             break;
@@ -122,7 +133,6 @@ void updateGameWorld( GameWorld *gw, float delta ) {
         case ESTADO_JOGO_FADE_IN:
             
             gw->alphaTransicao -= 5;
-
 
             if (gw->alphaTransicao <= 0) {
                 gw->alphaTransicao = 0;
@@ -154,11 +164,9 @@ void updateGameWorld( GameWorld *gw, float delta ) {
  */
 void drawGameWorld( GameWorld *gw ) {
     
-    
     BeginDrawing();
 
     DrawFPS(GetScreenWidth() - 100, 50);
-    
 
     switch (gw->estado) {
 
@@ -167,13 +175,19 @@ void drawGameWorld( GameWorld *gw ) {
             ClearBackground( (Color) {175, 231, 255, 255} );
         
             BeginMode2D(gw->camera);
-        
+
             desenharFundo(gw);
             desenharMapa(gw->mapa);
-        
+
             EndMode2D();
-        
+
             desenharHud(gw);
+
+            break;
+
+        case ESTADO_JOGO_MAPA_MUNDO:
+
+            desenharMapaMundo(gw->mapaMundo);
 
             break;
         
@@ -230,8 +244,10 @@ void drawGameWorld( GameWorld *gw ) {
                 0,
                 GetScreenWidth(),
                 GetScreenHeight(),
-                (Color){0, 0, 0, gw->alphaTransicao}
+                (Color){0,0,0,gw->alphaTransicao}
             );
+
+            drawTextAlinhado("Carregando...", 650, 25, WHITE, DIREITA);
 
             break;
 
@@ -322,7 +338,6 @@ static void verificarMorteJogador(GameWorld *gw) {
 
 }
 
-//no futuro usar estados do jogo --> ESTADO_JOGO_GAME_OVER
 static void verificarGameOver(GameWorld *gw) {
 
     if(gw->mapa->jogador->vidas < 0) {
@@ -356,15 +371,17 @@ static void reiniciarJogo(GameWorld *gw) {
     
 }
 
-
 static void inicializarGW(GameWorld *gw) {
 
     gw->faseAtual = 1;
-    gw->mapa = carregarMapa("resources/mapas/fase1.txt");
+    gw->mapaMundo = criarMapaMundo(3);
     gw->gravidade = 600;
     gw->timerJogo = 200000;
     gw->alphaTransicao = 0;
+    gw->mapa = NULL;
     gw->estado = ESTADO_JOGO_INICIO;
+    gw->vidasSalvas = 5;
+    gw->moedasSalvas = 0;
 
     gw->camera = (Camera2D) {
         .offset = {0},
@@ -388,28 +405,21 @@ static void desenharHud(GameWorld *gw) {
 
 static void passarFase(GameWorld *gw) {
 
+    // Salva antes de destruir o mapa
+    gw->vidasSalvas = gw->mapa->jogador->vidas;
+    gw->moedasSalvas = gw->mapa->jogador->moedas;
+
+    destruirMapa(gw->mapa);
+    gw->mapa = NULL;
+
     gw->faseAtual++;
 
-    //3 é o total de fases, talvez mude
     if(gw->faseAtual > 3) {
         gw->estado = ESTADO_JOGO_FIM;
         return;
     }
 
-    int vidas = gw->mapa->jogador->vidas;
-    int moedas = gw->mapa->jogador->moedas;
-    
-    destruirMapa(gw->mapa);
-
-    
-    char caminhoMapa[100];
-    sprintf(caminhoMapa, "resources/mapas/fase%d.txt", gw->faseAtual);
-    gw->mapa = carregarMapa(caminhoMapa);
-    
     gw->timerJogo = 200000;
-    gw->mapa->jogador->vidas = vidas;
-    gw->mapa->jogador->moedas = moedas;
     gw->alphaTransicao = 0;
-    gw->estado = ESTADO_JOGO_FADE_OUT;
-
+    gw->estado = ESTADO_JOGO_MAPA_MUNDO;
 }

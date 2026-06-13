@@ -20,6 +20,7 @@ void loadResourcesResourceManager( void ) {
     rm.texturaFundoNeve = LoadTexture("resources/images/fundos/bg-snow.png");
     rm.texturaFundoDeserto = LoadTexture("resources/images/fundos/bg-desert.png");
     rm.texturaInicio = LoadTexture("resources/images/fundos/inicio.png");
+    rm.texturaMapaMundo = LoadTexture("resources/images/fundos/mapaMundo.png");
     
     rm.texturaInimigoNormal = LoadTexture("resources/images/sprites/inimigoNormal.png");
     rm.texturaInimigoDash = LoadTexture("resources/images/sprites/inimigoDash.png");
@@ -35,6 +36,7 @@ void loadResourcesResourceManager( void ) {
     rm.texturaItens = LoadTexture("resources/images/sprites/itens.png");
 
     rm.texturaJogador = LoadTexture("resources/images/sprites/jogador.png");
+    rm.texturaJogadorMapa = LoadTexture("resources/images/sprites/jogadorMapa.png");
 
     rm.fonte = LoadFontEx("resources/fontes/PressStart2P-Regular.ttf", 32, 0, 250);
 
@@ -47,6 +49,7 @@ void unloadResourcesResourceManager( void ) {
     UnloadTexture(rm.texturaFundoNeve );
     UnloadTexture(rm.texturaFundoDeserto );
     UnloadTexture(rm.texturaInicio);
+    UnloadTexture(rm.texturaMapaMundo);
 
     UnloadTexture(rm.texturaInimigoNormal);
     UnloadTexture(rm.texturaInimigoDash);
@@ -59,6 +62,7 @@ void unloadResourcesResourceManager( void ) {
     UnloadTexture(rm.texturaTiro);
     UnloadTexture(rm.texturaInimigoMorrendo);
 
+    UnloadTexture(rm.texturaJogadorMapa);
     UnloadTexture(rm.texturaItens);
     
     UnloadTexture(rm.texturaJogador);
