@@ -101,10 +101,12 @@ void atualizarTiroNormal(TiroNormal *tiro, GameWorld *gw, float delta) {
 
         if(tiro->paraDireita) {
             if(tiro->ret.x >= tiro->xIni + tiro->distanciaMax ) {
+                tiro->velX = 0;
                 tiro->estado = TIRO_DISPERSADO;
             }
         } else {
             if(tiro->ret.x <= tiro->xIni - tiro->distanciaMax) {
+                tiro->velX = 0;
                 tiro->estado = TIRO_DISPERSADO;
             }
         }

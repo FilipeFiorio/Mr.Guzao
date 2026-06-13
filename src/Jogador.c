@@ -330,7 +330,7 @@ void atualizarJogador(Jogador *j, GameWorld *gw, float delta) {
 
             j->contadorTempoCongelado += delta * 1000;
 
-            if(j->contadorTempoCongelado >= 1500) {
+            if(j->contadorTempoCongelado >= 1750) {
                 j->congelado = false;
                 j->contadorTempoCongelado = 0;
                 j->velFreio = 1100;
@@ -347,7 +347,7 @@ void atualizarJogador(Jogador *j, GameWorld *gw, float delta) {
 
             j->contadorTempoAcelerado += delta * 1000;
 
-            if(j->contadorTempoAcelerado >= 1500) {
+            if(j->contadorTempoAcelerado >= 1750) {
                 j->acelerado = false;
                 j->contadorTempoAcelerado = 0;
                 j->velFreio = 1100;
