@@ -12,7 +12,7 @@ void criarQuadroAnimacao(Animacao *animacao, int quantidadeQuadros) {
 }
 
 void inicializarQuadroAnimacao(
-    QuadroAnimacao *quadros,
+    QuadroAnimacao *quadros, 
     int quantidadeQuadros,
     int duracaoPadrao,
     int xInicioFonte,

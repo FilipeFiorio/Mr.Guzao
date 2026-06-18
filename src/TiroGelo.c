@@ -7,6 +7,8 @@
 #include "Animacao.h"
 #include "ResourceManager.h"
 
+static void resolverColisaoMapa(TiroGelo *tiro, Mapa *mapa);
+
 static void desenharAnimacaoTiroGelo(TiroGelo *inimigo, QuadroAnimacao *quadro, Color tonalidade);
 static Animacao *getAnimacaoAtualTiroGelo(TiroGelo *tiro);
 
@@ -93,6 +95,8 @@ void atualizarTiroGelo(TiroGelo *tiro, GameWorld *gw, float delta) {
 
         Animacao *animacaoAtual = getAnimacaoAtualTiroGelo(tiro);
         atualizarAnimacao(animacaoAtual, delta);
+
+        resolverColisaoMapa(tiro, gw->mapa);
 
         if(tiro->estado == TIRO_DISPERSADO && animacaoAtual->finalizada) {
             tiro->ativo = false;
@@ -190,4 +194,77 @@ static Animacao *getAnimacaoAtualTiroGelo(TiroGelo *tiro) {
 
 QuadroAnimacao *getQuadroAnimacaoAtualTiroGelo(TiroGelo *tiro) {
     return getQuadroAtualAnimacao(getAnimacaoAtualTiroGelo(tiro));
+}
+
+static void resolverColisaoMapa(TiroGelo *tiro, Mapa *mapa) {
+
+    ElementoMapa *el = mapa->obstaculos;
+
+    while(el != NULL) {
+
+        Obstaculo *obstaculo = (Obstaculo*) el->objeto;
+        
+        if(obstaculo->tipo == OBSTACULO_ACELERADO) {
+
+            ObstaculoAcelerado *o = (ObstaculoAcelerado*) obstaculo->objeto;
+
+            if(CheckCollisionRecs(tiro->ret, o->ret)) {
+
+                tiro->velX = 0;
+                tiro->estado = TIRO_DISPERSADO;
+
+                return;
+            }
+
+        } else if(obstaculo->tipo == OBSTACULO_NORMAL) {
+
+            ObstaculoNormal *o = (ObstaculoNormal*) obstaculo->objeto;
+
+            if(CheckCollisionRecs(tiro->ret, o->ret)) {
+
+                tiro->velX = 0;
+                tiro->estado = TIRO_DISPERSADO;
+
+                return;
+            }
+
+        } else if(obstaculo->tipo == OBSTACULO_MOVEL) {
+
+            ObstaculoMovel *o = (ObstaculoMovel*) obstaculo->objeto;
+
+            if(CheckCollisionRecs(tiro->ret, o->ret)) {
+
+                tiro->velX = 0;
+                tiro->estado = TIRO_DISPERSADO;
+
+                return;
+            }
+
+        } else if(obstaculo->tipo == OBSTACULO_GELO) {
+
+            ObstaculoGelo *o = (ObstaculoGelo*) obstaculo->objeto;
+
+            if(CheckCollisionRecs(tiro->ret, o->ret)) {
+
+                tiro->velX = 0;
+                tiro->estado = TIRO_DISPERSADO;
+
+                return;
+            }
+
+        } else if(obstaculo->tipo == OBSTACULO_CHEGADA) {
+
+            ObstaculoChegada *o = (ObstaculoChegada*) obstaculo->objeto;
+
+            if(CheckCollisionRecs(tiro->ret, o->ret)) {
+
+                tiro->velX = 0;
+                tiro->estado = TIRO_DISPERSADO;
+
+                return;
+            }
+        }
+
+        el = el->proximo;
+    }
 }
