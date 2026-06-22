@@ -149,7 +149,7 @@ Jogador *criarJogador(float x, float y, float largura, float altura, Color cor) 
     inicializarQuadroAnimacao(
         novoJogador->animacaoMorrendo.quadros,
         novoJogador->animacaoMorrendo.quantidadeQuadros,
-        500,
+        2000,
         0,
         48,
         16,
@@ -290,6 +290,7 @@ void entradaJogador(Jogador *j) {
         bool pular = IsKeyPressed(KEY_SPACE) || (IsGamepadAvailable(0) && IsGamepadButtonPressed(0, GAMEPAD_BUTTON_RIGHT_FACE_DOWN));
         
         if(pular && j->noChao) {
+            PlaySound(rm.somPulo);
             j->vel.y = correr ? j->velPuloCorrendo : j->velPulo;
             j->noChao = false;
         }
@@ -636,6 +637,7 @@ static void verificarColisaoJogadorItem(GameWorld *gw) {
             if(CheckCollisionRecs(j->ret, i->ret) && i->estado == ITEM_GIRANDO) {
                 i->estado = ITEM_COLETADO;
                 j->moedas += i->valor;
+                PlaySound(rm.somMoeda);
             }
 
         } else if(item->tipo == ITEM_MOEDA_ESPECIAL) {
@@ -650,6 +652,7 @@ static void verificarColisaoJogadorItem(GameWorld *gw) {
             if(CheckCollisionRecs(j->ret, i->ret) && i->estado == ITEM_GIRANDO) {
                 i->estado = ITEM_COLETADO;
                 j->moedas += i->valor;
+                PlaySound(rm.somMoeda);
             }
             
         } else if(item->tipo == ITEM_VIDA) {
@@ -664,6 +667,7 @@ static void verificarColisaoJogadorItem(GameWorld *gw) {
             if(CheckCollisionRecs(j->ret, i->ret) && i->estado == ITEM_GIRANDO) {
                 i->estado = ITEM_COLETADO;
                 j->vidas++;
+                PlaySound(rm.somMoeda);
             }
 
         }
@@ -697,9 +701,11 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
                 if (j->vel.y > 0 && j->ret.y + j->ret.height / 2 < i->ret.y + i->ret.height / 2) {
                         i->vel = (Vector2) {0};
                         i->estado = INIMIGO_NORMAL_MORRENDO;
+                        PlaySound(rm.somMatar);
                         j->vel.y = -j->vel.y * 0.75f;
                 } else {
                     j->estado = JOGADOR_MORRENDO;
+                    PlaySound(rm.somMorte);
                 }
                 
                 return;
@@ -719,9 +725,11 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
                 if (j->vel.y > 0 && j->ret.y + j->ret.height / 2 < i->ret.y + i->ret.height / 2) {
                     i->velXInicial = 0;
                     i->estado = INIMIGO_DASH_MORRENDO;
+                    PlaySound(rm.somMatar);
                     j->vel.y = -j->vel.y * 0.75f;
                 } else {
                     j->estado = JOGADOR_MORRENDO;
+                    PlaySound(rm.somMorte);
                 }
 
                 return;
@@ -742,9 +750,11 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
                 if (j->vel.y > 0 && j->ret.y + j->ret.height / 2 < i->ret.y + i->ret.height / 2) {
                     i->vel = (Vector2) {0};
                     i->estado = INIMIGO_VOADOR_MORRENDO;
+                    PlaySound(rm.somMatar);
                     j->vel.y = -j->vel.y * 0.75f;
                 } else {
                     j->estado = JOGADOR_MORRENDO;
+                    PlaySound(rm.somMorte);
                 }
                
                 return;
@@ -760,6 +770,7 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
             if (CheckCollisionRecs(j->ret, i->ret)) {
 
                 j->estado = JOGADOR_MORRENDO;
+                PlaySound(rm.somMorte);
 
                 return;
             }
@@ -771,7 +782,8 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
             if (CheckCollisionRecs(j->ret, i->ret)) {
 
                 j->estado = JOGADOR_MORRENDO;
-                
+                PlaySound(rm.somMorte);
+
                 return;
             }
 
@@ -782,6 +794,7 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
             if (CheckCollisionRecs(j->ret, i->ret)) {
 
                 j->estado = JOGADOR_MORRENDO;
+                PlaySound(rm.somMorte);
 
                 return;
             }
@@ -794,6 +807,7 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
             if (CheckCollisionRecs(j->ret, i->ret)) {
                 
                 j->estado = JOGADOR_MORRENDO;
+                PlaySound(rm.somMorte);
 
                 return;
             }
@@ -811,6 +825,7 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
             if (CheckCollisionRecs(j->ret, i->ret)) {
 
                 j->estado = JOGADOR_MORRENDO;
+                PlaySound(rm.somMorte);
 
                 return;
             }

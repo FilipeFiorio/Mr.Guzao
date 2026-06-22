@@ -40,6 +40,19 @@ void loadResourcesResourceManager( void ) {
 
     rm.fonte = LoadFontEx("resources/fontes/PressStart2P-Regular.ttf", 32, 0, 250);
 
+    rm.somMatar = LoadSound("resources/sfx/spin-stomp.wav");
+    rm.somMorte = LoadSound("resources/sfx/death.wav");
+    rm.somMoeda = LoadSound("resources/sfx/Coin.wav");
+    rm.somPulo = LoadSound("resources/sfx/jump.wav");
+    rm.somPausa = LoadSound("resources/sfx/Pause.wav");
+    rm.somTiro = LoadSound("resources/sfx/flames.wav");
+
+    rm.musicaFase1 = LoadMusicStream("resources/musics/musica-fase1.mp3");
+    rm.musicaFase2 = LoadMusicStream("resources/musics/musica-fase2.mp3");
+    rm.musicaFase3 = LoadMusicStream("resources/musics/musica-fase3.mp3");
+    rm.musicaMundo = LoadMusicStream("resources/musics/musica-mapa-mundo.mp3");
+    rm.musicaInicio = LoadMusicStream("resources/musics/musica-tela-inicial.mp3");
+
 }
 
 void unloadResourcesResourceManager( void ) {
@@ -68,5 +81,19 @@ void unloadResourcesResourceManager( void ) {
     UnloadTexture(rm.texturaJogador);
 
     UnloadFont(rm.fonte);
+
+    UnloadSound(rm.somMatar);
+    UnloadSound(rm.somMoeda);
+    UnloadSound(rm.somMorte);
+    UnloadSound(rm.somPulo);
+    UnloadSound(rm.somPausa);
+    UnloadSound(rm.somTiro);
+
+
+    UnloadMusicStream(rm.musicaFase1);
+    UnloadMusicStream(rm.musicaFase2);
+    UnloadMusicStream(rm.musicaFase3);
+    UnloadMusicStream(rm.musicaInicio);
+    UnloadMusicStream(rm.musicaMundo);
 
 }

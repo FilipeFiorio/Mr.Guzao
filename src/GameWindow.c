@@ -95,6 +95,11 @@ void initGameWindow( GameWindow *gameWindow ) {
 
         if ( gameWindow->initAudio ) {
             InitAudioDevice();
+
+            if ( !IsAudioDeviceReady() ) {
+                gameWindow->initAudio = false;
+                TraceLog(LOG_WARNING, "Audio device could not be initialized. Continuing without audio.");
+            }
         }
 
         SetTargetFPS( gameWindow->targetFPS );    
@@ -119,7 +124,7 @@ void initGameWindow( GameWindow *gameWindow ) {
 
         destroyGameWindow( gameWindow );
 
-        if ( initAudio ) {
+        if ( initAudio && IsAudioDeviceReady() ) {
             CloseAudioDevice();
         }
 

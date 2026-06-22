@@ -17,7 +17,7 @@ int main( void ) {
     GameWindow *gameWindow = createGameWindow(
         1280,             // width
         720,             // height
-        "Projeto Final",  // titlema
+        "Mr. Gusão",  // title
         60,              // target FPS
         false,            // antialiasing
         false,           // resizable
@@ -27,7 +27,7 @@ int main( void ) {
         false,           // invisible background
         false,           // always run
         true,            // load resources
-        false            // init audio
+        true            // init audio
     );
 
     initGameWindow( gameWindow );

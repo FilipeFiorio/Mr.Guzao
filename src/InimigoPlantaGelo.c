@@ -202,6 +202,7 @@ static void atirar(InimigoPlantaGelo *inimigo, GameWorld *gw,float delta) {
 
     if(inimigo->tiro == NULL) {
         inimigo->tiro = criarTiroGelo(inimigo);
+        PlaySound(rm.somTiro);
         inimigo->tiro->ativo = true;
     }
 

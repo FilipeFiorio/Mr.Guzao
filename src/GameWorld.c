@@ -39,9 +39,12 @@ static void passarFase(GameWorld *gw);
  */
 GameWorld* createGameWorld( void ) {
 
-    GameWorld *gw = (GameWorld*) malloc( sizeof( GameWorld ) );
+    GameWorld *gw = (GameWorld*) calloc( 1, sizeof( GameWorld ) );
+    if ( gw == NULL ) {
+        return NULL;
+    }
 
-    inicializarGW(gw);
+    inicializarGW( gw );
 
     return gw;
 
@@ -73,8 +76,35 @@ void updateGameWorld( GameWorld *gw, float delta ) {
 
         case ESTADO_JOGO_GAMEPLAY:
 
+            switch (gw->faseAtual) {
+                case 1:
+                    if(!IsMusicStreamPlaying(rm.musicaFase1)) {
+                        PlayMusicStream(rm.musicaFase1);
+                    } else {
+                        UpdateMusicStream(rm.musicaFase1);
+                    }
+                    break;
+                case 2:
+                    if(!IsMusicStreamPlaying(rm.musicaFase2)) {
+                        PlayMusicStream(rm.musicaFase2);
+                    } else {
+                        UpdateMusicStream(rm.musicaFase2);
+                    }
+                    break;
+                case 3:
+                    if(!IsMusicStreamPlaying(rm.musicaFase3)) {
+                        PlayMusicStream(rm.musicaFase3);
+                    } else {
+                        UpdateMusicStream(rm.musicaFase3);
+                    }
+                    break;
+                default:
+                    break;
+            }
+
             if(IsKeyPressed(KEY_P)) {
                 gw->estado = ESTADO_JOGO_PAUSE;
+                PlaySound(rm.somPausa);
             }
 
             gw->timerJogo -= (int) (1000 * delta);
@@ -101,6 +131,12 @@ void updateGameWorld( GameWorld *gw, float delta ) {
 
         case ESTADO_JOGO_MAPA_MUNDO:
 
+            if(!IsMusicStreamPlaying(rm.musicaMundo)) {
+                PlayMusicStream(rm.musicaMundo);
+            } else {
+                UpdateMusicStream(rm.musicaMundo);
+            }
+
             atualizarMapaMundo(gw, delta);
 
             break;
@@ -116,6 +152,12 @@ void updateGameWorld( GameWorld *gw, float delta ) {
 
         case ESTADO_JOGO_INICIO:
 
+            if(!IsMusicStreamPlaying(rm.musicaInicio)) {
+                PlayMusicStream(rm.musicaInicio);
+            } else {
+                UpdateMusicStream(rm.musicaInicio);
+            }
+
             if(IsKeyPressed(KEY_ENTER)) {
                 gw->estado = ESTADO_JOGO_MAPA_MUNDO;
             }
@@ -125,6 +167,7 @@ void updateGameWorld( GameWorld *gw, float delta ) {
         case ESTADO_JOGO_PAUSE:
 
             if(IsKeyPressed(KEY_P)) {
+                PlaySound(rm.somPausa);
                 gw->estado = ESTADO_JOGO_GAMEPLAY;
             }
 

@@ -202,6 +202,7 @@ static void atirar(InimigoPlanta *inimigo, GameWorld *gw,float delta) {
 
     if(inimigo->tiro == NULL) {
         inimigo->tiro = criarTiroNormal(inimigo);
+        PlaySound(rm.somTiro);
         inimigo->tiro->ativo = true;
     }
 
