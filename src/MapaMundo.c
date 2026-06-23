@@ -97,6 +97,7 @@ void atualizarMapaMundo(GameWorld *gw, float delta) {
         int proximaFase = mapaMundo->faseAtual + 1;
 
         if(proximaFase < mapaMundo->quantidadeFases && mapaMundo->fases[proximaFase].liberado) {
+            PlaySound(rm.somMapaMover);
             mapaMundo->faseAtual = proximaFase;
             mapaMundo->jogador.x = mapaMundo->fases[proximaFase].pos.x;
             mapaMundo->jogador.y = mapaMundo->fases[proximaFase].pos.y;
@@ -107,6 +108,7 @@ void atualizarMapaMundo(GameWorld *gw, float delta) {
         int faseAnterior = mapaMundo->faseAtual - 1;
 
         if(faseAnterior >= 0) {
+            PlaySound(rm.somMapaMover);
             mapaMundo->faseAtual = faseAnterior;
             mapaMundo->jogador.x = mapaMundo->fases[faseAnterior].pos.x;
             mapaMundo->jogador.y = mapaMundo->fases[faseAnterior].pos.y;
@@ -116,6 +118,7 @@ void atualizarMapaMundo(GameWorld *gw, float delta) {
 
     //Entrar numa fase
     if(IsKeyPressed(KEY_ENTER)) {
+        PlaySound(rm.somBotao);
         gw->faseAtual = mapaMundo->fases[mapaMundo->faseAtual].fase;
 
         mapaMundo->fases[mapaMundo->faseAtual].finalizado = false;
@@ -127,6 +130,7 @@ void atualizarMapaMundo(GameWorld *gw, float delta) {
         gw->mapa->jogador->vidas = gw->vidasSalvas;
         gw->mapa->jogador->moedas = gw->moedasSalvas;
 
+        gw->proximoEstado = ESTADO_JOGO_GAMEPLAY;
         gw->estado = ESTADO_JOGO_FADE_OUT;
     }
     

@@ -33,6 +33,7 @@ static void reiniciarJogo(GameWorld *gw);
 static void inicializarGW(GameWorld *gw);
 static void desenharHud(GameWorld *gw);
 static void passarFase(GameWorld *gw);
+static void iniciarTransicao(GameWorld *gw, EstadoJogo proximoEstado);
 
 /**
  * @brief Creates a dinamically allocated GameWorld struct instance.
@@ -76,31 +77,35 @@ void updateGameWorld( GameWorld *gw, float delta ) {
 
         case ESTADO_JOGO_GAMEPLAY:
 
-            switch (gw->faseAtual) {
-                case 1:
-                    if(!IsMusicStreamPlaying(rm.musicaFase1)) {
-                        PlayMusicStream(rm.musicaFase1);
-                    } else {
-                        UpdateMusicStream(rm.musicaFase1);
-                    }
-                    break;
-                case 2:
-                    if(!IsMusicStreamPlaying(rm.musicaFase2)) {
-                        PlayMusicStream(rm.musicaFase2);
-                    } else {
-                        UpdateMusicStream(rm.musicaFase2);
-                    }
-                    break;
-                case 3:
-                    if(!IsMusicStreamPlaying(rm.musicaFase3)) {
-                        PlayMusicStream(rm.musicaFase3);
-                    } else {
-                        UpdateMusicStream(rm.musicaFase3);
-                    }
-                    break;
-                default:
-                    break;
+            if(gw->mapa->jogador->estado != JOGADOR_MORRENDO) {
+
+                switch (gw->faseAtual) {
+                    case 1:
+                        if(!IsMusicStreamPlaying(rm.musicaFase1)) {
+                            PlayMusicStream(rm.musicaFase1);
+                        } else {
+                            UpdateMusicStream(rm.musicaFase1);
+                        }
+                        break;
+                    case 2:
+                        if(!IsMusicStreamPlaying(rm.musicaFase2)) {
+                            PlayMusicStream(rm.musicaFase2);
+                        } else {
+                            UpdateMusicStream(rm.musicaFase2);
+                        }
+                        break;
+                    case 3:
+                        if(!IsMusicStreamPlaying(rm.musicaFase3)) {
+                            PlayMusicStream(rm.musicaFase3);
+                        } else {
+                            UpdateMusicStream(rm.musicaFase3);
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
+
 
             if(IsKeyPressed(KEY_P)) {
                 gw->estado = ESTADO_JOGO_PAUSE;
@@ -144,6 +149,7 @@ void updateGameWorld( GameWorld *gw, float delta ) {
         case ESTADO_JOGO_GAME_OVER:
 
             if(IsKeyPressed(KEY_ENTER)) {
+                PlaySound(rm.somBotao);
                 inicializarGW(gw);
                 gw->estado = ESTADO_JOGO_INICIO;
             }
@@ -159,7 +165,8 @@ void updateGameWorld( GameWorld *gw, float delta ) {
             }
 
             if(IsKeyPressed(KEY_ENTER)) {
-                gw->estado = ESTADO_JOGO_MAPA_MUNDO;
+                PlaySound(rm.somBotao);
+                iniciarTransicao(gw, ESTADO_JOGO_MAPA_MUNDO);
             }
 
             break;
@@ -173,10 +180,29 @@ void updateGameWorld( GameWorld *gw, float delta ) {
 
             break;
 
+        case ESTADO_JOGO_MORTE:
+
+            gw->timerMorte += delta;
+
+            if(!IsSoundPlaying(rm.somMorte)) {
+                if(gw->mapa->jogador->vidas >= 0) {
+                    reiniciarJogo(gw);
+                } else {
+                    PlaySound(rm.somGameOver);
+                    destruirMapa(gw->mapa);
+                    gw->mapa = NULL;
+                    gw->estado = ESTADO_JOGO_GAME_OVER;
+                }
+            }
+
+            break;
+
         case ESTADO_JOGO_FIM:
 
             if(IsKeyPressed(KEY_ENTER)){
-                gw->estado = ESTADO_JOGO_INICIO;
+                if(!IsSoundPlaying(rm.somVitoria)) {
+                    gw->estado = ESTADO_JOGO_INICIO;
+                }
             }
 
             break;
@@ -187,7 +213,7 @@ void updateGameWorld( GameWorld *gw, float delta ) {
 
             if (gw->alphaTransicao <= 0) {
                 gw->alphaTransicao = 0;
-                gw->estado = ESTADO_JOGO_GAMEPLAY;
+                gw->estado = gw->proximoEstado;
             }
 
             break;
@@ -216,8 +242,6 @@ void updateGameWorld( GameWorld *gw, float delta ) {
 void drawGameWorld( GameWorld *gw ) {
     
     BeginDrawing();
-
-    DrawFPS(GetScreenWidth() - 100, 50);
 
     switch (gw->estado) {
 
@@ -277,12 +301,29 @@ void drawGameWorld( GameWorld *gw ) {
 
             break;
 
+        case ESTADO_JOGO_MORTE:
+
+            ClearBackground( (Color) {175, 231, 255, 255} );
+        
+            BeginMode2D(gw->camera);
+
+            desenharFundo(gw);
+            desenharMapa(gw->mapa);
+
+            EndMode2D();
+
+            desenharHud(gw);
+
+            break;
+
         case ESTADO_JOGO_FIM:
 
             ClearBackground(BLACK);
 
             drawTextAlinhado("Você Venceu!!!", 200, 50, WHITE, CENTRO);
-            drawTextAlinhado("Aperte ENTER para voltar para o início", 400, 25, WHITE, CENTRO);
+            if(!IsSoundPlaying(rm.somVitoria)) {
+                drawTextAlinhado("Aperte ENTER para voltar para o início", 400, 25, WHITE, CENTRO);
+            }
 
             break;
 
@@ -378,12 +419,15 @@ static void verificarMorteJogador(GameWorld *gw) {
 
     bool foraDoMapa = (j->ret.y > calcularAlturaMapa(gw->mapa));
 
+    if(foraDoMapa && j->vidas > 0) {
+        PlaySound(rm.somMorte);
+    }
+
     if(foraDoMapa || j->morto) {
         j->vidas--;
-        if(j->vidas >= 0) {
-            reiniciarJogo(gw);
-            j->morto = false;
-        }
+        gw->estado = ESTADO_JOGO_MORTE;
+        gw->timerMorte = 0;
+        j->morto = false;
     } 
 
 }
@@ -391,6 +435,7 @@ static void verificarMorteJogador(GameWorld *gw) {
 static void verificarGameOver(GameWorld *gw) {
 
     if(gw->mapa->jogador->vidas < 0) {
+        PlaySound(rm.somGameOver);
         destruirMapa(gw->mapa);
         gw->mapa = NULL;
         gw->estado = ESTADO_JOGO_GAME_OVER;
@@ -434,6 +479,8 @@ static void inicializarGW(GameWorld *gw) {
     gw->gravidade = 600;
     gw->timerJogo = 200000;
     gw->alphaTransicao = 0;
+    gw->timerMorte = 0;
+    gw->proximoEstado = ESTADO_JOGO_INICIO;
     gw->mapa = NULL;
     gw->estado = ESTADO_JOGO_INICIO;
     gw->vidasSalvas = 5;
@@ -451,11 +498,8 @@ static void inicializarGW(GameWorld *gw) {
 static void desenharHud(GameWorld *gw) {
 
     char textoHudJogador[50];
-    char textoHudTempo[50];
-    sprintf(textoHudJogador, "Vidas: %d   Moedas: %d", gw->mapa->jogador->vidas, gw->mapa->jogador->moedas);
-    sprintf(textoHudTempo, "Tempo: %ds", gw->timerJogo / 1000);
+    sprintf(textoHudJogador, "Vidas: %d   Moedas: %d   Tempo: %d", gw->mapa->jogador->vidas, gw->mapa->jogador->moedas, gw->timerJogo / 1000);
     drawTextAlinhado(textoHudJogador, 10, 20, WHITE, ESQUERDA);
-    drawTextAlinhado(textoHudTempo, 10, 20, WHITE, CENTRO);
 
 }
 
@@ -470,11 +514,19 @@ static void passarFase(GameWorld *gw) {
     gw->faseAtual++;
 
     if(gw->faseAtual > 3) {
+        PlaySound(rm.somVitoria);
         gw->estado = ESTADO_JOGO_FIM;
         return;
     }
 
     gw->timerJogo = 200000;
+    iniciarTransicao(gw, ESTADO_JOGO_MAPA_MUNDO);
+}
+
+static void iniciarTransicao(GameWorld *gw, EstadoJogo proximoEstado) {
+
+    gw->proximoEstado = proximoEstado;
+    gw->estado = ESTADO_JOGO_FADE_OUT;
     gw->alphaTransicao = 0;
-    gw->estado = ESTADO_JOGO_MAPA_MUNDO;
+
 }

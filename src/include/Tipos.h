@@ -11,7 +11,8 @@ typedef enum EstadoJogo {
     ESTADO_JOGO_GAME_OVER,
     ESTADO_JOGO_FIM,
     ESTADO_JOGO_FADE_IN,
-    ESTADO_JOGO_FADE_OUT
+    ESTADO_JOGO_FADE_OUT,
+    ESTADO_JOGO_MORTE
 } EstadoJogo;
 
 typedef enum EstadoJogador {
@@ -491,11 +492,13 @@ typedef struct GameWorld {
     MapaMundo *mapaMundo;
     Camera2D camera;
     EstadoJogo estado;
+    EstadoJogo proximoEstado;
     float gravidade;
     int timerJogo;
     int faseAtual;
     float alphaTransicao;
     int vidasSalvas;
     int moedasSalvas;
+    float timerMorte;
 }GameWorld;
 

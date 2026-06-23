@@ -46,7 +46,13 @@ void loadResourcesResourceManager( void ) {
     rm.somPulo = LoadSound("resources/sfx/jump.wav");
     rm.somPausa = LoadSound("resources/sfx/Pause.wav");
     rm.somTiro = LoadSound("resources/sfx/flames.wav");
-
+    rm.somBotao = LoadSound("resources/sfx/botao.wav");
+    rm.somGameOver = LoadSound("resources/sfx/gameOver.wav");
+    rm.somMapaMover = LoadSound("resources/sfx/mapMove.wav");
+    rm.somVida = LoadSound("resources/sfx/vida.wav");
+    rm.somChegada = LoadSound("resources/sfx/chegada.wav");
+    rm.somVitoria = LoadSound("resources/sfx/vitoria.wav");
+    
     rm.musicaFase1 = LoadMusicStream("resources/musics/musica-fase1.mp3");
     rm.musicaFase2 = LoadMusicStream("resources/musics/musica-fase2.mp3");
     rm.musicaFase3 = LoadMusicStream("resources/musics/musica-fase3.mp3");
@@ -88,7 +94,12 @@ void unloadResourcesResourceManager( void ) {
     UnloadSound(rm.somPulo);
     UnloadSound(rm.somPausa);
     UnloadSound(rm.somTiro);
-
+    UnloadSound(rm.somVida);
+    UnloadSound(rm.somBotao);
+    UnloadSound(rm.somGameOver);
+    UnloadSound(rm.somMapaMover);
+    UnloadSound(rm.somChegada);
+    UnloadSound(rm.somVitoria);
 
     UnloadMusicStream(rm.musicaFase1);
     UnloadMusicStream(rm.musicaFase2);
