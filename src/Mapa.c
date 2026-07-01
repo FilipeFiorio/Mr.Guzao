@@ -97,7 +97,7 @@ Mapa *carregarMapa( const char *caminhoArquivo ) {
                                 novoMapa->tamanhoElemento
                             },
                             (Vector2) {0, (float) (novoMapa->tamanhoElemento * 5)},
-                            (Vector2) {0, 50.0},
+                            (Vector2) {0, 50.0f},
                             YELLOW,
                             &rm.texturaTerreno
                         );
@@ -119,7 +119,7 @@ Mapa *carregarMapa( const char *caminhoArquivo ) {
                                 novoMapa->tamanhoElemento
                             },
                             (Vector2) {(float) (novoMapa->tamanhoElemento * 7), 0},
-                            (Vector2) {50.0, 0},
+                            (Vector2) {75.0f, 0},
                             YELLOW,
                             &rm.texturaTerreno
                         );

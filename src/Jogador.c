@@ -599,15 +599,16 @@ static void resolverColisaoJogadorMapaY(GameWorld *gw, float delta) {
                 // Ficar de olho pra ver se funciona, correção meio meia boca
                 if (retSobre.height < retSobre.width + 2) {
                     if (j->ret.y + j->ret.height / 2 < o->ret.y + o->ret.height / 2) {
-                        j->ret.y = o->ret.y - j->ret.height + (o->vel.y * delta);
-                        j->noChao = true;
                         
                         if (o->retornando) {
                             j->ret.x -= o->vel.x * delta;
+                            j->ret.y = o->ret.y -j->ret.height - (o->vel.y * delta);
                         } else {
                             j->ret.x += o->vel.x * delta;
-                            
+                            j->ret.y = o->ret.y -j->ret.height + (o->vel.y * delta);
                         }
+                        j->noChao = true;
+
                     } else {
                         j->ret.y = o->ret.y + o->ret.height;
                     }

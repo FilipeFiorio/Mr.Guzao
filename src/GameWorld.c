@@ -7,6 +7,7 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "GameWorld.h"
 #include "ResourceManager.h"
@@ -394,8 +395,8 @@ static void atualizarCamera(GameWorld *gw) {
     camera->offset.x = GetScreenWidth() / 2;
     camera->offset.y = GetScreenHeight() / 2;
 
-    camera->target.x = jogador->ret.x + jogador->ret.width;
-    camera->target.y = jogador->ret.y + jogador->ret.height;
+    camera->target.x = (int) roundf(jogador->ret.x + jogador->ret.width);
+    camera->target.y = (int) roundf(jogador->ret.y + jogador->ret.height);
 
     int minX = GetScreenWidth() / 2 + 50;
     int maxX = calcularLarguraMapa(gw->mapa) - GetScreenWidth() / 2 - 50;

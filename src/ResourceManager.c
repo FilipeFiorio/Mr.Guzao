@@ -70,6 +70,8 @@ void unloadResourcesResourceManager( void ) {
     UnloadTexture(rm.texturaInicio);
     UnloadTexture(rm.texturaMapaMundo);
 
+    SetTextureFilter(rm.texturaTerreno, TEXTURE_FILTER_POINT);
+
     UnloadTexture(rm.texturaInimigoNormal);
     UnloadTexture(rm.texturaInimigoDash);
     UnloadTexture(rm.texturaInimigoVoador);
