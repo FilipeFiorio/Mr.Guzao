@@ -1,5 +1,7 @@
 /build
+/dist
 **/*.exe
 .vscode/
 todo.txt
 Makefile
+dist.sh
