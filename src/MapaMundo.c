@@ -129,6 +129,7 @@ void atualizarMapaMundo(GameWorld *gw, float delta) {
 
         gw->mapa->jogador->vidas = gw->vidasSalvas;
         gw->mapa->jogador->moedas = gw->moedasSalvas;
+        gw->timerJogo = 200000;
 
         gw->proximoEstado = ESTADO_JOGO_GAMEPLAY;
         gw->estado = ESTADO_JOGO_FADE_OUT;

@@ -179,6 +179,24 @@ void updateGameWorld( GameWorld *gw, float delta ) {
                 gw->estado = ESTADO_JOGO_GAMEPLAY;
             }
 
+            if(IsKeyPressed(KEY_BACKSPACE)) {
+                PlaySound(rm.somBotao); 
+                switch (gw->faseAtual) {
+                case 1:
+                    StopMusicStream(rm.musicaFase1);
+                    break;
+                case 2:
+                    StopMusicStream(rm.musicaFase2);
+                    break;
+                case 3:
+                    StopMusicStream(rm.musicaFase3);
+                    break;
+                default:
+                    break;
+                }
+                iniciarTransicao(gw, ESTADO_JOGO_MAPA_MUNDO);
+            }
+
             break;
 
         case ESTADO_JOGO_MORTE:
@@ -300,7 +318,7 @@ void drawGameWorld( GameWorld *gw ) {
             
             drawTextAlinhado("Jogo Pausado", 200, 25, WHITE, CENTRO);
             desenharHud(gw);
-            
+
             break;
 
         case ESTADO_JOGO_MORTE:
