@@ -200,6 +200,10 @@ void updateGameWorld( GameWorld *gw, float delta ) {
                     TraceLog(LOG_ERROR, "Numero de fase atual inesperado");
                     break;
                 }
+
+                gw->vidasSalvas = gw->mapa->jogador->vidas;
+                gw->moedasSalvas = gw->mapa->jogador->moedas;
+
                 iniciarTransicao(gw, ESTADO_JOGO_MAPA_MUNDO);
             }
 
