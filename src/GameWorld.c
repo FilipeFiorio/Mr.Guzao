@@ -290,16 +290,17 @@ void drawGameWorld( GameWorld *gw ) {
 
             ClearBackground( (Color) {175, 231, 255, 255} );
 
-            drawTextAlinhado("Jogo Pausado", 200, 25, WHITE, CENTRO);
-            desenharHud(gw);
-
+            
             BeginMode2D(gw->camera);
-
+            
             desenharFundo(gw);
             desenharMapa(gw->mapa);
             
             EndMode2D();
-
+            
+            drawTextAlinhado("Jogo Pausado", 200, 25, WHITE, CENTRO);
+            desenharHud(gw);
+            
             break;
 
         case ESTADO_JOGO_MORTE:

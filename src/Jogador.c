@@ -602,10 +602,10 @@ static void resolverColisaoJogadorMapaY(GameWorld *gw, float delta) {
                         
                         if (o->retornando) {
                             j->ret.x -= o->vel.x * delta;
-                            j->ret.y = o->ret.y -j->ret.height - (o->vel.y * delta);
+                            j->ret.y = o->ret.y - j->ret.height - (o->vel.y * delta);
                         } else {
                             j->ret.x += o->vel.x * delta;
-                            j->ret.y = o->ret.y -j->ret.height + (o->vel.y * delta);
+                            j->ret.y = o->ret.y - j->ret.height + (o->vel.y * delta);
                         }
                         j->noChao = true;
 

@@ -97,7 +97,7 @@ Mapa *carregarMapa( const char *caminhoArquivo ) {
                                 novoMapa->tamanhoElemento
                             },
                             (Vector2) {0, (float) (novoMapa->tamanhoElemento * 5)},
-                            (Vector2) {0, 50.0f},
+                            (Vector2) {0, 75.0f},
                             YELLOW,
                             &rm.texturaTerreno
                         );
