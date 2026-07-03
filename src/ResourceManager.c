@@ -52,6 +52,8 @@ void loadResourcesResourceManager( void ) {
     rm.somVida = LoadSound("resources/sfx/vida.wav");
     rm.somChegada = LoadSound("resources/sfx/chegada.wav");
     rm.somVitoria = LoadSound("resources/sfx/vitoria.wav");
+    rm.somHurryUp = LoadSound("resources/sfx/hurry-up.wav");
+    rm.somBatida = LoadSound("resources/sfx/batida.wav");
     
     rm.musicaFase1 = LoadMusicStream("resources/musics/musica-fase1.mp3");
     rm.musicaFase2 = LoadMusicStream("resources/musics/musica-fase2.mp3");
@@ -102,6 +104,8 @@ void unloadResourcesResourceManager( void ) {
     UnloadSound(rm.somMapaMover);
     UnloadSound(rm.somChegada);
     UnloadSound(rm.somVitoria);
+    UnloadSound(rm.somHurryUp);
+    UnloadSound(rm.somBatida);
 
     UnloadMusicStream(rm.musicaFase1);
     UnloadMusicStream(rm.musicaFase2);

@@ -114,6 +114,10 @@ void updateGameWorld( GameWorld *gw, float delta ) {
             }
 
             gw->timerJogo -= (int) (1000 * delta);
+
+            if(gw->timerJogo == 60000) {
+                PlaySound(rm.somHurryUp);
+            }
         
             if(gw->timerJogo <= 0) {
                 gw->mapa->jogador->morto = true;
@@ -592,7 +596,7 @@ static void desenharHud(GameWorld *gw) {
             if(segundosRestantes % 2 == 0) {
                 corTempo = RED;
             } else {
-                corTempo = LIGHTGRAY;
+                corTempo = (Color) {130, 31, 45, 255};
             }
         }
     

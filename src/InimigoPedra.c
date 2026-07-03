@@ -142,6 +142,7 @@ void atualizarInimigoPedra(InimigoPedra *inimigo, GameWorld *gw, float delta) {
 
     if(verificarToqueChao(gw->mapa, inimigo)) {
         
+        PlaySound(rm.somBatida);
         inimigo->velAtual = -inimigo->vel.y / 3;
         inimigo->estado = INIMIGO_PEDRA_PARADO;
         inimigo->retornando = true;

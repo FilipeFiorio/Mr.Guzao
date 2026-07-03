@@ -44,6 +44,8 @@ typedef struct ResourceManager {
     Sound somGameOver;
     Sound somMapaMover;
     Sound somVida;
+    Sound somHurryUp;
+    Sound somBatida;
 
     Music musicaInicio;
     Music musicaFase1;
