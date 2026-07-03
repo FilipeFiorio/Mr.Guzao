@@ -7,6 +7,7 @@
 #include "MapaMundo.h"
 #include "Mapa.h"
 #include "ResourceManager.h"
+#include "Utils.h"
 
 MapaMundo *criarMapaMundo(int quantidadeFases) {
 
@@ -92,7 +93,7 @@ void atualizarMapaMundo(GameWorld *gw, float delta) {
     }
     
     //Andar entre fases
-    if(IsKeyPressed(KEY_D)) {
+    if(IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_D)) {
 
         int proximaFase = mapaMundo->faseAtual + 1;
 
@@ -103,7 +104,7 @@ void atualizarMapaMundo(GameWorld *gw, float delta) {
             mapaMundo->jogador.y = mapaMundo->fases[proximaFase].pos.y;
         }
     
-    } else if(IsKeyPressed(KEY_A)) {
+    } else if(IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_A)) {
     
         int faseAnterior = mapaMundo->faseAtual - 1;
 
@@ -129,7 +130,7 @@ void atualizarMapaMundo(GameWorld *gw, float delta) {
 
         gw->mapa->jogador->vidas = gw->vidasSalvas;
         gw->mapa->jogador->moedas = gw->moedasSalvas;
-        gw->timerJogo = 200000;
+        gw->timerJogo = 180000;
 
         gw->proximoEstado = ESTADO_JOGO_GAMEPLAY;
         gw->estado = ESTADO_JOGO_FADE_OUT;

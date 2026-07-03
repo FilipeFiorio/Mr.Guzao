@@ -103,6 +103,7 @@ void updateGameWorld( GameWorld *gw, float delta ) {
                         }
                         break;
                     default:
+                        TraceLog(LOG_ERROR, "Numero de fase atual inesperado");
                         break;
                 }
             }
@@ -192,6 +193,7 @@ void updateGameWorld( GameWorld *gw, float delta ) {
                     StopMusicStream(rm.musicaFase3);
                     break;
                 default:
+                    TraceLog(LOG_ERROR, "Numero de fase atual inesperado");
                     break;
                 }
                 iniciarTransicao(gw, ESTADO_JOGO_MAPA_MUNDO);
@@ -249,6 +251,7 @@ void updateGameWorld( GameWorld *gw, float delta ) {
             break;
 
         default:
+            TraceLog(LOG_ERROR, "Estado de jogo inesperado");
             break;
     }
     
@@ -282,6 +285,7 @@ void drawGameWorld( GameWorld *gw ) {
         case ESTADO_JOGO_MAPA_MUNDO:
 
             desenharMapaMundo(gw->mapaMundo);
+            desenharHud(gw); // dps
 
             break;
         
@@ -363,11 +367,8 @@ void drawGameWorld( GameWorld *gw ) {
             break;
 
         default:
-
-
+            TraceLog(LOG_ERROR, "Estado de jogo inesperado");
             break;
-
-
 
     }
 
@@ -390,6 +391,7 @@ static void desenharFundo( GameWorld *gw ) {
             fundo = rm.texturaFundoDeserto;
             break;
         default:
+            TraceLog(LOG_ERROR, "Numero de fase inesperado");
             break;
     }
 
@@ -478,7 +480,7 @@ static void reiniciarJogo(GameWorld *gw) {
     gw->mapa = carregarMapa(caminhoMapa);
 
     gw->gravidade = 600;
-    gw->timerJogo = 200000;
+    gw->timerJogo = 180000;
     gw->faseAtual = faseAtual;
     gw->estado = ESTADO_JOGO_GAMEPLAY;
     
@@ -497,7 +499,7 @@ static void inicializarGW(GameWorld *gw) {
     gw->faseAtual = 1;
     gw->mapaMundo = criarMapaMundo(3);
     gw->gravidade = 600;
-    gw->timerJogo = 200000;
+    gw->timerJogo = 180000;
     gw->alphaTransicao = 0;
     gw->timerMorte = 0;
     gw->proximoEstado = ESTADO_JOGO_INICIO;
@@ -512,14 +514,6 @@ static void inicializarGW(GameWorld *gw) {
         .rotation = 0.0f,
         .zoom = 1.0f
     };
-
-}
-
-static void desenharHud(GameWorld *gw) {
-
-    char textoHudJogador[50];
-    sprintf(textoHudJogador, "Vidas: %d   Moedas: %d   Tempo: %d", gw->mapa->jogador->vidas, gw->mapa->jogador->moedas, gw->timerJogo / 1000);
-    drawTextAlinhado(textoHudJogador, 10, 20, WHITE, ESQUERDA);
 
 }
 
@@ -539,7 +533,7 @@ static void passarFase(GameWorld *gw) {
         return;
     }
 
-    gw->timerJogo = 200000;
+    gw->timerJogo = 180000;
     iniciarTransicao(gw, ESTADO_JOGO_MAPA_MUNDO);
 }
 
@@ -548,5 +542,66 @@ static void iniciarTransicao(GameWorld *gw, EstadoJogo proximoEstado) {
     gw->proximoEstado = proximoEstado;
     gw->estado = ESTADO_JOGO_FADE_OUT;
     gw->alphaTransicao = 0;
+
+}
+
+static void desenharHud(GameWorld *gw) {
+
+    int vidas = 0;
+    int moedas = 0;
+
+    if(gw->mapa != NULL) {
+        vidas = gw->mapa->jogador->vidas;
+        moedas = gw->mapa->jogador->moedas;
+    } else {
+        vidas = gw->vidasSalvas;
+        moedas = gw->moedasSalvas;
+    }
+
+    Rectangle painel = {0};
+
+    if(gw->estado == ESTADO_JOGO_GAMEPLAY || gw->estado == ESTADO_JOGO_PAUSE || gw->estado == ESTADO_JOGO_MORTE) {
+        painel = (Rectangle) { 10, 10, 475, 50 };
+    } else if (gw->estado == ESTADO_JOGO_MAPA_MUNDO) {
+        painel = (Rectangle) {10, 10, 290, 50};
+    }
+ 
+    DrawRectangleRounded(painel, 0.25f, 8, (Color){ 0, 0, 0, 140 });
+    DrawRectangleRoundedLines(painel, 0.25f, 8, (Color){ 255, 255, 255, 60 });
+
+    int maxCoracoesExibidos = 10;
+    int vidasParaDesenhar = vidas < maxCoracoesExibidos ? vidas : maxCoracoesExibidos;
+
+    for (int i = 0; i < vidasParaDesenhar; i++) {
+        desenharCoracao((Vector2){ 25 + i * 28, 25 }, 25, (Color){ 220, 40, 60, 255 });
+    }
+    if (vidas > maxCoracoesExibidos) {
+        desenharTextoContornado(TextFormat("x%d", vidas), 22 + maxCoracoesExibidos * 26 + 4, 25, 18, WHITE);
+    }
+
+    desenharIconeMoeda((Vector2){ 200, 25 }, 12);
+    desenharTextoContornado(TextFormat("x %d", moedas), 226, 25, 20, (Color){ 255, 230, 150, 255 });
+
+    if(gw->estado == ESTADO_JOGO_GAMEPLAY || gw->estado == ESTADO_JOGO_PAUSE || gw->estado == ESTADO_JOGO_MORTE) {
+
+        int segundosRestantes = gw->timerJogo / 1000;
+        int minutos = segundosRestantes / 60;
+        int segundos = segundosRestantes % 60;
+    
+        Color corTempo = WHITE;
+    
+        if (segundosRestantes <= 60) {
+            if(segundosRestantes % 2 == 0) {
+                corTempo = RED;
+            } else {
+                corTempo = LIGHTGRAY;
+            }
+        }
+    
+        const char *textoTempo = TextFormat("%02d:%02d", minutos, segundos);
+        desenharTextoContornado(textoTempo, 350, 25, 24, corTempo);
+
+    }
+
 
 }
