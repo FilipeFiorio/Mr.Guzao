@@ -210,7 +210,7 @@ void updateGameWorld( GameWorld *gw, float delta ) {
             gw->timerMorte += delta;
 
             if(!IsSoundPlaying(rm.somMorte)) {
-                if(gw->mapa->jogador->vidas >= 0) {
+                if(gw->mapa->jogador->vidas >= 1) {
                     reiniciarJogo(gw);
                 } else {
                     PlaySound(rm.somGameOver);
@@ -443,7 +443,7 @@ static void verificarMorteJogador(GameWorld *gw) {
 
     bool foraDoMapa = (j->ret.y > calcularAlturaMapa(gw->mapa));
 
-    if(foraDoMapa && j->vidas > 0) {
+    if(foraDoMapa && j->vidas > 1) {
         PlaySound(rm.somMorte);
     }
 
@@ -458,7 +458,7 @@ static void verificarMorteJogador(GameWorld *gw) {
 
 static void verificarGameOver(GameWorld *gw) {
 
-    if(gw->mapa->jogador->vidas < 0) {
+    if(gw->mapa->jogador->vidas <= 0) {
         PlaySound(rm.somGameOver);
         destruirMapa(gw->mapa);
         gw->mapa = NULL;
@@ -559,17 +559,6 @@ static void desenharHud(GameWorld *gw) {
         vidas = gw->vidasSalvas;
         moedas = gw->moedasSalvas;
     }
-
-    Rectangle painel = {0};
-
-    if(gw->estado == ESTADO_JOGO_GAMEPLAY || gw->estado == ESTADO_JOGO_PAUSE || gw->estado == ESTADO_JOGO_MORTE) {
-        painel = (Rectangle) { 10, 10, 475, 50 };
-    } else if (gw->estado == ESTADO_JOGO_MAPA_MUNDO) {
-        painel = (Rectangle) {10, 10, 290, 50};
-    }
- 
-    DrawRectangleRounded(painel, 0.25f, 8, (Color){ 0, 0, 0, 140 });
-    DrawRectangleRoundedLines(painel, 0.25f, 8, (Color){ 255, 255, 255, 60 });
 
     int maxCoracoesExibidos = 10;
     int vidasParaDesenhar = vidas < maxCoracoesExibidos ? vidas : maxCoracoesExibidos;
