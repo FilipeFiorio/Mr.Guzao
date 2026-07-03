@@ -25,7 +25,6 @@
 //#include "raylib/raygui.h"       // other compilation units must only include
 //#undef RAYGUI_IMPLEMENTATION     // raygui.h
 
-
 static void atualizarCamera(GameWorld *gw);
 static void desenharFundo(GameWorld *gw);
 static void verificarMorteJogador(GameWorld *gw);
@@ -168,6 +167,7 @@ void updateGameWorld( GameWorld *gw, float delta ) {
 
             if(IsKeyPressed(KEY_ENTER)) {
                 PlaySound(rm.somBotao);
+                StopMusicStream(rm.musicaInicio);
                 iniciarTransicao(gw, ESTADO_JOGO_MAPA_MUNDO);
             }
 
@@ -254,7 +254,6 @@ void updateGameWorld( GameWorld *gw, float delta ) {
             TraceLog(LOG_ERROR, "Estado de jogo inesperado");
             break;
     }
-    
 
 }
 
@@ -312,7 +311,6 @@ void drawGameWorld( GameWorld *gw ) {
 
             ClearBackground( (Color) {175, 231, 255, 255} );
 
-            
             BeginMode2D(gw->camera);
             
             desenharFundo(gw);

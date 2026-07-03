@@ -120,6 +120,7 @@ void atualizarMapaMundo(GameWorld *gw, float delta) {
     //Entrar numa fase
     if(IsKeyPressed(KEY_ENTER)) {
         PlaySound(rm.somBotao);
+        StopMusicStream(rm.musicaMundo);
         gw->faseAtual = mapaMundo->fases[mapaMundo->faseAtual].fase;
 
         mapaMundo->fases[mapaMundo->faseAtual].finalizado = false;
