@@ -33,6 +33,7 @@ Jogador *criarJogador(float x, float y, float largura, float altura, Color cor) 
     };
     novoJogador->vel = (Vector2) {0};
     novoJogador->cor = BLUE;
+    novoJogador->plataformaAtual = NULL;
 
     novoJogador->vidas = 5;
     novoJogador->moedas = 0;
@@ -220,7 +221,7 @@ void entradaJogador(Jogador *j) {
         bool correr = IsKeyDown(KEY_LEFT_SHIFT) || (IsGamepadAvailable(0) && IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT));
         bool esquerda = IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT) || (IsGamepadAvailable(0) && IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_LEFT));
         bool direita = IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT) || (IsGamepadAvailable(0) && IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_RIGHT));
-            
+           
 
         if(!j->acelerado) {
             j->velMax = correr? j->velCorrendo : j->velAndando;
@@ -293,6 +294,7 @@ void entradaJogador(Jogador *j) {
             PlaySound(rm.somPulo);
             j->vel.y = correr ? j->velPuloCorrendo : j->velPulo;
             j->noChao = false;
+            j->plataformaAtual = NULL;
         }
         
         if(j->vel.y != 0) {
@@ -367,9 +369,25 @@ void atualizarJogador(Jogador *j, GameWorld *gw, float delta) {
         if(j->estado != JOGADOR_MORRENDO) {
 
             verificarColisaoJogadorItem(gw);
+
+            if (j->plataformaAtual != NULL) {
+                ObstaculoMovel *o = j->plataformaAtual;
+
+                bool aindaSobre = (j->ret.x + j->ret.width > o->ret.x) && (j->ret.x < o->ret.x + o->ret.width);
+
+                if (aindaSobre && j->noChao) {
+                    float dx = o->ret.x - o->posAnterior.x;
+                    float dy = o->ret.y - o->posAnterior.y;
+                    j->ret.x += dx;
+                    j->ret.y += dy;
+                } else {
+                    j->plataformaAtual = NULL;
+                }
+            }
             
             j->ret.x += j->vel.x * delta;
             resolverColisaoJogadorMapaX(gw);
+
         
             j->vel.y += gw->gravidade * delta;
         
@@ -589,27 +607,21 @@ static void resolverColisaoJogadorMapaY(GameWorld *gw, float delta) {
             }
             
         } else if (obs->tipo == OBSTACULO_MOVEL) {
-            
+
             ObstaculoMovel *o = (ObstaculoMovel*) obs->objeto;
-            
+
             if (CheckCollisionRecs(j->ret, o->ret)) {
 
                 Rectangle retSobre = GetCollisionRec(j->ret, o->ret);
-                
-                // Ficar de olho pra ver se funciona, correção meio meia boca
+
                 if (retSobre.height < retSobre.width + 2) {
                     if (j->ret.y + j->ret.height / 2 < o->ret.y + o->ret.height / 2) {
-                        
-                        if (o->retornando) {
-                            j->ret.x -= o->vel.x * delta;
-                            j->ret.y = o->ret.y - j->ret.height - (o->vel.y * delta);
-                        } else {
-                            j->ret.x += o->vel.x * delta;
-                            j->ret.y = o->ret.y - j->ret.height + (o->vel.y * delta);
-                        }
+                        // pousou em cima -> gruda
+                        j->ret.y = o->ret.y - j->ret.height;
                         j->noChao = true;
-
+                        j->plataformaAtual = o;
                     } else {
+                        // bateu por baixo
                         j->ret.y = o->ret.y + o->ret.height;
                     }
                     j->vel.y = 0;

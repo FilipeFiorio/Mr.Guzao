@@ -107,6 +107,12 @@ typedef enum EstadoTiro {
     TIRO_VIAJANDO,
     TIRO_DISPERSADO
 } EstadoTiro;
+
+typedef struct TransformacaoTela{
+    float escala;
+    float offsetX;
+    float offsetY;
+} TransformacaoTela;
  
 typedef struct QuadroAnimacao {
     Rectangle fonte;
@@ -123,46 +129,6 @@ typedef struct Animacao{
     bool executarUmaVez;
 } Animacao;
 
-typedef struct Jogador {
-    Rectangle ret;
-    Vector2 vel;
-    Color cor;
-    int vidas;
-    int moedas;
-
-    float velAndando;
-    float velCorrendo;
-    float velPulo;
-    float velPuloCorrendo;
-    float velMaxQueda;
-    float velFreio;
-    float velDesacelarar;
-    float velAcelerar;
-    float velMax;
-
-    bool noChao;
-    bool morto;
-    bool paraDireita;
-    bool freando;
-
-    bool acelerado;
-    int contadorTempoAcelerado;
-    bool congelado;
-    int contadorTempoCongelado;
-
-    EstadoJogador estado;
-
-    Animacao *animacoes[6];
-    int quantidadeAnimacoes;
-
-    Animacao animacaoParado;
-    Animacao animacaoAndando;
-    Animacao animacaoCorrendo;
-    Animacao animacaoPulando;
-    Animacao animacaoMorrendo;
-    Animacao animacaoFreando;
-
-} Jogador;
 
 typedef struct Inimigo {
     void *objeto;
@@ -178,13 +144,13 @@ typedef struct InimigoNormal {
     bool noChao;
     bool paraDireita;
     EstadoInimigoNormal estado;
-
+    
     Animacao *animacoes[2];
     int quantidadeAnimacoes;
-
+    
     Animacao animacaoAndando;
     Animacao animacaoMorrendo;
-
+    
 } InimigoNormal;
 
 typedef struct InimigoDash {
@@ -198,14 +164,14 @@ typedef struct InimigoDash {
     bool noChao;
     bool paraDireita;
     EstadoInimigoDash estado;
-
+    
     Animacao *animacoes[3];
     int quantidadeAnimacoes;
-
+    
     Animacao animacoAndando;
     Animacao animacaoDashando;
     Animacao animacaoMorrendo;
-
+    
 } InimigoDash;
 
 typedef struct InimigoVoador {
@@ -217,13 +183,13 @@ typedef struct InimigoVoador {
     bool estaVivo;
     bool retornando;
     EstadoInimigoVoador estado;
-
+    
     Animacao *animacoes[2];
     int quantidadeAnimacoes;
-
+    
     Animacao animacaoVoando;
     Animacao animacaoMorrendo;
-
+    
 }InimigoVoador;
 
 typedef struct InimigoEspinho {
@@ -233,12 +199,12 @@ typedef struct InimigoEspinho {
     float velMaxQueda;
     bool paraDireita;
     bool noChao;
-
+    
     EstadoInimigoEspinho estado;
-
+    
     Animacao *animacoes[1];
     int quantidadeAnimacoes;
-
+    
     Animacao animacaoAndando;
 } InimigoEspinho;
 
@@ -248,13 +214,13 @@ typedef struct InimigoFantasma {
     Vector2 vel;
     bool paraDireita;
     EstadoInimigoFantasma estado;
-
+    
     Animacao *animacoes[2];
     int quantidadeAnimacoes;
-
+    
     Animacao animacaoVoando;
     Animacao animacaoParado;
-
+    
 } InimigoFantasma;
 
 typedef struct InimigoPedra {
@@ -282,7 +248,7 @@ typedef struct Tiro {
 } Tiro;
 
 typedef struct TiroNormal {
-
+    
     Rectangle ret;
     Color cor;
     bool ativo;
@@ -291,17 +257,17 @@ typedef struct TiroNormal {
     float xIni;
     float distanciaMax;
     EstadoTiro estado;
-
+    
     Animacao *animacoes[2];
     int quantidadeAnimacoes;
-
+    
     Animacao animacaoViajando;
     Animacao animacaoDispersado;
-
+    
 }TiroNormal;
 
 typedef struct TiroGelo {
-
+    
     Rectangle ret;
     Color cor;
     bool ativo;
@@ -310,13 +276,13 @@ typedef struct TiroGelo {
     float xIni;
     float distanciaMax;
     EstadoTiro estado;
-
+    
     Animacao *animacoes[2];
     int quantidadeAnimacoes;
-
+    
     Animacao animacaoViajando;
     Animacao animacaoDispersado;
-
+    
 } TiroGelo;
 
 typedef struct InimigoPlanta {
@@ -326,13 +292,13 @@ typedef struct InimigoPlanta {
     bool paraDireita;
     EstadoInimigoPlanta estado;
     TiroNormal *tiro;
-
+    
     Animacao *animacoes[2];
     int quantidadeAnimacoes;
-
+    
     Animacao animacaoParado;
     Animacao animacaoAtirando;
-
+    
 } InimigoPlanta;
 
 typedef struct InimigoPlantaGelo {
@@ -342,13 +308,13 @@ typedef struct InimigoPlantaGelo {
     bool paraDireita;
     EstadoInimigoPlanta estado;
     TiroGelo *tiro;
-
+    
     Animacao *animacoes[2];
     int quantidadeAnimacoes;
-
+    
     Animacao animacaoParado;
     Animacao animacaoAtirando;
-
+    
 } InimigoPlantaGelo;
 
 typedef struct Obstaculo {
@@ -368,6 +334,7 @@ typedef struct ObstaculoMovel {
     Vector2 posInicial;
     Vector2 deslocamento;
     Vector2 vel;
+    Vector2 posAnterior;
     Color cor;
     Rectangle fonte;
     Texture2D *textura;
@@ -406,13 +373,13 @@ typedef struct ItemMoeda {
     int valor;
     bool ativo;
     EstadoItem estado;
-
+    
     Animacao *animacoes[2];
     int quantidadeAnimacoes;
-
+    
     Animacao animacaoGirando;
     Animacao animacaoColetado;
-
+    
 } ItemMoeda;
 
 typedef struct ItemMoedaEspecial {
@@ -421,10 +388,10 @@ typedef struct ItemMoedaEspecial {
     int valor;
     bool ativo;
     EstadoItem estado;
-
+    
     Animacao *animacoes[2];
     int quantidadeAnimacoes;
-
+    
     Animacao animacaoGirando;
     Animacao animacaoColetado;
     
@@ -435,13 +402,13 @@ typedef struct ItemVida{
     Color cor;
     bool ativo;
     EstadoItem estado;
-
+    
     Animacao *animacoes[2];
     int quantidadeAnimacoes;
-
+    
     Animacao animacaoGirando;
     Animacao animacaoColetado;
-
+    
 }ItemVida;
 
 typedef struct ElementoMapa ElementoMapa;
@@ -451,13 +418,55 @@ struct ElementoMapa {
     ElementoMapa *proximo;
 };
 
+typedef struct Jogador {
+    Rectangle ret;
+    Vector2 vel;
+    Color cor;
+    ObstaculoMovel *plataformaAtual;
+    int vidas;
+    int moedas;
+
+    float velAndando;
+    float velCorrendo;
+    float velPulo;
+    float velPuloCorrendo;
+    float velMaxQueda;
+    float velFreio;
+    float velDesacelarar;
+    float velAcelerar;
+    float velMax;
+
+    bool noChao;
+    bool morto;
+    bool paraDireita;
+    bool freando;
+
+    bool acelerado;
+    int contadorTempoAcelerado;
+    bool congelado;
+    int contadorTempoCongelado;
+
+    EstadoJogador estado;
+
+    Animacao *animacoes[6];
+    int quantidadeAnimacoes;
+
+    Animacao animacaoParado;
+    Animacao animacaoAndando;
+    Animacao animacaoCorrendo;
+    Animacao animacaoPulando;
+    Animacao animacaoMorrendo;
+    Animacao animacaoFreando;
+
+} Jogador;
+
 typedef struct Mapa {
     ElementoMapa *obstaculos;
     int quantidadeObstaculos;
-
+    
     ElementoMapa *inimigos;
     int quantidadeInimigos;
-
+    
     ElementoMapa *itens;
     int quantidadeItens;
 

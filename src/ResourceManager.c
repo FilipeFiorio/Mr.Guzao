@@ -73,6 +73,11 @@ void unloadResourcesResourceManager( void ) {
     UnloadTexture(rm.texturaMapaMundo);
 
     SetTextureFilter(rm.texturaTerreno, TEXTURE_FILTER_POINT);
+    SetTextureFilter(rm.texturaInicio, TEXTURE_FILTER_POINT);
+    SetTextureFilter(rm.texturaMapaMundo, TEXTURE_FILTER_POINT);
+    SetTextureFilter(rm.texturaFundo, TEXTURE_FILTER_POINT);
+    SetTextureFilter(rm.texturaFundoDeserto, TEXTURE_FILTER_POINT);
+    SetTextureFilter(rm.texturaFundoNeve, TEXTURE_FILTER_POINT);
 
     UnloadTexture(rm.texturaInimigoNormal);
     UnloadTexture(rm.texturaInimigoDash);
@@ -85,10 +90,26 @@ void unloadResourcesResourceManager( void ) {
     UnloadTexture(rm.texturaTiro);
     UnloadTexture(rm.texturaInimigoMorrendo);
 
+    SetTextureFilter(rm.texturaInimigoNormal, TEXTURE_FILTER_POINT);
+    SetTextureFilter(rm.texturaInimigoDash, TEXTURE_FILTER_POINT);
+    SetTextureFilter(rm.texturaInimigoVoador, TEXTURE_FILTER_POINT);
+    SetTextureFilter(rm.texturaInimigoFantasma, TEXTURE_FILTER_POINT);
+    SetTextureFilter(rm.texturaInimigoPlantaGelo, TEXTURE_FILTER_POINT);
+    SetTextureFilter(rm.texturaInimigoPlanta, TEXTURE_FILTER_POINT);
+    SetTextureFilter(rm.texturaInimigoPedra, TEXTURE_FILTER_POINT);
+    SetTextureFilter(rm.texturaInimigoEspinho, TEXTURE_FILTER_POINT);
+    SetTextureFilter(rm.texturaTiro, TEXTURE_FILTER_POINT);
+    SetTextureFilter(rm.texturaInimigoMorrendo, TEXTURE_FILTER_POINT);
+    
     UnloadTexture(rm.texturaJogadorMapa);
     UnloadTexture(rm.texturaItens);
+
+    SetTextureFilter(rm.texturaItens, TEXTURE_FILTER_POINT);
+    SetTextureFilter(rm.texturaJogadorMapa, TEXTURE_FILTER_POINT);
     
     UnloadTexture(rm.texturaJogador);
+
+    SetTextureFilter(rm.texturaJogador, TEXTURE_FILTER_POINT);
 
     UnloadFont(rm.fonte);
 

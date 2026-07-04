@@ -308,7 +308,13 @@ void drawGameWorld( GameWorld *gw ) {
 
             ClearBackground(WHITE);
 
-            DrawTexture(rm.texturaInicio, 0, 0, WHITE);
+            TransformacaoTela t = calcularTransformacaoCover(rm.texturaInicio);
+
+            Rectangle origem = {0, 0, (float) rm.texturaInicio.width, (float) rm.texturaInicio.height};
+            Rectangle destino = {t.offsetX, t.offsetY, (float) rm.texturaInicio.width * t.escala, (float) rm.texturaInicio.height * t.escala };
+
+            DrawTexturePro(rm.texturaInicio, origem, destino, (Vector2) {0}, 0.0f, WHITE);
+
 
             drawTextAlinhado("Mr. Guzão", 200, 72, WHITE, CENTRO);
             drawTextAlinhado("Aperte [ENTER] para iniciar", 500, 25, WHITE, CENTRO);
@@ -363,8 +369,8 @@ void drawGameWorld( GameWorld *gw ) {
             DrawRectangle(
                 0,
                 0,
-                GetScreenWidth(),
-                GetScreenHeight(),
+                GetRenderWidth(),
+                GetRenderHeight(),
                 (Color){0,0,0,gw->alphaTransicao}
             );
 
@@ -419,15 +425,15 @@ static void atualizarCamera(GameWorld *gw) {
     Jogador *jogador = gw->mapa->jogador;
     Camera2D *camera = &gw->camera;
 
-    camera->offset.x = GetScreenWidth() / 2;
-    camera->offset.y = GetScreenHeight() / 2;
+    camera->offset.x = GetRenderWidth() / 2;
+    camera->offset.y = GetRenderHeight() / 2;
 
     camera->target.x = (int) roundf(jogador->ret.x + jogador->ret.width);
     camera->target.y = (int) roundf(jogador->ret.y + jogador->ret.height);
 
-    int minX = GetScreenWidth() / 2 + 50;
-    int maxX = calcularLarguraMapa(gw->mapa) - GetScreenWidth() / 2 - 50;
-    int maxY = calcularAlturaMapa(gw->mapa) - GetScreenHeight() / 2;
+    int minX = GetRenderWidth() / 2 + 50;
+    int maxX = calcularLarguraMapa(gw->mapa) - GetRenderWidth() / 2 - 50;
+    int maxY = calcularAlturaMapa(gw->mapa) - GetRenderHeight() / 2;
 
     if(camera->target.x < minX) {
         camera->target.x = minX;
@@ -582,27 +588,45 @@ static void desenharHud(GameWorld *gw) {
         moedas = gw->moedasSalvas;
     }
 
+    const int margem = 25;     
+    const int espacoEntreGrupos = 25; 
+    const float tamanhoCoracao = 25;
+    const float espacamentoCoracao = 28;
+
     int maxCoracoesExibidos = 10;
     int vidasParaDesenhar = vidas < maxCoracoesExibidos ? vidas : maxCoracoesExibidos;
 
+    int cursorX = margem;
+
     for (int i = 0; i < vidasParaDesenhar; i++) {
-        desenharCoracao((Vector2){ 25 + i * 28, 25 }, 25, (Color){ 220, 40, 60, 255 });
-    }
-    if (vidas > maxCoracoesExibidos) {
-        desenharTextoContornado(TextFormat("x%d", vidas), 22 + maxCoracoesExibidos * 26 + 4, 25, 18, WHITE);
+        desenharCoracao((Vector2){ cursorX, 25 }, tamanhoCoracao, (Color){ 220, 40, 60, 255 });
+        cursorX += espacamentoCoracao;
     }
 
-    desenharIconeMoeda((Vector2){ 200, 25 }, 12);
-    desenharTextoContornado(TextFormat("x %d", moedas), 226, 25, 20, (Color){ 255, 230, 150, 255 });
+    if (vidas > maxCoracoesExibidos) {
+        const char *textoExtra = TextFormat("x%d", vidas);
+        desenharTextoContornado(textoExtra, cursorX, 25, 18, WHITE);
+        cursorX += MeasureText(textoExtra, 18);
+    } else if (vidasParaDesenhar > 0) {
+        cursorX = margem + (vidasParaDesenhar - 1) * espacamentoCoracao + tamanhoCoracao;
+    }
+
+    cursorX += espacoEntreGrupos;
+
+    desenharIconeMoeda((Vector2){ cursorX, 25 }, 12);
+    cursorX += 12 * 2 + 6; 
+
+    const char *textoMoedas = TextFormat("x %d", moedas);
+    desenharTextoContornado(textoMoedas, cursorX, 25, 20, (Color){ 255, 230, 150, 255 });
 
     if(gw->estado == ESTADO_JOGO_GAMEPLAY || gw->estado == ESTADO_JOGO_PAUSE || gw->estado == ESTADO_JOGO_MORTE) {
 
         int segundosRestantes = gw->timerJogo / 1000;
         int minutos = segundosRestantes / 60;
         int segundos = segundosRestantes % 60;
-    
+
         Color corTempo = WHITE;
-    
+
         if (segundosRestantes <= 60) {
             if(segundosRestantes % 2 == 0) {
                 corTempo = RED;
@@ -610,11 +634,9 @@ static void desenharHud(GameWorld *gw) {
                 corTempo = (Color) {130, 31, 45, 255};
             }
         }
-    
+
         const char *textoTempo = TextFormat("%02d:%02d", minutos, segundos);
-        desenharTextoContornado(textoTempo, 350, 25, 24, corTempo);
-
+        drawTextAlinhado(textoTempo, 25, 24, corTempo, CENTRO);
     }
-
 
 }

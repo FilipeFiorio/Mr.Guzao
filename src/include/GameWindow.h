@@ -18,6 +18,7 @@ typedef struct GameWindow {
     const char *title;
 
     int targetFPS;
+    bool vSync;
     bool antialiasing;
     bool resizable;
     bool fullScreen;
@@ -42,6 +43,7 @@ GameWindow* createGameWindow(
         int height, 
         const char *title, 
         int targetFPS,
+        bool vSync,
         bool antialiasing, 
         bool resizable, 
         bool fullScreen,

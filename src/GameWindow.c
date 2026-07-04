@@ -21,6 +21,7 @@ GameWindow* createGameWindow(
         int height, 
         const char *title, 
         int targetFPS,
+        bool vSync,
         bool antialiasing, 
         bool resizable, 
         bool fullScreen,
@@ -37,6 +38,7 @@ GameWindow* createGameWindow(
     gameWindow->height = height;
     gameWindow->title = title;
     gameWindow->targetFPS = targetFPS;
+    gameWindow->vSync = vSync;
     gameWindow->antialiasing = antialiasing;
     gameWindow->resizable = resizable;
     gameWindow->fullScreen = fullScreen;
@@ -67,12 +69,12 @@ void initGameWindow( GameWindow *gameWindow ) {
             SetConfigFlags( FLAG_MSAA_4X_HINT );
         }
 
-        if ( gameWindow->resizable ) {
-            SetConfigFlags( FLAG_WINDOW_RESIZABLE );
+        if(gameWindow->vSync) {
+            SetConfigFlags( FLAG_VSYNC_HINT ); 
         }
 
-        if ( gameWindow->fullScreen ) {
-            SetConfigFlags( FLAG_FULLSCREEN_MODE );
+        if ( gameWindow->resizable ) {
+            SetConfigFlags( FLAG_WINDOW_RESIZABLE );
         }
 
         if ( gameWindow->undecorated ) {
@@ -90,9 +92,19 @@ void initGameWindow( GameWindow *gameWindow ) {
         if ( gameWindow->alwaysRun ) {
             SetConfigFlags( FLAG_WINDOW_ALWAYS_RUN );
         }
-
+        
         InitWindow( gameWindow->width, gameWindow->height, gameWindow->title );
 
+        int mLargura = GetMonitorWidth(GetCurrentMonitor());
+        int mAltura = GetMonitorHeight(GetCurrentMonitor());
+        int largura = mLargura > 0 ? mLargura : gameWindow->width;
+        int altura = mAltura > 0 ? mAltura : gameWindow->height;
+
+        if (gameWindow->fullScreen && mLargura > 0 && mAltura > 0) {
+            SetWindowSize( largura, altura );
+            ToggleFullscreen();
+        }
+        
         if ( gameWindow->initAudio ) {
             InitAudioDevice();
 
@@ -102,7 +114,9 @@ void initGameWindow( GameWindow *gameWindow ) {
             }
         }
 
-        SetTargetFPS( gameWindow->targetFPS );    
+        int refreshRate = GetMonitorRefreshRate(GetCurrentMonitor());
+        int fps = refreshRate > 0 ? refreshRate : gameWindow->targetFPS;
+        SetTargetFPS(fps);    
 
         if ( gameWindow->loadResources ) {
             loadResourcesResourceManager();
@@ -114,6 +128,7 @@ void initGameWindow( GameWindow *gameWindow ) {
         while ( !WindowShouldClose() ) {
             updateGameWorld( gameWindow->gw, GetFrameTime() );
             drawGameWorld( gameWindow->gw );
+            HideCursor();
         }
 
         if ( gameWindow->loadResources ) {
