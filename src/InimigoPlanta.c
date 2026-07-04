@@ -113,7 +113,6 @@ void atualizarInimigoPlanta(InimigoPlanta *inimigo, GameWorld *gw, float delta) 
 
     
     } else {
-        inimigo->coolDownTiro = 0;
         inimigo->estado = INIMIGO_PLANTA_PARADO;
     }
 
