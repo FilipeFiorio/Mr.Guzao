@@ -26,14 +26,14 @@ MapaMundo *criarMapaMundo(int quantidadeFases) {
 
     novoMapaMundo->fases[1] = (NodeMapa) {
         {632, 397},
-        1,
+        false,
         false,
         2
     };
     
     novoMapaMundo->fases[2] = (NodeMapa) {
         {1033, 387},
-        1,
+        false,
         false,
         3
     };

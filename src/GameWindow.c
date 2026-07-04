@@ -114,6 +114,7 @@ void initGameWindow( GameWindow *gameWindow ) {
         while ( !WindowShouldClose() ) {
             updateGameWorld( gameWindow->gw, GetFrameTime() );
             drawGameWorld( gameWindow->gw );
+            HideCursor();
         }
 
         if ( gameWindow->loadResources ) {
