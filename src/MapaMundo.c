@@ -39,7 +39,7 @@ MapaMundo *criarMapaMundo(int quantidadeFases) {
     
     novoMapaMundo->fases[2] = (NodeMapa) {
         posFase3,
-        false,
+        1,
         false,
         3
     };
