@@ -263,6 +263,10 @@ void updateGameWorld( GameWorld *gw, float delta ) {
             break;
     }
 
+    TraceLog(LOG_INFO, "Screen: %d x %d", GetScreenWidth(), GetScreenHeight());
+    TraceLog(LOG_INFO, "Render: %d x %d", GetRenderWidth(), GetRenderHeight());
+    TraceLog(LOG_INFO, "Monitor: %d x %d", GetMonitorWidth(GetCurrentMonitor()), GetMonitorHeight(GetCurrentMonitor()));
+
 }
 
 /**

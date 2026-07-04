@@ -8,33 +8,28 @@
 #include "Mapa.h"
 #include "ResourceManager.h"
 #include "Utils.h"
-
 MapaMundo *criarMapaMundo(int quantidadeFases) {
 
     MapaMundo *novoMapaMundo = (MapaMundo*) malloc( sizeof(MapaMundo));
-
     novoMapaMundo->quantidadeFases = quantidadeFases;
-
     novoMapaMundo->fases = (NodeMapa*) malloc(sizeof(NodeMapa) * novoMapaMundo->quantidadeFases);
 
-    TransformacaoTela t = calcularTransformacaoCover(rm.texturaMapaMundo);
+    // Guarda as coordenadas ORIGINAIS (relativas à imagem), sem transformar aqui
+    Vector2 posFase1 = (Vector2) {282, 507};
+    Vector2 posFase2 = (Vector2) {838, 525};
+    Vector2 posFase3 = (Vector2) {1370, 511};
 
-    Vector2 posFase1 = transformarPonto((Vector2) {282, 507}, t);
-    Vector2 posFase2 = transformarPonto((Vector2) {838, 525}, t);
-    Vector2 posFase3 = transformarPonto((Vector2) {1370, 511}, t);
-
-    novoMapaMundo->fases[0] = (NodeMapa) {
-        posFase1,
-        true,
-        false,
-        1
+    novoMapaMundo->fases[0] = (NodeMapa) { 
+        posFase1, 
+        true, 
+        false, 1
     };
 
-    novoMapaMundo->fases[1] = (NodeMapa) {
-        posFase2,
-        false,
-        false,
-        2
+    novoMapaMundo->fases[1] = (NodeMapa) { 
+        posFase2, 
+        1, 
+        false, 
+        2 
     };
     
     novoMapaMundo->fases[2] = (NodeMapa) {
@@ -42,14 +37,26 @@ MapaMundo *criarMapaMundo(int quantidadeFases) {
         1,
         false,
         3
+
+    };
+    
+    novoMapaMundo->fases[2] = (NodeMapa) { 
+        posFase3, 
+        1, 
+        false, 
+        3 
     };
 
     novoMapaMundo->faseAtual = 0;
 
-    novoMapaMundo->jogador = (Rectangle) {posFase1.x, posFase1.y, 48, 48};
+    novoMapaMundo->jogador = (Rectangle) {
+        posFase1.x, 
+        posFase1.y, 
+        48, 
+        48
+    };
 
     return novoMapaMundo;
-
 }
 
 void desenharMapaMundo(MapaMundo *mapaMundo) {
@@ -58,11 +65,11 @@ void desenharMapaMundo(MapaMundo *mapaMundo) {
 
     Rectangle origem = {0, 0, (float) rm.texturaMapaMundo.width, (float) rm.texturaMapaMundo.height};
     Rectangle destino = {t.offsetX, t.offsetY, (float) rm.texturaMapaMundo.width * t.escala, (float) rm.texturaMapaMundo.height * t.escala };
-
+    
     DrawTexturePro(rm.texturaMapaMundo, origem, destino, (Vector2) {0}, 0.0f, WHITE);
 
-    DrawTexture(rm.texturaJogadorMapa, mapaMundo->jogador.x, mapaMundo->jogador.y, WHITE);
-
+    Vector2 posJogadorTela = transformarPonto((Vector2){mapaMundo->jogador.x, mapaMundo->jogador.y}, t);
+    DrawTexture(rm.texturaJogadorMapa, posJogadorTela.x, posJogadorTela.y, WHITE);
 }
 
 void destruirMapaMundo(MapaMundo *mapaMundo) {
@@ -88,6 +95,8 @@ void atualizarMapaMundo(GameWorld *gw, float delta) {
             mapaMundo->fases[i+1].liberado = true;
         }
     }
+
+    TraceLog(LOG_INFO, TextFormat("%d x %d", mapaMundo->fases[1].pos.x, mapaMundo->fases[1].pos.y));
     
     //Andar entre fases
     if(IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_D)) {
