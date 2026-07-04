@@ -97,7 +97,7 @@ Mapa *carregarMapa( const char *caminhoArquivo ) {
                                 novoMapa->tamanhoElemento
                             },
                             (Vector2) {0, (float) (novoMapa->tamanhoElemento * 5)},
-                            (Vector2) {0, 75.0f},
+                            (Vector2) {0, 90.0f},
                             YELLOW,
                             &rm.texturaTerreno
                         );
@@ -119,7 +119,7 @@ Mapa *carregarMapa( const char *caminhoArquivo ) {
                                 novoMapa->tamanhoElemento
                             },
                             (Vector2) {(float) (novoMapa->tamanhoElemento * 7), 0},
-                            (Vector2) {75.0f, 0},
+                            (Vector2) {90.0f, 0},
                             YELLOW,
                             &rm.texturaTerreno
                         );
@@ -546,11 +546,6 @@ void atualizarMapa(Mapa *m,GameWorld *gw, float delta ) {
 
     ElementoMapa *el = NULL;
 
-    if(m->jogador != NULL) {
-        entradaJogador(m->jogador);
-        atualizarJogador(m->jogador, gw, delta);
-    }
-
     if(m->jogador->estado != JOGADOR_MORRENDO) {
         
         el = m->inimigos;
@@ -574,6 +569,12 @@ void atualizarMapa(Mapa *m,GameWorld *gw, float delta ) {
             el = el->proximo;
         }
     }
+    
+    if(m->jogador != NULL) {
+        entradaJogador(m->jogador);
+        atualizarJogador(m->jogador, gw, delta);
+    }
+
 
 
 }

@@ -15,10 +15,11 @@
 int main( void ) {
 
     GameWindow *gameWindow = createGameWindow(
-        1280,             // width
-        720,             // height
+        800,             // width
+        600,             // height
         "Mr. Guzão",  // title
-        60,              // target FPS
+        60,             // target fps
+        true,              // vsync
         false,            // antialiasing
         false,           // resizable
         true,           // full screen

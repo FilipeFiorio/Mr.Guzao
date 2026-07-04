@@ -13,6 +13,7 @@ ObstaculoMovel *criarObstaculoMovel(Rectangle ret, Rectangle fonte, Vector2 desl
     novoObstaculoMovel->fonte = fonte;
     novoObstaculoMovel->deslocamento = deslocamento;
     novoObstaculoMovel->vel = vel;
+    novoObstaculoMovel->posAnterior = (Vector2) {0};
     novoObstaculoMovel->cor = cor;
     novoObstaculoMovel->textura = textura;
 
@@ -52,6 +53,8 @@ void desenharObstaculoMovel(ObstaculoMovel *obstaculoMovel) {
 }
 
 void atualizarObstaculoMovel(ObstaculoMovel *obstaculoMovel, GameWorld *gw, float delta) {
+
+    obstaculoMovel->posAnterior =  (Vector2) {obstaculoMovel->ret.x, obstaculoMovel->ret.y};
 
     Vector2 alvo;
 

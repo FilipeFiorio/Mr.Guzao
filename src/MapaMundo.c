@@ -17,22 +17,28 @@ MapaMundo *criarMapaMundo(int quantidadeFases) {
 
     novoMapaMundo->fases = (NodeMapa*) malloc(sizeof(NodeMapa) * novoMapaMundo->quantidadeFases);
 
+    TransformacaoTela t = calcularTransformacaoCover(rm.texturaMapaMundo);
+
+    Vector2 posFase1 = transformarPonto((Vector2) {282, 507}, t);
+    Vector2 posFase2 = transformarPonto((Vector2) {838, 525}, t);
+    Vector2 posFase3 = transformarPonto((Vector2) {1370, 511}, t);
+
     novoMapaMundo->fases[0] = (NodeMapa) {
-        {212, 380},
+        posFase1,
         true,
         false,
         1
     };
 
     novoMapaMundo->fases[1] = (NodeMapa) {
-        {632, 397},
+        posFase2,
         false,
         false,
         2
     };
     
     novoMapaMundo->fases[2] = (NodeMapa) {
-        {1033, 387},
+        posFase3,
         false,
         false,
         3
@@ -40,7 +46,7 @@ MapaMundo *criarMapaMundo(int quantidadeFases) {
 
     novoMapaMundo->faseAtual = 0;
 
-    novoMapaMundo->jogador = (Rectangle) {210, 380, 48, 48};
+    novoMapaMundo->jogador = (Rectangle) {posFase1.x, posFase1.y, 48, 48};
 
     return novoMapaMundo;
 
@@ -48,23 +54,14 @@ MapaMundo *criarMapaMundo(int quantidadeFases) {
 
 void desenharMapaMundo(MapaMundo *mapaMundo) {
 
-    DrawTexturePro( 
-        rm.texturaMapaMundo, 
-        (Rectangle) {
-            0, 0,
-            rm.texturaMapaMundo.width, rm.texturaMapaMundo.height
-        },
-        (Rectangle) {
-            0, 0,
-            GetScreenWidth(), GetScreenHeight()
-        },
-        (Vector2) {0},
-        0.0f,
-        WHITE
-    );
+    TransformacaoTela t = calcularTransformacaoCover(rm.texturaMapaMundo);
+
+    Rectangle origem = {0, 0, (float) rm.texturaMapaMundo.width, (float) rm.texturaMapaMundo.height};
+    Rectangle destino = {t.offsetX, t.offsetY, (float) rm.texturaMapaMundo.width * t.escala, (float) rm.texturaMapaMundo.height * t.escala };
+
+    DrawTexturePro(rm.texturaMapaMundo, origem, destino, (Vector2) {0}, 0.0f, WHITE);
 
     DrawTexture(rm.texturaJogadorMapa, mapaMundo->jogador.x, mapaMundo->jogador.y, WHITE);
-
 
 }
 

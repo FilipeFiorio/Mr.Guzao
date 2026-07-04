@@ -6,7 +6,7 @@
 void drawTextAlinhado(const char *texto, int y, int tamanhoFonte, Color cor, int posicao) {
     
     Vector2 tamanhoTexto = MeasureTextEx(rm.fonte, texto, tamanhoFonte, 0);
-    int tamanhoTela = GetScreenWidth();
+    int tamanhoTela = GetRenderWidth();
     int posicaoTexto = 0;
     
     switch (posicao) {
@@ -66,4 +66,30 @@ void desenharIconeMoeda(Vector2 pos, float raio) {
     DrawCircleV(centro, raio, (Color){ 255, 215, 0, 255 });
     DrawCircleLines(centro.x, centro.y, raio, (Color){ 150, 110, 0, 255 });
     DrawCircleV((Vector2){ centro.x - raio * 0.3f, centro.y - raio * 0.3f }, raio * 0.3f, (Color){ 255, 255, 255, 130 });
+}
+
+TransformacaoTela calcularTransformacaoCover(Texture2D textura) {
+    float telaLargura = (float) GetRenderWidth();
+    float telaAltura = (float) GetRenderHeight();
+
+    float escalaX = telaLargura / textura.width;
+    float escalaY = telaAltura / textura.height;
+    float escala = (escalaX > escalaY) ? escalaX : escalaY;
+
+    float larguraDestino = textura.width * escala;
+    float alturaDestino = textura.height * escala;
+
+    TransformacaoTela t;
+    t.escala = escala;
+    t.offsetX = (telaLargura - larguraDestino) / 2.0f;
+    t.offsetY = (telaAltura - alturaDestino) / 2.0f;
+
+    return t;
+}
+
+Vector2 transformarPonto(Vector2 posOriginal, TransformacaoTela t) {
+    return (Vector2) {
+        posOriginal.x * t.escala + t.offsetX,
+        posOriginal.y * t.escala + t.offsetY
+    };
 }
