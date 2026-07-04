@@ -238,7 +238,7 @@ void updateGameWorld( GameWorld *gw, float delta ) {
         
         case ESTADO_JOGO_FADE_IN:
             
-            gw->alphaTransicao -= 5;
+            gw->alphaTransicao -= 600 * delta;
 
             if (gw->alphaTransicao <= 0) {
                 gw->alphaTransicao = 0;
@@ -249,7 +249,7 @@ void updateGameWorld( GameWorld *gw, float delta ) {
         
         case ESTADO_JOGO_FADE_OUT:
 
-            gw->alphaTransicao += 5;
+            gw->alphaTransicao += 600 * delta;
 
             if (gw->alphaTransicao >= 255) {
                 gw->alphaTransicao = 255;
@@ -374,7 +374,7 @@ void drawGameWorld( GameWorld *gw ) {
                 (Color){0,0,0,gw->alphaTransicao}
             );
 
-            drawTextAlinhado("Carregando...", 650, 25, WHITE, DIREITA);
+            drawTextAlinhado("Carregando...", GetRenderHeight() * 0.95f, 25, WHITE, DIREITA);
 
             break;
 
