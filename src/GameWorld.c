@@ -451,11 +451,29 @@ static void verificarMorteJogador(GameWorld *gw) {
         PlaySound(rm.somMorte);
     }
 
+
     if(foraDoMapa || j->morto) {
+
+        switch (gw->faseAtual) { 
+            case 1:
+                StopMusicStream(rm.musicaFase1);
+                break;
+            case 2:
+                StopMusicStream(rm.musicaFase2);
+                break;
+            case 3:
+                StopMusicStream(rm.musicaFase3);
+                break;
+            default:
+                TraceLog(LOG_ERROR, "Numero de fase inesperado");
+                break;
+        }
+
         j->vidas--;
         gw->estado = ESTADO_JOGO_MORTE;
         gw->timerMorte = 0;
         j->morto = false;
+        
     } 
 
 }
