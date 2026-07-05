@@ -72,6 +72,8 @@ void destruirInimigo(Inimigo *inimigo) {
     } else if(inimigo->tipo == INIMIGO_PLANTA_GELO) {
         destruirInimigoPlantaGelo((InimigoPlantaGelo*) inimigo->objeto);
     }
+
+    free(inimigo);
     
 }
 

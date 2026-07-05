@@ -488,29 +488,45 @@ Mapa *carregarMapa( const char *caminhoArquivo ) {
 
 void destruirMapa(Mapa *m) {
     
+    if (m == NULL) {
+        return;
+    }
+
     if(m->jogador != NULL) {
         destruirJogador(m->jogador);
     }
-   
-    ElementoMapa *el = NULL;
 
-    el = m->obstaculos;
+    ElementoMapa *el = m->obstaculos;
     while(el != NULL) {
-        destruirObstaculo((Obstaculo*) el->objeto);
-        el = el->proximo;
+        ElementoMapa *proximo = el->proximo;
+        if (el->objeto != NULL) {
+            destruirObstaculo((Obstaculo*) el->objeto);
+        }
+        free(el);
+        el = proximo;
     }
 
     el = m->inimigos;
     while(el != NULL) {
-        destruirInimigo((Inimigo*) el->objeto);
-        el = el->proximo;
+        ElementoMapa *proximo = el->proximo;
+        if (el->objeto != NULL) {
+            destruirInimigo((Inimigo*) el->objeto);
+        }
+        free(el);
+        el = proximo;
     }
 
     el = m->itens;
     while(el != NULL) {
-        destruirItem((Item*) el->objeto);
-        el = el->proximo;
+        ElementoMapa *proximo = el->proximo;
+        if (el->objeto != NULL) {
+            destruirItem((Item*) el->objeto);
+        }
+        free(el);
+        el = proximo;
     }
+
+    free(m);
 
 }
 

@@ -56,6 +56,10 @@ GameWorld* createGameWorld( void ) {
  */
 void destroyGameWorld( GameWorld *gw ) {
 
+    if ( gw == NULL ) {
+        return;
+    }
+
     if (gw->mapa != NULL) {
         destruirMapa(gw->mapa);
     }
@@ -63,6 +67,12 @@ void destroyGameWorld( GameWorld *gw ) {
     if (gw->mapaMundo != NULL) {
         destruirMapaMundo(gw->mapaMundo);
     }
+
+    StopMusicStream(rm.musicaFase1);
+    StopMusicStream(rm.musicaFase2);
+    StopMusicStream(rm.musicaFase3);
+    StopMusicStream(rm.musicaInicio);
+    StopMusicStream(rm.musicaMundo);
 
     free(gw);
 
@@ -262,10 +272,6 @@ void updateGameWorld( GameWorld *gw, float delta ) {
             TraceLog(LOG_ERROR, "Estado de jogo inesperado");
             break;
     }
-
-    TraceLog(LOG_INFO, "Screen: %d x %d", GetScreenWidth(), GetScreenHeight());
-    TraceLog(LOG_INFO, "Render: %d x %d", GetRenderWidth(), GetRenderHeight());
-    TraceLog(LOG_INFO, "Monitor: %d x %d", GetMonitorWidth(GetCurrentMonitor()), GetMonitorHeight(GetCurrentMonitor()));
 
 }
 

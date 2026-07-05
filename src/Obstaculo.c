@@ -55,5 +55,7 @@ void destruirObstaculo(Obstaculo *obstaculo) {
     } else if(obstaculo->tipo == OBSTACULO_ACELERADO) {
         destruirObstaculoAcelerado((ObstaculoAcelerado*) obstaculo->objeto);
     }
+
+    free(obstaculo);
     
 }

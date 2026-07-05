@@ -131,10 +131,6 @@ void initGameWindow( GameWindow *gameWindow ) {
             HideCursor();
         }
 
-        if ( gameWindow->loadResources ) {
-            unloadResourcesResourceManager();
-        }
-
         bool initAudio = gameWindow->initAudio;
 
         destroyGameWindow( gameWindow );
@@ -143,7 +139,9 @@ void initGameWindow( GameWindow *gameWindow ) {
             CloseAudioDevice();
         }
 
-        CloseWindow();
+        if ( IsWindowReady() ) {
+            CloseWindow();
+        }
 
     }
 
@@ -153,6 +151,14 @@ void initGameWindow( GameWindow *gameWindow ) {
  * @brief Destroys a GameWindow object and its dependecies.
  */
 void destroyGameWindow( GameWindow *gameWindow ) {
-    destroyGameWorld( gameWindow->gw );
+    if ( gameWindow == NULL ) {
+        return;
+    }
+
+    if ( gameWindow->gw != NULL ) {
+        destroyGameWorld( gameWindow->gw );
+        gameWindow->gw = NULL;
+    }
+
     free( gameWindow );
 }

@@ -29,11 +29,17 @@ void atualizarTiro(Tiro *tiro, GameWorld *gw, float delta) {
 
 void destruirTiro(Tiro *tiro) {
 
+    if(tiro == NULL) {
+        return;
+    }
+
     if(tiro->tipo == TIRO_NORMAL) {
         destruirTiroNormal((TiroNormal*) tiro->objeto);
     } else if(tiro->tipo == TIRO_GELO) {
         destruirTiroGelo((TiroGelo*) tiro->objeto);
     }
+
+    free(tiro);
 
 }
 

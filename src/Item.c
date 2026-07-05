@@ -44,6 +44,8 @@ void destruirItem(Item *item) {
         destruirItemVida((ItemVida*) item->objeto);
     }
 
+    free(item);
+
 }
 
 void desenharItem(Item *item) {

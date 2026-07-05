@@ -211,16 +211,16 @@ void destruirJogador(Jogador *j) {
 }
 
 
-// Implementado para WASD, setinhas e controle(n sei se funciona)
+// Implementado para WASD e setinhas
 void entradaJogador(Jogador *j) {
     
     if(j->estado != JOGADOR_MORRENDO) {
 
         EstadoJogador estadoAnterior = j->estado;
 
-        bool correr = IsKeyDown(KEY_LEFT_SHIFT) || (IsGamepadAvailable(0) && IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT));
-        bool esquerda = IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT) || (IsGamepadAvailable(0) && IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_LEFT));
-        bool direita = IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT) || (IsGamepadAvailable(0) && IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_RIGHT));
+        bool correr = IsKeyDown(KEY_LEFT_SHIFT);
+        bool esquerda = IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT);
+        bool direita = IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT);
            
 
         if(!j->acelerado) {
@@ -284,7 +284,7 @@ void entradaJogador(Jogador *j) {
             }
         } 
 
-        if(j->freando) {
+        if(j->freando && j->noChao) {
             j->estado = JOGADOR_FREANDO;
         }
         
@@ -488,6 +488,21 @@ static void resolverColisaoJogadorMapaX(GameWorld *gw) {
 
                 PlaySound(rm.somChegada);
                 gw->mapa->faseCompleta = true;
+
+                switch (gw->faseAtual) {
+                    case 1:
+                        StopMusicStream(rm.musicaFase1);
+                        break;
+                    case 2: 
+                        StopMusicStream(rm.musicaFase2);
+                        break;
+                    case 3:
+                        StopMusicStream(rm.musicaFase3);
+                        break;
+                    default:
+                        TraceLog(LOG_ERROR, "Numero de fase inesperado");
+                        break;
+                }
 
             }
 

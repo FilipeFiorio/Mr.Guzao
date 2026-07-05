@@ -27,24 +27,17 @@ MapaMundo *criarMapaMundo(int quantidadeFases) {
 
     novoMapaMundo->fases[1] = (NodeMapa) { 
         posFase2, 
-        1, 
+        false, 
         false, 
         2 
     };
     
     novoMapaMundo->fases[2] = (NodeMapa) {
         posFase3,
-        1,
+        false,
         false,
         3
 
-    };
-    
-    novoMapaMundo->fases[2] = (NodeMapa) { 
-        posFase3, 
-        1, 
-        false, 
-        3 
     };
 
     novoMapaMundo->faseAtual = 0;
@@ -95,8 +88,6 @@ void atualizarMapaMundo(GameWorld *gw, float delta) {
             mapaMundo->fases[i+1].liberado = true;
         }
     }
-
-    TraceLog(LOG_INFO, TextFormat("%d x %d", mapaMundo->fases[1].pos.x, mapaMundo->fases[1].pos.y));
     
     //Andar entre fases
     if(IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_D)) {
