@@ -737,7 +737,7 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
                         j->vel.y = -j->vel.y * 0.75f;
                 } else {
                     j->estado = JOGADOR_MORRENDO;
-                    if(j->vidas > 0 ) {
+                    if(j->vidas > 1 ) {
                         PlaySound(rm.somMorte);
                     }
                 }
@@ -763,7 +763,7 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
                     j->vel.y = -j->vel.y * 0.75f;
                 } else {
                     j->estado = JOGADOR_MORRENDO;
-                    if(j->vidas > 0 ) {
+                    if(j->vidas > 1 ) {
                         PlaySound(rm.somMorte);
                     }
                 }
@@ -790,7 +790,7 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
                     j->vel.y = -j->vel.y * 0.75f;
                 } else {
                     j->estado = JOGADOR_MORRENDO;
-                    if(j->vidas > 0 ) {
+                    if(j->vidas > 1 ) {
                         PlaySound(rm.somMorte);
                     }
                 }
@@ -808,7 +808,7 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
             if (CheckCollisionRecs(j->ret, i->ret)) {
 
                 j->estado = JOGADOR_MORRENDO;
-                if(j->vidas > 0 ) {
+                if(j->vidas > 1 ) {
                     PlaySound(rm.somMorte);
                 }
 
@@ -822,7 +822,7 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
             if (CheckCollisionRecs(j->ret, i->ret)) {
 
                 j->estado = JOGADOR_MORRENDO;
-                if(j->vidas > 0 ) {
+                if(j->vidas > 1 ) {
                     PlaySound(rm.somMorte);
                 }
 
@@ -836,7 +836,7 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
             if (CheckCollisionRecs(j->ret, i->ret)) {
 
                 j->estado = JOGADOR_MORRENDO;
-                if(j->vidas > 0 ) {
+                if(j->vidas > 1 ) {
                    PlaySound(rm.somMorte);
                 }
 
@@ -851,7 +851,7 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
             if (CheckCollisionRecs(j->ret, i->ret)) {
                 
                 j->estado = JOGADOR_MORRENDO;
-                if(j->vidas > 0 ) {
+                if(j->vidas > 1 ) {
                     PlaySound(rm.somMorte);
                 }
 
@@ -861,7 +861,7 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
             if(i->tiro != NULL && i->tiro->ativo && i->tiro->estado == TIRO_VIAJANDO) {
                 if(CheckCollisionRecs(j->ret, i->tiro->ret)) {
                     j->estado = JOGADOR_MORRENDO;
-                    if(j->vidas > 0 ) {
+                    if(j->vidas > 1 ) {
                         PlaySound(rm.somMorte);
                     }
                 }
@@ -874,7 +874,7 @@ static void verificarColisaoJogadorInimigo(GameWorld *gw) {
             if (CheckCollisionRecs(j->ret, i->ret)) {
 
                 j->estado = JOGADOR_MORRENDO;
-                if(j->vidas > 0 ) {
+                if(j->vidas > 1 ) {
                     PlaySound(rm.somMorte);
                 }
 
