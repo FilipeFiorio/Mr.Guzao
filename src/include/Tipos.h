@@ -509,5 +509,10 @@ typedef struct GameWorld {
     int vidasSalvas;
     int moedasSalvas;
     float timerMorte;
+    bool musicaInicioIniciada;
+    bool musicaMundoIniciada;
+    bool musicaFase1Iniciada;
+    bool musicaFase2Iniciada;
+    bool musicaFase3Iniciada;
 }GameWorld;
 

@@ -34,6 +34,8 @@ static void inicializarGW(GameWorld *gw);
 static void desenharHud(GameWorld *gw);
 static void passarFase(GameWorld *gw);
 static void iniciarTransicao(GameWorld *gw, EstadoJogo proximoEstado);
+static void tocarMusica(Music musica, bool *iniciada);
+static void pararMusica(Music musica, bool *iniciada);
 
 /**
  * @brief Creates a dinamically allocated GameWorld struct instance.
@@ -79,6 +81,35 @@ void destroyGameWorld( GameWorld *gw ) {
 }
 
 /**
+ * @brief Helper: toca uma música apenas uma vez (se ainda não foi
+ * iniciada e o dispositivo de áudio estiver pronto), e nos frames
+ * seguintes só atualiza o stream. Evita reabrir/PlayMusicStream em
+ * loop quando o áudio falha ao iniciar (ex: driver de áudio ruim).
+ */
+static void tocarMusica(Music musica, bool *iniciada) {
+
+    if (!IsAudioDeviceReady()) {
+        return;
+    }
+
+    if (*iniciada) {
+        UpdateMusicStream(musica);
+    } else {
+        PlayMusicStream(musica);
+        *iniciada = true;
+    }
+
+}
+
+/**
+ * @brief Helper: para uma música e reseta a flag de controle.
+ */
+static void pararMusica(Music musica, bool *iniciada) {
+    StopMusicStream(musica);
+    *iniciada = false;
+}
+
+/**
  * @brief Reads user input and updates the state of the game.
  */
 void updateGameWorld( GameWorld *gw, float delta ) {
@@ -91,25 +122,13 @@ void updateGameWorld( GameWorld *gw, float delta ) {
 
                 switch (gw->faseAtual) {
                     case 1:
-                        if(!IsMusicStreamPlaying(rm.musicaFase1)) {
-                            PlayMusicStream(rm.musicaFase1);
-                        } else {
-                            UpdateMusicStream(rm.musicaFase1);
-                        }
+                        tocarMusica(rm.musicaFase1, &gw->musicaFase1Iniciada);
                         break;
                     case 2:
-                        if(!IsMusicStreamPlaying(rm.musicaFase2)) {
-                            PlayMusicStream(rm.musicaFase2);
-                        } else {
-                            UpdateMusicStream(rm.musicaFase2);
-                        }
+                        tocarMusica(rm.musicaFase2, &gw->musicaFase2Iniciada);
                         break;
                     case 3:
-                        if(!IsMusicStreamPlaying(rm.musicaFase3)) {
-                            PlayMusicStream(rm.musicaFase3);
-                        } else {
-                            UpdateMusicStream(rm.musicaFase3);
-                        }
+                        tocarMusica(rm.musicaFase3, &gw->musicaFase3Iniciada);
                         break;
                     default:
                         TraceLog(LOG_ERROR, "Numero de fase atual inesperado");
@@ -151,11 +170,7 @@ void updateGameWorld( GameWorld *gw, float delta ) {
 
         case ESTADO_JOGO_MAPA_MUNDO:
 
-            if(!IsMusicStreamPlaying(rm.musicaMundo)) {
-                PlayMusicStream(rm.musicaMundo);
-            } else {
-                UpdateMusicStream(rm.musicaMundo);
-            }
+            tocarMusica(rm.musicaMundo, &gw->musicaMundoIniciada);
 
             atualizarMapaMundo(gw, delta);
 
@@ -173,15 +188,11 @@ void updateGameWorld( GameWorld *gw, float delta ) {
 
         case ESTADO_JOGO_INICIO:
 
-            if(!IsMusicStreamPlaying(rm.musicaInicio)) {
-                PlayMusicStream(rm.musicaInicio);
-            } else {
-                UpdateMusicStream(rm.musicaInicio);
-            }
+            tocarMusica(rm.musicaInicio, &gw->musicaInicioIniciada);
 
             if(IsKeyPressed(KEY_ENTER)) {
                 PlaySound(rm.somBotao);
-                StopMusicStream(rm.musicaInicio);
+                pararMusica(rm.musicaInicio, &gw->musicaInicioIniciada);
                 iniciarTransicao(gw, ESTADO_JOGO_MAPA_MUNDO);
             }
 
@@ -198,13 +209,13 @@ void updateGameWorld( GameWorld *gw, float delta ) {
                 PlaySound(rm.somBotao); 
                 switch (gw->faseAtual) {
                 case 1:
-                    StopMusicStream(rm.musicaFase1);
+                    pararMusica(rm.musicaFase1, &gw->musicaFase1Iniciada);
                     break;
                 case 2:
-                    StopMusicStream(rm.musicaFase2);
+                    pararMusica(rm.musicaFase2, &gw->musicaFase2Iniciada);
                     break;
                 case 3:
-                    StopMusicStream(rm.musicaFase3);
+                    pararMusica(rm.musicaFase3, &gw->musicaFase3Iniciada);
                     break;
                 default:
                     TraceLog(LOG_ERROR, "Numero de fase atual inesperado");
@@ -324,7 +335,6 @@ void drawGameWorld( GameWorld *gw ) {
             Rectangle destino = {t.offsetX, t.offsetY, (float) rm.texturaInicio.width * t.escala, (float) rm.texturaInicio.height * t.escala };
 
             DrawTexturePro(rm.texturaInicio, origem, destino, (Vector2) {0}, 0.0f, WHITE);
-
 
             drawTextAlinhado("Mr. Guzão", 200, 72, WHITE, CENTRO);
             drawTextAlinhado("Aperte [ENTER] para iniciar", 500, 25, WHITE, CENTRO);
@@ -472,13 +482,13 @@ static void verificarMorteJogador(GameWorld *gw) {
 
         switch (gw->faseAtual) { 
             case 1:
-                StopMusicStream(rm.musicaFase1);
+                pararMusica(rm.musicaFase1, &gw->musicaFase1Iniciada);
                 break;
             case 2:
-                StopMusicStream(rm.musicaFase2);
+                pararMusica(rm.musicaFase2, &gw->musicaFase2Iniciada);
                 break;
             case 3:
-                StopMusicStream(rm.musicaFase3);
+                pararMusica(rm.musicaFase3, &gw->musicaFase3Iniciada);
                 break;
             default:
                 TraceLog(LOG_ERROR, "Numero de fase inesperado");
@@ -547,6 +557,12 @@ static void inicializarGW(GameWorld *gw) {
     gw->estado = ESTADO_JOGO_INICIO;
     gw->vidasSalvas = 5;
     gw->moedasSalvas = 0;
+
+    gw->musicaInicioIniciada = false;
+    gw->musicaMundoIniciada = false;
+    gw->musicaFase1Iniciada = false;
+    gw->musicaFase2Iniciada = false;
+    gw->musicaFase3Iniciada = false;
 
     gw->camera = (Camera2D) {
         .offset = {0},

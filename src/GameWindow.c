@@ -101,8 +101,9 @@ void initGameWindow( GameWindow *gameWindow ) {
         int altura = mAltura > 0 ? mAltura : gameWindow->height;
 
         if (gameWindow->fullScreen && mLargura > 0 && mAltura > 0) {
-            SetWindowSize( largura, altura );
-            ToggleFullscreen();
+            SetWindowState(FLAG_WINDOW_UNDECORATED);
+            SetWindowPosition(0, 0);
+            SetWindowSize(largura, altura);
         }
         
         if ( gameWindow->initAudio ) {
