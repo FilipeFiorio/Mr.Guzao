@@ -325,7 +325,7 @@ void drawGameWorld( GameWorld *gw ) {
 
             DrawTexturePro(rm.texturaInicio, origem, destino, (Vector2) {0}, 0.0f, WHITE);
 
-            drawTextAlinhado("Super Luquinhas", 200, 72, WHITE, CENTRO);
+            drawTextAlinhado("Mr. Guzão", 200, 72, WHITE, CENTRO);
             drawTextAlinhado("Aperte [ENTER] para iniciar", 500, 25, WHITE, CENTRO);
 
             break;
