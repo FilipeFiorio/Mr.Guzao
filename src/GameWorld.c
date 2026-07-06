@@ -34,6 +34,7 @@ static void inicializarGW(GameWorld *gw);
 static void desenharHud(GameWorld *gw);
 static void passarFase(GameWorld *gw);
 static void iniciarTransicao(GameWorld *gw, EstadoJogo proximoEstado);
+static void desenharMiniMapa(GameWorld *gw);
 
 /**
  * @brief Creates a dinamically allocated GameWorld struct instance.
@@ -296,6 +297,7 @@ void drawGameWorld( GameWorld *gw ) {
             EndMode2D();
 
             desenharHud(gw);
+            desenharMiniMapa(gw);
 
             break;
 
@@ -343,6 +345,7 @@ void drawGameWorld( GameWorld *gw ) {
             
             drawTextAlinhado("Jogo Pausado", 200, 25, WHITE, CENTRO);
             desenharHud(gw);
+            desenharMiniMapa(gw);
 
             break;
 
@@ -647,5 +650,55 @@ static void desenharHud(GameWorld *gw) {
         const char *textoTempo = TextFormat("%02d:%02d", minutos, segundos);
         drawTextAlinhado(textoTempo, 25, 24, corTempo, CENTRO);
     }
+
+}
+
+static void desenharMiniMapa(GameWorld *gw) {
+    
+    Mapa *m = gw->mapa;
+    Jogador *j = m->jogador;
+
+    const int tamanhoFase = calcularLarguraMapa(m);
+
+    const int tamanhoMiniMapa = 300;
+    const int alturaMiniMapa = 15;
+    const int xIniMiniMapa = GetRenderWidth() - tamanhoMiniMapa - 25;
+    const int yIniMiniMapa = 30;
+
+    int xChegada = xIniMiniMapa + tamanhoMiniMapa - alturaMiniMapa;
+    int yChegada = 30;
+
+    Rectangle retMapa = {xIniMiniMapa, yIniMiniMapa, tamanhoMiniMapa, alturaMiniMapa};
+    Rectangle retChegada = {xChegada, yChegada, alturaMiniMapa, alturaMiniMapa};
+
+    DrawRectangleRec(retMapa, (Color) {255, 255, 255, 150});
+    DrawRectangleRec(retChegada, RED);
+
+    int xJogador = xIniMiniMapa;
+    int yJogador = 30;
+
+    Rectangle retJogador = {xJogador, yJogador, alturaMiniMapa, alturaMiniMapa};
+    
+    retJogador.x = (xIniMiniMapa + (j->ret.x / tamanhoFase)  * tamanhoMiniMapa) - alturaMiniMapa;
+
+    DrawTexturePro(
+        rm.texturaJogadorMapa,
+        (Rectangle) {
+            0,
+            0,
+            rm.texturaJogadorMapa.width,
+            rm.texturaJogadorMapa.height
+        },
+        (Rectangle) {
+            retJogador.x, 
+            retJogador.y,
+            alturaMiniMapa,
+            alturaMiniMapa 
+        },
+        (Vector2) {0},
+        0.0f,
+        WHITE
+    );
+
 
 }
