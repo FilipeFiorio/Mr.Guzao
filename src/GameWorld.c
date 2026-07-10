@@ -444,7 +444,7 @@ static void atualizarCamera(GameWorld *gw) {
     camera->target.y = (int) roundf(jogador->ret.y + jogador->ret.height);
 
     int minX = GetRenderWidth() / 2 + 50;
-    int maxX = calcularLarguraMapa(gw->mapa) - GetRenderWidth() / 2 - 50;
+    int maxX = calcularLarguraMapa(gw->mapa) - GetRenderWidth() / 2 - 100;
     int maxY = calcularAlturaMapa(gw->mapa) - GetRenderHeight() / 2;
 
     if(camera->target.x < minX) {
