@@ -8,9 +8,6 @@
 #include "ResourceManager.h"
 #include "Animacao.h"
 
-static void resolverColisaoInimigoMapaX(InimigoVoador *i, Mapa *m);
-static void resolverColisaoInimigoMapaY(InimigoVoador *i, Mapa *m);
-
 static void desenharAnimacaoInimigoVoador(InimigoVoador *inimigo, QuadroAnimacao *quadro, Color tonalidade);
 static Animacao *getAnimacaoAtualInimigoVoador(InimigoVoador *inimigo);
 
@@ -144,9 +141,6 @@ void atualizarInimigoVoador(InimigoVoador *inimigo, GameWorld *gw, float delta) 
             }
         }
         
-        resolverColisaoInimigoMapaX(inimigo, gw->mapa);
-        resolverColisaoInimigoMapaY(inimigo, gw->mapa);
-
     }
     
 }
@@ -168,94 +162,6 @@ void desenharInimigoVoador(InimigoVoador *inimigo) {
         QuadroAnimacao *quadro = getQuadroAnimacaoAtualInimigoVoador(inimigo);
         desenharAnimacaoInimigoVoador(inimigo, quadro, WHITE);
     }
-
-}
-
-static void resolverColisaoInimigoMapaY( InimigoVoador *i, Mapa *m ) {
-
-    ElementoMapa *el = m->obstaculos;
-
-    while ( el != NULL ) {
-
-        Obstaculo *obs = (Obstaculo*) el->objeto;
-
-        if(obs->tipo == OBSTACULO_NORMAL) {
-
-            ObstaculoNormal *o = (ObstaculoNormal*) obs->objeto;
-
-            if ( CheckCollisionRecs( i->ret, o->ret ) ) {
-                if ( i->ret.y + i->ret.height / 2 < o->ret.y + o->ret.height / 2 ) {
-                    i->ret.y = o->ret.y - i->ret.height;
-                } else { //não precisa
-                    i->ret.y = o->ret.y + o->ret.height;
-                }
-                i->vel.y = 0;
-            }
-
-        } else if(obs->tipo == OBSTACULO_MOVEL)  {
-
-            ObstaculoMovel *o = (ObstaculoMovel*) obs->objeto;
-            
-            if ( CheckCollisionRecs( i->ret, o->ret ) ) {
-                if ( i->ret.y + i->ret.height / 2 < o->ret.y + o->ret.height / 2 ) {
-                    i->ret.y = o->ret.y - i->ret.height;
-                } else { //não precisa
-                    i->ret.y = o->ret.y + o->ret.height;
-                }
-                i->vel.y = 0;
-            }
-         }
-
-        el = el->proximo;
-
-    }
-
-}
-
-static void resolverColisaoInimigoMapaX(InimigoVoador *i, Mapa *m) {
-
-    ElementoMapa *el = m->obstaculos;
-
-    while(el != NULL) {
-
-        Obstaculo *obs = (Obstaculo*) el->objeto;
-
-        if(obs->tipo == OBSTACULO_NORMAL) {
-
-            ObstaculoNormal *o = (ObstaculoNormal*) obs->objeto;
-
-            if(CheckCollisionRecs(i->ret, o->ret)) {
-                if(i->ret.x + i->ret.width / 2 < o->ret.x + o->ret.width / 2) {
-                    i->ret.x = o->ret.x - i->ret.width;
-                } else {
-                    i->ret.x = o->ret.x + o->ret.width;
-                }
-                    
-                i->vel.x = -i->vel.x;
-                
-            }
-
-        } else if(obs->tipo == OBSTACULO_MOVEL) {
-
-            ObstaculoMovel *o = (ObstaculoMovel*) obs->objeto;
-
-            if(CheckCollisionRecs(i->ret, o->ret)) {
-                if(i->ret.x + i->ret.width / 2 < o->ret.x + o->ret.width / 2) {
-                    i->ret.x = o->ret.x - i->ret.width;
-                } else {
-                    i->ret.x = o->ret.x + o->ret.width;
-                }
-                    
-                i->vel.x = -i->vel.x;
-                
-            }
-            
-        }
-
-        el = el->proximo;
-
-    }
-
 
 }
 

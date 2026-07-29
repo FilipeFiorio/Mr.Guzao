@@ -93,8 +93,6 @@ void atualizarInimigoFantasma(InimigoFantasma *inimigo, GameWorld *gw, float del
 
     inimigo->paraDireita = (gw->mapa->jogador->ret.x > inimigo->ret.x);
 
-
-
 }
 
 void destruirInimigoFantasma(InimigoFantasma *inimigo) {
