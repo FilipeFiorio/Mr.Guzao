@@ -38,7 +38,6 @@ void resolverColisaoJogadorMapaX(GameWorld *gw) {
 
             }
         
-
         }else if (obs->tipo == OBSTACULO_MOVEL) {
 
             ObstaculoMovel *o = (ObstaculoMovel*) obs->objeto;
@@ -535,7 +534,7 @@ void resolverColisaoInimigoMapaY(Rectangle *ret, Vector2 *vel, bool *noChao, Map
             if ( CheckCollisionRecs( *ret, o->ret ) ) {
                 if ( ret->y + ret->height / 2 < o->ret.y + o->ret.height / 2 ) {
                     ret->y= o->ret.y - ret->height;
-                    noChao = (bool*) true;
+                    *noChao = true;
                 }
                 vel->y = 0;
             }
@@ -547,7 +546,7 @@ void resolverColisaoInimigoMapaY(Rectangle *ret, Vector2 *vel, bool *noChao, Map
             if ( CheckCollisionRecs( *ret, o->ret ) ) {
                 if ( ret->y + ret->height / 2 < o->ret.y + o->ret.height / 2 ) {
                     ret->y = o->ret.y - ret->height;
-                    noChao = (bool*) true;
+                    *noChao = true;
                 }
                 vel->y = 0;
             }
@@ -581,14 +580,7 @@ bool verificarSeTemChao(Rectangle *retInimigo, Vector2 *velInimigo, Mapa *m) {
                 return true;
             }
 
-        } else if(obs->tipo == OBSTACULO_MOVEL) {
-
-            ObstaculoMovel *o = (ObstaculoMovel*) obs->objeto;
-            
-            if(CheckCollisionRecs(ret, o->ret)) {
-                return true;
-            }
-        }
+        } 
         
         el = el->proximo;
     }
