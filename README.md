@@ -5,12 +5,6 @@ Jogo de plataforma 2D desenvolvido em **C** utilizando a biblioteca **[raylib](h
 ![Linguagem](https://img.shields.io/badge/linguagem-C-blue)
 ![Raylib](https://img.shields.io/badge/engine-raylib-orange)
 
-## 🕹️ Jogue no navegador
-
-Você pode jogar direto no navegador, sem precisar baixar nada, através da versão compilada em WebAssembly:
-
-**[👉 Jogar Mr. Guzão online](https://filipefiorio.github.io/Mr.Guzao/)**
-
 ## 📖 Sobre o projeto
 
 **Mr. Guzão** é um jogo de plataforma onde o jogador controla o personagem principal através de fases repletas de desafios, inimigos e obstáculos. O projeto foi construído do zero em C puro, com a raylib cuidando de renderização, input e áudio.
@@ -80,25 +74,6 @@ build.bat
 ```
 
 O executável e os recursos necessários serão gerados/empacotados na pasta de saída definida pelo script.
-
-### Web (WebAssembly)
-
-Pré-requisito: [Emscripten SDK](https://emscripten.org/docs/getting_started/downloads.html) instalado e ativado (`emcc` disponível no `PATH`).
-
-```bash
-emcc src/*.c -o docs/Mr_Guzao.html \
-    -Os -Wall \
-    -I src/include/ \
-    -I raylib/src \
-    -L lib/ \
-    -l:libraylib_web.a \
-    -s USE_GLFW=3 \
-    -s ASYNCIFY \
-    -s TOTAL_MEMORY=67108864 \
-    --preload-file resources
-```
-
-O resultado é servido através do [GitHub Pages](https://filipefiorio.github.io/Mr.Guzao/), a partir da pasta `docs/`.
 
 ## 📦 Releases
 
