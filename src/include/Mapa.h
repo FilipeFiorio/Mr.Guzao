@@ -2,7 +2,7 @@
 
 #include "Tipos.h"
 
-Mapa *carregarMapa(const char *caminhoArquivo);
+Mapa *carregarMapa(const char *caminhoArquivo, GameWorld *gw);
 void destruirMapa(Mapa *m);
 void desenharMapa(Mapa *m);
 void atualizarMapa(Mapa *m,GameWorld *gw, float delta );

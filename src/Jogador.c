@@ -17,7 +17,7 @@ static QuadroAnimacao *getQuadroAnimacaoAtualJogador(Jogador *j);
 
 static bool MOSTRAR_RETANGULO_COLISAO = false;
 
-Jogador *criarJogador(float x, float y, float largura, float altura, Color cor) {
+Jogador *criarJogador(float x, float y, float largura, float altura, Color cor, GameWorld *gw) {
 
     Jogador *novoJogador = (Jogador*) malloc(sizeof(Jogador));
 
@@ -71,7 +71,7 @@ Jogador *criarJogador(float x, float y, float largura, float altura, Color cor) 
         novoJogador->animacaoParado.quantidadeQuadros,
         1000,
         0,
-        0,
+        gw->personagemAtual = 0 ? 0 : 80,
         16,
         16,
         false,
@@ -91,7 +91,7 @@ Jogador *criarJogador(float x, float y, float largura, float altura, Color cor) 
         novoJogador->animacaoAndando.quantidadeQuadros,
         90,
         0,
-        16,
+        gw->personagemAtual = 0 ? 16 : 96,
         16,
         16,
         false,
@@ -110,7 +110,7 @@ Jogador *criarJogador(float x, float y, float largura, float altura, Color cor) 
         novoJogador->animacaoCorrendo.quantidadeQuadros,
         60,
         0,
-        16,
+        gw->personagemAtual = 0 ? 16 : 96,
         16,
         16,
         false,
@@ -129,7 +129,7 @@ Jogador *criarJogador(float x, float y, float largura, float altura, Color cor) 
         novoJogador->animacaoPulando.quantidadeQuadros,
         1000,
         0,
-        32,
+        gw->personagemAtual = 0 ? 32 : 112,
         16,
         16,
         false,
@@ -148,7 +148,7 @@ Jogador *criarJogador(float x, float y, float largura, float altura, Color cor) 
         novoJogador->animacaoMorrendo.quantidadeQuadros,
         2000,
         0,
-        48,
+        gw->personagemAtual = 0 ? 48 : 128,
         16,
         16,
         false,
@@ -167,7 +167,7 @@ Jogador *criarJogador(float x, float y, float largura, float altura, Color cor) 
         novoJogador->animacaoFreando.quantidadeQuadros,
         500,
         0,
-        64,
+        gw->personagemAtual = 0 ? 64 : 144,
         16,
         16,
         false,

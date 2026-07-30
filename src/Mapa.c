@@ -32,7 +32,7 @@ static void inserirObstaculo(Mapa *m, ElementoMapa *o);
 static void inserirInimigo(Mapa *m, ElementoMapa *i);
 static void inserirItem(Mapa *m, ElementoMapa *i);
 
-Mapa *carregarMapa( const char *caminhoArquivo ) {
+Mapa *carregarMapa( const char *caminhoArquivo, GameWorld *gw ) {
 
     Mapa *novoMapa = (Mapa*) malloc( sizeof( Mapa ) );
 
@@ -457,7 +457,8 @@ Mapa *carregarMapa( const char *caminhoArquivo ) {
                         linhaAtual * novoMapa->tamanhoElemento,
                         novoMapa->tamanhoElemento,
                         novoMapa->tamanhoElemento,
-                        BLUE
+                        BLUE,
+                        gw
                     );
 
                     if(novoMapa->jogador == NULL) {

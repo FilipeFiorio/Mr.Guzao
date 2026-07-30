@@ -5,6 +5,7 @@
 
 typedef enum EstadoJogo {
     ESTADO_JOGO_INICIO,
+    ESTADO_JOGO_PERSONAGEM,
     ESTADO_JOGO_MAPA_MUNDO,
     ESTADO_JOGO_GAMEPLAY,
     ESTADO_JOGO_PAUSE,
@@ -425,6 +426,7 @@ typedef struct Jogador {
     ObstaculoMovel *plataformaAtual;
     int vidas;
     int moedas;
+    int personagemAtual;
 
     float velAndando;
     float velCorrendo;
@@ -505,6 +507,7 @@ typedef struct GameWorld {
     float gravidade;
     int timerJogo;
     int faseAtual;
+    int personagemAtual;
     float alphaTransicao;
     int vidasSalvas;
     int moedasSalvas;

@@ -14,7 +14,6 @@ MapaMundo *criarMapaMundo(int quantidadeFases) {
     novoMapaMundo->quantidadeFases = quantidadeFases;
     novoMapaMundo->fases = (NodeMapa*) malloc(sizeof(NodeMapa) * novoMapaMundo->quantidadeFases);
 
-    // Guarda as coordenadas ORIGINAIS (relativas à imagem), sem transformar aqui
     Vector2 posFase1 = (Vector2) {282, 507};
     Vector2 posFase2 = (Vector2) {838, 525};
     Vector2 posFase3 = (Vector2) {1370, 511};
@@ -125,7 +124,7 @@ void atualizarMapaMundo(GameWorld *gw, float delta) {
 
         char caminhoMapa[100];
         sprintf(caminhoMapa, "resources/mapas/fase%d.txt", gw->faseAtual);
-        gw->mapa = carregarMapa(caminhoMapa);
+        gw->mapa = carregarMapa(caminhoMapa, gw);
 
         gw->mapa->jogador->vidas = gw->vidasSalvas;
         gw->mapa->jogador->moedas = gw->moedasSalvas;

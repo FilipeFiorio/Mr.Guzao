@@ -3,7 +3,7 @@
 #include "raylib/raylib.h"
 #include "Tipos.h"
 
-Jogador *criarJogador(float x, float y, float largura, float altura, Color cor);
+Jogador *criarJogador(float x, float y, float largura, float altura, Color cor, GameWorld *gw);
 void entradaJogador(Jogador *j);
 void destruirJogador(Jogador *j);
 void atualizarJogador(Jogador *j, GameWorld *gw, float delta);

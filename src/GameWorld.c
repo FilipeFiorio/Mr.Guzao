@@ -183,9 +183,26 @@ void updateGameWorld( GameWorld *gw, float delta ) {
             if(IsKeyPressed(KEY_ENTER)) {
                 PlaySound(rm.somBotao);
                 StopMusicStream(rm.musicaInicio);
+                iniciarTransicao(gw, ESTADO_JOGO_PERSONAGEM);
+            }
+
+            break;
+
+        case ESTADO_JOGO_PERSONAGEM:
+
+            if(IsKeyPressed(KEY_ENTER)) {
+                PlaySound(rm.somBotao);
                 iniciarTransicao(gw, ESTADO_JOGO_MAPA_MUNDO);
             }
 
+            if(IsKeyPressed(KEY_A) || IsKeyPressed(KEY_LEFT)) {
+                gw->personagemAtual = 0;
+                PlaySound(rm.somMapaMover);
+            } else if(IsKeyPressed(KEY_D) || IsKeyPressed(KEY_RIGHT)) {
+                gw->personagemAtual = 1;
+                PlaySound(rm.somMapaMover);
+            }
+            
             break;
 
         case ESTADO_JOGO_PAUSE:
@@ -304,7 +321,7 @@ void drawGameWorld( GameWorld *gw ) {
         case ESTADO_JOGO_MAPA_MUNDO:
 
             desenharMapaMundo(gw->mapaMundo);
-            desenharHud(gw); // dps
+            desenharHud(gw);
 
             break;
         
@@ -330,6 +347,104 @@ void drawGameWorld( GameWorld *gw ) {
             drawTextAlinhado("Mr. Guzão", 200, 72, WHITE, CENTRO);
             drawTextAlinhado("Aperte [ENTER] para iniciar", 500, 25, WHITE, CENTRO);
 
+            break;
+
+        case ESTADO_JOGO_PERSONAGEM:
+
+            ClearBackground(BLACK);
+
+            drawTextAlinhado("Escolha seu Personagem:", 200, 25, WHITE, CENTRO);
+
+            Rectangle ret1 = {
+                    GetRenderWidth() * 0.2f,
+                    GetRenderHeight() * 0.4f,
+                    GetRenderWidth() * 0.2f,
+                    GetRenderHeight() * 0.5f 
+            };
+
+            Rectangle ret2 = {
+                    GetRenderWidth() * 0.8f - ret1.width,
+                    GetRenderHeight() * 0.4f,
+                    GetRenderWidth() * 0.2f,
+                    GetRenderHeight() * 0.5f 
+            };
+
+            if(gw->personagemAtual == 0) {
+                DrawRectangleRoundedLines(
+                    ret1,
+                    0.1f,
+                    0,
+                    WHITE
+                );
+
+                DrawTextPro(rm.fonte, 
+                    "Mr. Guzão",
+                    (Vector2) {
+                        ret1.x + (ret1.width - MeasureTextEx(rm.fonte, "Mr. Guzão", 15, 0.0f).x) / 2,
+                        ret1.y + ret1.height + 10
+                    },
+                    (Vector2) {0},
+                    0.0f,
+                    15,
+                    0, 
+                    WHITE
+                );
+
+
+            } else {   
+                DrawRectangleRoundedLines(
+                    ret2,
+                    0.1f,
+                    0,
+                    WHITE
+                );
+
+                DrawTextPro(rm.fonte, 
+                    "Mr. Guzinho",
+                    (Vector2) {
+                        ret2.x + (ret2.width - MeasureTextEx(rm.fonte, "Mr. Guzinho", 15, 0.0f).x) / 2,
+                        ret2.y + ret2.height + 10
+                    },
+                    (Vector2) {0},
+                    0.0f,
+                    15,
+                    0, 
+                    WHITE
+                );
+            }    
+                
+            DrawTexturePro(
+                rm.texturaJogador,
+                (Rectangle) {0, 0, 16, 16},
+                (Rectangle) {
+                    ret1.x + 5,
+                    ret1.y + 5,
+                    ret1.width - 10,
+                    ret1.height - 10
+                },
+                (Vector2) {0},
+                0.0f,
+                WHITE
+            );
+
+            DrawTexturePro(
+                rm.texturaJogador,
+                (Rectangle) {0, 80, 16, 16},
+                (Rectangle) {
+                    ret2.x + 5,
+                    ret2.y + 5,
+                    ret2.width - 10,
+                    ret2.height - 10
+                },
+                (Vector2) {0},
+                0.0f,
+                WHITE
+            );
+                 
+            
+
+  
+            
             break;
 
         case ESTADO_JOGO_PAUSE:    
@@ -519,7 +634,7 @@ static void reiniciarJogo(GameWorld *gw) {
 
     char caminhoMapa[100];
     sprintf(caminhoMapa, "resources/mapas/fase%d.txt", faseAtual);
-    gw->mapa = carregarMapa(caminhoMapa);
+    gw->mapa = carregarMapa(caminhoMapa, gw);
 
     gw->gravidade = 600;
     gw->timerJogo = 180000;
@@ -539,6 +654,7 @@ static void inicializarGW(GameWorld *gw) {
 
     
     gw->faseAtual = 1;
+    gw->personagemAtual = 0;
     gw->mapaMundo = criarMapaMundo(3);
     gw->gravidade = 600;
     gw->timerJogo = 180000;
