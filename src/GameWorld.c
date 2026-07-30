@@ -190,18 +190,21 @@ void updateGameWorld( GameWorld *gw, float delta ) {
 
         case ESTADO_JOGO_PERSONAGEM:
 
+        
+            if((IsKeyPressed(KEY_A) || IsKeyPressed(KEY_LEFT)) && gw->personagemAtual != 0) {
+                gw->personagemAtual = 0;
+                PlaySound(rm.somMapaMover);
+            } else if((IsKeyPressed(KEY_D) || IsKeyPressed(KEY_RIGHT)) && gw->personagemAtual != 1) {
+                gw->personagemAtual = 1;
+                PlaySound(rm.somMapaMover);
+            }
+            
             if(IsKeyPressed(KEY_ENTER)) {
                 PlaySound(rm.somBotao);
                 iniciarTransicao(gw, ESTADO_JOGO_MAPA_MUNDO);
             }
 
-            if(IsKeyPressed(KEY_A) || IsKeyPressed(KEY_LEFT)) {
-                gw->personagemAtual = 0;
-                PlaySound(rm.somMapaMover);
-            } else if(IsKeyPressed(KEY_D) || IsKeyPressed(KEY_RIGHT)) {
-                gw->personagemAtual = 1;
-                PlaySound(rm.somMapaMover);
-            }
+            //TraceLog(LOG_INFO, TextFormat("Personagem Atual: %d", gw->personagemAtual));
             
             break;
 

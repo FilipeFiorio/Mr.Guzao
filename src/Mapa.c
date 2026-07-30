@@ -465,6 +465,8 @@ Mapa *carregarMapa( const char *caminhoArquivo, GameWorld *gw ) {
                         novoMapa->jogador = jogador;
                     }
 
+                    TraceLog(LOG_INFO, TextFormat("personagem atual %d", gw->personagemAtual));
+
                 }
 
             }
