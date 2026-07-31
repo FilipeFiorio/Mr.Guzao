@@ -22,7 +22,7 @@ ItemMoedaEspecial *criarItemMoedaEspecial(float x, float y, float largura, float
     novoItem->ret.y = y;
     novoItem->ret.width = largura;
     novoItem->ret.height = altura;
-    novoItem->valor = 10;
+    novoItem->valor = 3;
     novoItem->estado = ITEM_GIRANDO;
 
     int quantidadeAnimacoes = 0;
