@@ -85,7 +85,6 @@ InimigoPlantaGelo *criarInimigoPlantaGelo(float x, float y, float largura, float
 
 void atualizarInimigoPlantaGelo(InimigoPlantaGelo *inimigo, GameWorld *gw, float delta) {
 
-
     Animacao *animacaoAtual = getAnimacaoAtualInimigoPlantaGelo(inimigo);
     atualizarAnimacao(animacaoAtual, delta);
 
@@ -98,21 +97,29 @@ void atualizarInimigoPlantaGelo(InimigoPlantaGelo *inimigo, GameWorld *gw, float
         100
     };
 
-    if(CheckCollisionRecs(ret, gw->mapa->jogador->ret) && inimigo->coolDownTiro >= 2000) {            
-        
+    if(CheckCollisionRecs(ret, gw->mapa->jogador->ret) && inimigo->coolDownTiro >= 2000) {
+
         inimigo->estado = INIMIGO_PLANTA_ATIRANDO;
 
         if(animacaoAtual->quadroAtual == 3) {
             atirar(inimigo, gw, delta);
         }
- 
+
         if(animacaoAtual->finalizada) {
             inimigo->coolDownTiro = 0;
+            inimigo->animacaoAtirando.quadroAtual = 0;
+            inimigo->animacaoAtirando.contadorTempoQuadro = 0;
             inimigo->animacaoAtirando.finalizada = false;
         }
 
-    
     } else {
+
+        if(inimigo->estado == INIMIGO_PLANTA_ATIRANDO && !animacaoAtual->finalizada) {
+            inimigo->animacaoAtirando.quadroAtual = 0;
+            inimigo->animacaoAtirando.contadorTempoQuadro = 0;
+            inimigo->animacaoAtirando.finalizada = false;
+        }
+
         inimigo->estado = INIMIGO_PLANTA_PARADO;
     }
 
@@ -128,7 +135,6 @@ void atualizarInimigoPlantaGelo(InimigoPlantaGelo *inimigo, GameWorld *gw, float
     inimigo->paraDireita = inimigo->ret.x < gw->mapa->jogador->ret.x;
 
 }
-
 void destruirInimigoPlantaGelo(InimigoPlantaGelo *inimigo) {
 
     if(inimigo != NULL) {
