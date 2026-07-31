@@ -79,6 +79,8 @@ void atualizarInimigoEspinho(InimigoEspinho *inimigo, GameWorld *gw, float delta
         inimigo->vel.x = -inimigo->vel.x;
     }
 
+    resolverColisaoInimigoComInimigo(&inimigo->ret, &inimigo->vel, gw->mapa);
+
     inimigo->paraDireita = inimigo->vel.x > 0;
 
 }

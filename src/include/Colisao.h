@@ -8,4 +8,5 @@ void verificarColisaoJogadorItem(GameWorld *gw);
 void verificarColisaoJogadorInimigo(GameWorld *gw);
 void resolverColisaoInimigoMapaX(Rectangle *ret, Vector2 *vel, Mapa *m);
 void resolverColisaoInimigoMapaY(Rectangle *ret, Vector2 *vel, bool *noChao, Mapa *m);
+void resolverColisaoInimigoComInimigo(Rectangle *ret, Vector2 *vel, Mapa *m);
 bool verificarSeTemChao(Rectangle *retInimigo, Vector2 *velInimigo, Mapa *m);

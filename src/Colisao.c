@@ -589,6 +589,48 @@ bool verificarSeTemChao(Rectangle *retInimigo, Vector2 *velInimigo, Mapa *m) {
 
 }
 
+void resolverColisaoInimigoComInimigo(Rectangle *ret, Vector2 *vel, Mapa *m) {
+
+    ElementoMapa *el = m->inimigos;
+
+    while( el != NULL) {
+        
+        Inimigo *inimigo = (Inimigo*) el->objeto;
+
+        if(inimigo->tipo == INIMIGO_NORMAL) {
+
+            InimigoNormal *i =(InimigoNormal*) inimigo->objeto;
+
+            if(CheckCollisionRecs(*ret, i->ret) && ret->x != i->ret.x) {
+                vel->x = -vel->x;
+            }
+
+        } else if(inimigo->tipo == INIMIGO_DASH) {
+
+            InimigoDash *i =(InimigoDash*) inimigo->objeto;
+
+            if(CheckCollisionRecs(*ret, i->ret) && ret->x != i->ret.x) {
+                vel->x = -vel->x;
+            }
+
+        } else if(inimigo->tipo == INIMIGO_ESPINHO) {
+
+            InimigoEspinho *i =(InimigoEspinho*) inimigo->objeto;
+
+            if(CheckCollisionRecs(*ret, i->ret) && ret->x != i->ret.x) {
+                vel->x = -vel->x;
+            }
+
+        }
+
+        el = el->proximo;
+
+
+    }
+    
+
+}
+
 // static Rectangle *getRetanguloInimigo(Inimigo *inimigo) {
 
 //     switch (inimigo->tipo) {
