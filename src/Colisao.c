@@ -7,11 +7,6 @@
 #include "ResourceManager.h"
 #include "Tipos.h"
 
-// static Rectangle *getRetanguloInimigo(Inimigo *inimigo);
-// static bool *getInimigoEstaVivio(Inimigo *inimigo);
-// static bool *getInimigoNoChao(Inimigo *inimigo);
-// static Vector2 *getInimigoVelocidade(Inimigo *inimigo);
-
 void resolverColisaoJogadorMapaX(GameWorld *gw) {
 
     Jogador *j = gw->mapa->jogador;
@@ -67,12 +62,18 @@ void resolverColisaoJogadorMapaX(GameWorld *gw) {
 
                 switch (gw->faseAtual) {
                     case 1:
+                    case 2:
+                    case 3:
                         StopMusicStream(rm.musicaFase1);
                         break;
-                    case 2: 
+                    case 4:
+                    case 5:
+                    case 6: 
                         StopMusicStream(rm.musicaFase2);
                         break;
-                    case 3:
+                    case 7:
+                    case 8:
+                    case 9:
                         StopMusicStream(rm.musicaFase3);
                         break;
                     default:
@@ -550,7 +551,29 @@ void resolverColisaoInimigoMapaY(Rectangle *ret, Vector2 *vel, bool *noChao, Map
                 }
                 vel->y = 0;
             }
-         }
+        } else if(obs->tipo == OBSTACULO_GELO)  {
+
+            ObstaculoGelo *o = (ObstaculoGelo*) obs->objeto;
+            
+            if ( CheckCollisionRecs( *ret, o->ret ) ) {
+                if ( ret->y + ret->height / 2 < o->ret.y + o->ret.height / 2 ) {
+                    ret->y = o->ret.y - ret->height;
+                    *noChao = true;
+                }
+                vel->y = 0;
+            }
+        } else if(obs->tipo == OBSTACULO_ACELERADO)  {
+
+            ObstaculoAcelerado *o = (ObstaculoAcelerado*) obs->objeto;
+            
+            if ( CheckCollisionRecs( *ret, o->ret ) ) {
+                if ( ret->y + ret->height / 2 < o->ret.y + o->ret.height / 2 ) {
+                    ret->y = o->ret.y - ret->height;
+                    *noChao = true;
+                }
+                vel->y = 0;
+            }
+        }
 
         el = el->proximo;
 
@@ -580,6 +603,22 @@ bool verificarSeTemChao(Rectangle *retInimigo, Vector2 *velInimigo, Mapa *m) {
                 return true;
             }
 
+        } else if(obs->tipo == OBSTACULO_GELO) {
+
+            ObstaculoGelo *o = (ObstaculoGelo*) obs->objeto;
+            
+            if(CheckCollisionRecs(ret, o->ret)) {
+                return true;
+            }
+
+        } else if(obs->tipo == OBSTACULO_ACELERADO) {
+
+            ObstaculoAcelerado *o = (ObstaculoAcelerado*) obs->objeto;
+            
+            if(CheckCollisionRecs(ret, o->ret)) {
+                return true;
+            }
+
         } 
         
         el = el->proximo;
@@ -601,7 +640,7 @@ void resolverColisaoInimigoComInimigo(Rectangle *ret, Vector2 *vel, Mapa *m) {
 
             InimigoNormal *i =(InimigoNormal*) inimigo->objeto;
 
-            if(CheckCollisionRecs(*ret, i->ret) && ret->x != i->ret.x) {
+            if(CheckCollisionRecs(*ret, i->ret) && ret->x != i->ret.x && i->estaVivo) {
                 vel->x = -vel->x;
             }
 
@@ -609,7 +648,7 @@ void resolverColisaoInimigoComInimigo(Rectangle *ret, Vector2 *vel, Mapa *m) {
 
             InimigoDash *i =(InimigoDash*) inimigo->objeto;
 
-            if(CheckCollisionRecs(*ret, i->ret) && ret->x != i->ret.x) {
+            if(CheckCollisionRecs(*ret, i->ret) && ret->x != i->ret.x && i->estaVivo) {
                 vel->x = -vel->x;
             }
 
@@ -630,79 +669,3 @@ void resolverColisaoInimigoComInimigo(Rectangle *ret, Vector2 *vel, Mapa *m) {
     
 
 }
-
-// static Rectangle *getRetanguloInimigo(Inimigo *inimigo) {
-
-//     switch (inimigo->tipo) {
-//         case INIMIGO_NORMAL:
-//             return &((InimigoNormal*) inimigo->objeto)->ret;
-//         case INIMIGO_DASH:
-//             return &((InimigoDash*) inimigo->objeto)->ret;
-//         case INIMIGO_VOADOR:
-//             return &((InimigoVoador*) inimigo->objeto)->ret;
-//         case INIMIGO_FANTASMA:
-//             return &((InimigoFantasma*) inimigo->objeto)->ret;
-//         case INIMIGO_PLANTA_GELO:
-//             return &((InimigoPlantaGelo*) inimigo->objeto)->ret;
-//         case INIMIGO_PLANTA:
-//             return &((InimigoPlanta*) inimigo->objeto)->ret;
-//         case INIMIGO_PEDRA:
-//             return &((InimigoPedra*) inimigo->objeto)->ret;
-//         case INIMIGO_ESPINHO:
-//             return &((InimigoEspinho*) inimigo->objeto)->ret;
-//         default:
-//             return NULL;
-//     } 
-
-// }
-
-// static bool *getInimigoEstaVivio(Inimigo *inimigo) {
-
-//     switch(inimigo->tipo) {
-//         case INIMIGO_NORMAL:
-//             return &((InimigoNormal*) inimigo->objeto)->estaVivo;   
-//         case INIMIGO_DASH:
-//             return &((InimigoDash*) inimigo->objeto)->estaVivo;   
-//         case INIMIGO_VOADOR:
-//             return &((InimigoVoador*) inimigo->objeto)->estaVivo;
-//         default:
-//             return NULL;   
-//     }
-// }
-
-// static bool *getInimigoNoChao(Inimigo *inimigo) {
-
-//     switch (inimigo->tipo) {
-//         case INIMIGO_NORMAL:
-//             return &((InimigoNormal*) inimigo->objeto)->noChao;
-//         case INIMIGO_DASH:
-//             return &((InimigoDash*) inimigo->objeto)->noChao;
-//         case INIMIGO_ESPINHO:
-//             return &((InimigoEspinho*) inimigo->objeto)->noChao;
-//         default:
-//             return NULL;
-//     }
-
-// }
-
-// static Vector2 *getInimigoVelocidade(Inimigo *inimigo) {
-
-//     switch (inimigo->tipo) {
-//         case INIMIGO_NORMAL:
-//             return &((InimigoNormal*) inimigo->objeto)->vel;
-//         case INIMIGO_DASH:
-//             return &((InimigoDash*) inimigo->objeto)->vel;
-//         case INIMIGO_VOADOR:
-//             return &((InimigoVoador*) inimigo->objeto)->vel;
-//         case INIMIGO_FANTASMA:
-//             return &((InimigoFantasma*) inimigo->objeto)->vel;
-//         case INIMIGO_PEDRA:
-//             return &((InimigoPedra*) inimigo->objeto)->vel;
-//         case INIMIGO_ESPINHO:
-//             return &((InimigoEspinho*) inimigo->objeto)->vel;
-//         default:
-//             return NULL;
-//     } 
-
-
-// }
