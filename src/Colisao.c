@@ -60,26 +60,9 @@ void resolverColisaoJogadorMapaX(GameWorld *gw) {
                 PlaySound(rm.somChegada);
                 gw->mapa->faseCompleta = true;
 
-                switch (gw->faseAtual) {
-                    case 1:
-                    case 2:
-                    case 3:
-                        StopMusicStream(rm.musicaFase1);
-                        break;
-                    case 4:
-                    case 5:
-                    case 6: 
-                        StopMusicStream(rm.musicaFase2);
-                        break;
-                    case 7:
-                    case 8:
-                    case 9:
-                        StopMusicStream(rm.musicaFase3);
-                        break;
-                    default:
-                        TraceLog(LOG_ERROR, "Numero de fase inesperado");
-                        break;
-                }
+                StopMusicStream(rm.musicaFase1);
+                StopMusicStream(rm.musicaFase2);
+                StopMusicStream(rm.musicaFase3);
 
             }
 
@@ -144,16 +127,6 @@ void resolverColisaoJogadorMapaY(GameWorld *gw, float delta) {
                 
             }
             
-        } else if (obs->tipo == OBSTACULO_CHEGADA) {
-
-            ObstaculoChegada *o = (ObstaculoChegada*) obs->objeto;
-
-            if (CheckCollisionRecs(j->ret, o->ret)) {
-
-                gw->mapa->faseCompleta = true;
-
-            }
-
         } else if (obs->tipo == OBSTACULO_GELO) {
 
             ObstaculoGelo *o = (ObstaculoGelo*) obs->objeto;
