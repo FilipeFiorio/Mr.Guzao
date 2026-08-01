@@ -14,36 +14,75 @@ MapaMundo *criarMapaMundo(int quantidadeFases) {
     novoMapaMundo->quantidadeFases = quantidadeFases;
     novoMapaMundo->fases = (NodeMapa*) malloc(sizeof(NodeMapa) * novoMapaMundo->quantidadeFases);
 
-    Vector2 posFase1 = (Vector2) {282, 507};
-    Vector2 posFase2 = (Vector2) {838, 525};
-    Vector2 posFase3 = (Vector2) {1370, 511};
-
     novoMapaMundo->fases[0] = (NodeMapa) { 
-        posFase1, 
+        (Vector2) {137,467}, 
         true, 
-        false, 1
+        false, 
+        1
     };
 
     novoMapaMundo->fases[1] = (NodeMapa) { 
-        posFase2, 
+        (Vector2) {266, 466}, 
         false, 
         false, 
         2 
     };
     
     novoMapaMundo->fases[2] = (NodeMapa) {
-        posFase3,
+        (Vector2) {425, 466},
         false,
         false,
         3
+
+    };
+    novoMapaMundo->fases[3] = (NodeMapa) { 
+        (Vector2) {645, 507}, 
+        false, 
+        false, 
+        4
+    };
+
+    novoMapaMundo->fases[4] = (NodeMapa) { 
+        (Vector2) {802, 507}, 
+        false, 
+        false, 
+        5 
+    };
+    
+    novoMapaMundo->fases[5] = (NodeMapa) {
+        (Vector2) {965, 507},
+        false,
+        false,
+        6
+
+    };
+    novoMapaMundo->fases[6] = (NodeMapa) { 
+        (Vector2) {1202, 507}, 
+        false, 
+        false, 
+        7
+    };
+
+    novoMapaMundo->fases[7] = (NodeMapa) { 
+        (Vector2) {1360, 507}, 
+        false, 
+        false, 
+        8 
+    };
+    
+    novoMapaMundo->fases[8] = (NodeMapa) {
+        (Vector2) {1510, 507},
+        false,
+        false,
+        9
 
     };
 
     novoMapaMundo->faseAtual = 0;
 
     novoMapaMundo->jogador = (Rectangle) {
-        posFase1.x, 
-        posFase1.y, 
+        novoMapaMundo->fases[0].pos.x, 
+        novoMapaMundo->fases[0].pos.y, 
         48, 
         48
     };
