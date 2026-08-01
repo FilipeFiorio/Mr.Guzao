@@ -94,7 +94,7 @@ void atualizarInimigoPlantaGelo(InimigoPlantaGelo *inimigo, GameWorld *gw, float
         inimigo->ret.x - 400,
         inimigo->ret.y - inimigo->ret.width,
         850,
-        100
+        200
     };
 
     if(CheckCollisionRecs(ret, gw->mapa->jogador->ret) && inimigo->coolDownTiro >= 2000) {
