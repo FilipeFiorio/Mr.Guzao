@@ -92,20 +92,26 @@ void updateGameWorld( GameWorld *gw, float delta ) {
 
                 switch (gw->faseAtual) {
                     case 1:
+                    case 2:
+                    case 3:
                         if(!IsMusicStreamPlaying(rm.musicaFase1)) {
                             PlayMusicStream(rm.musicaFase1);
                         } else {
                             UpdateMusicStream(rm.musicaFase1);
                         }
                         break;
-                    case 2:
+                    case 4:
+                    case 5:
+                    case 6:
                         if(!IsMusicStreamPlaying(rm.musicaFase2)) {
                             PlayMusicStream(rm.musicaFase2);
                         } else {
                             UpdateMusicStream(rm.musicaFase2);
                         }
                         break;
-                    case 3:
+                    case 7:
+                    case 8:
+                    case 9:
                         if(!IsMusicStreamPlaying(rm.musicaFase3)) {
                             PlayMusicStream(rm.musicaFase3);
                         } else {
@@ -219,12 +225,18 @@ void updateGameWorld( GameWorld *gw, float delta ) {
                 PlaySound(rm.somBotao); 
                 switch (gw->faseAtual) {
                 case 1:
+                case 2:
+                case 3:
                     StopMusicStream(rm.musicaFase1);
                     break;
-                case 2:
+                case 4:
+                case 5:
+                case 6:
                     StopMusicStream(rm.musicaFase2);
                     break;
-                case 3:
+                case 7:
+                case 8:
+                case 9:
                     StopMusicStream(rm.musicaFase3);
                     break;
                 default:
@@ -524,12 +536,18 @@ static void desenharFundo( GameWorld *gw ) {
 
     switch (gw->faseAtual) {
         case 1:
+        case 2:
+        case 3:
             fundo = rm.texturaFundo;
             break;
-        case 2:
+        case 4:
+        case 5:
+        case 6:
             fundo = rm.texturaFundoNeve;
             break;
-        case 3:
+        case 7:
+        case 8:
+        case 9:
             fundo = rm.texturaFundoDeserto;
             break;
         default:
@@ -592,12 +610,18 @@ static void verificarMorteJogador(GameWorld *gw) {
 
         switch (gw->faseAtual) { 
             case 1:
+            case 2:
+            case 3:
                 StopMusicStream(rm.musicaFase1);
                 break;
-            case 2:
+            case 4:
+            case 5:
+            case 6:
                 StopMusicStream(rm.musicaFase2);
                 break;
-            case 3:
+            case 7:
+            case 8:
+            case 9:
                 StopMusicStream(rm.musicaFase3);
                 break;
             default:
@@ -658,7 +682,7 @@ static void inicializarGW(GameWorld *gw) {
     
     gw->faseAtual = 1;
     gw->personagemAtual = 0;
-    gw->mapaMundo = criarMapaMundo(3);
+    gw->mapaMundo = criarMapaMundo(9);
     gw->gravidade = 600;
     gw->timerJogo = 180000;
     gw->alphaTransicao = 0;
@@ -688,7 +712,7 @@ static void passarFase(GameWorld *gw) {
 
     gw->faseAtual++;
 
-    if(gw->faseAtual > 3) {
+    if(gw->faseAtual > 9) {
         PlaySound(rm.somVitoria);
         gw->estado = ESTADO_JOGO_FIM;
         return;
