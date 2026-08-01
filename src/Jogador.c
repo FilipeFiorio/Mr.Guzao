@@ -411,11 +411,54 @@ void atualizarJogador(Jogador *j, GameWorld *gw, float delta) {
 void desenharJogador(Jogador *j) {
 
     Color cor = {0};
-
+    Rectangle retStatus = {0};
+    
     if(j->acelerado) {
+
         cor = RED;
+
+        retStatus = (Rectangle) {
+            .x = j->ret.x,
+            .y = j->ret.y - 15,
+            .width = j->ret.width * ((1750.0f - j->contadorTempoAcelerado) / 1750.0f),
+            .height = 7
+        };
+
+        DrawRectangleRec(
+            (Rectangle) {
+                .x = retStatus.x - 2,
+                .y = retStatus.y + 2,
+                .width = j->ret.width,
+                .height = retStatus.height
+            },
+            BLACK
+        );
+
+        DrawRectangleRec(retStatus, cor);
+        
     } else if (j->congelado) {
+
         cor = BLUE;
+
+        retStatus = (Rectangle) {
+            .x = j->ret.x,
+            .y = j->ret.y - 15,
+            .width = j->ret.width * ((1750.0f - j->contadorTempoCongelado) / 1750.0f),
+            .height = 7
+        };
+
+        DrawRectangleRec(
+            (Rectangle) {
+                .x = retStatus.x - 2,
+                .y = retStatus.y + 2,
+                .width = j->ret.width,
+                .height = retStatus.height
+            },
+            BLACK
+        );
+
+        DrawRectangleRec(retStatus, cor);
+        
     } else {
         cor = WHITE;
     }
