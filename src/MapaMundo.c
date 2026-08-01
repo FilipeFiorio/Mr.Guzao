@@ -13,6 +13,7 @@ MapaMundo *criarMapaMundo(int quantidadeFases) {
     MapaMundo *novoMapaMundo = (MapaMundo*) malloc( sizeof(MapaMundo));
     novoMapaMundo->quantidadeFases = quantidadeFases;
     novoMapaMundo->fases = (NodeMapa*) malloc(sizeof(NodeMapa) * novoMapaMundo->quantidadeFases);
+    novoMapaMundo->ilhasCompletadas = (bool*) calloc(3, sizeof(bool) * 3);
 
     novoMapaMundo->fases[0] = (NodeMapa) { 
         (Vector2) {137,467}, 
@@ -113,7 +114,6 @@ void destruirMapaMundo(MapaMundo *mapaMundo) {
 
 void atualizarMapaMundo(GameWorld *gw, float delta) {
 
-
     MapaMundo *mapaMundo = gw->mapaMundo;
 
     if (gw->mapa != NULL && gw->mapa->faseCompleta) {
@@ -156,7 +156,6 @@ void atualizarMapaMundo(GameWorld *gw, float delta) {
     if(IsKeyPressed(KEY_ENTER)) {
         PlaySound(rm.somBotao);
         StopMusicStream(rm.musicaMundo);
-        gw->musicaMundoIniciada = false;
         gw->faseAtual = mapaMundo->fases[mapaMundo->faseAtual].fase;
 
         mapaMundo->fases[mapaMundo->faseAtual].finalizado = false;

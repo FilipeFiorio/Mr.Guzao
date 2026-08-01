@@ -4,6 +4,7 @@
 #include "raylib/raylib.h"
 
 typedef enum EstadoJogo {
+    ESTADO_JOGO_APRESENTACAO,
     ESTADO_JOGO_INICIO,
     ESTADO_JOGO_PERSONAGEM,
     ESTADO_JOGO_MAPA_MUNDO,
@@ -488,14 +489,11 @@ typedef struct NodeMapa {
 } NodeMapa;
 
 typedef struct MapaMundo {
-
     NodeMapa *fases;
     int quantidadeFases;
-
     int faseAtual;
-
     Rectangle jogador;
-
+    bool *ilhasCompletadas;
 } MapaMundo;
 
 typedef struct GameWorld {
@@ -511,11 +509,10 @@ typedef struct GameWorld {
     float alphaTransicao;
     int vidasSalvas;
     int moedasSalvas;
+    int checkpointFase;
+    int checkpointVidas;
+    int checkpointMoedas;
+    bool checkpointAtivo;
     float timerMorte;
-    bool musicaInicioIniciada;
-    bool musicaMundoIniciada;
-    bool musicaFase1Iniciada;
-    bool musicaFase2Iniciada;
-    bool musicaFase3Iniciada;
 }GameWorld;
 

@@ -18,7 +18,6 @@
 #include "MapaMundo.h"
 #include "Utils.h"
 
-
 #include "raylib/raylib.h"
 //#include "raylib/raymath.h"
 //#define RAYGUI_IMPLEMENTATION    // to use raygui, comment these three lines.
@@ -30,11 +29,15 @@ static void desenharFundo(GameWorld *gw);
 static void verificarMorteJogador(GameWorld *gw);
 static void verificarGameOver(GameWorld *gw);
 static void reiniciarJogo(GameWorld *gw);
+static void voltarParaCheckpoint(GameWorld *gw);
+static void salvarCheckpoint(GameWorld *gw);
 static void inicializarGW(GameWorld *gw);
 static void desenharHud(GameWorld *gw);
 static void passarFase(GameWorld *gw);
 static void iniciarTransicao(GameWorld *gw, EstadoJogo proximoEstado);
 static void desenharMiniMapa(GameWorld *gw);
+
+static bool inverterAlpha = false;
 
 /**
  * @brief Creates a dinamically allocated GameWorld struct instance.
@@ -86,6 +89,23 @@ void updateGameWorld( GameWorld *gw, float delta ) {
 
     switch (gw->estado) {
 
+        case ESTADO_JOGO_APRESENTACAO:
+
+        if(!inverterAlpha) {
+            gw->alphaTransicao += 100 * delta;
+            if(gw->alphaTransicao >= 255) {
+                inverterAlpha = true;
+            }
+        } else {
+            gw->alphaTransicao -= 100 * delta;
+            if(gw->alphaTransicao <= 0) {
+                gw->estado = ESTADO_JOGO_INICIO;
+            }
+        }
+
+
+        break;
+    
         case ESTADO_JOGO_GAMEPLAY:
 
             if(gw->mapa->jogador->estado != JOGADOR_MORRENDO) {
@@ -143,7 +163,8 @@ void updateGameWorld( GameWorld *gw, float delta ) {
             atualizarMapa(gw->mapa, gw, delta);
 
             if (gw->mapa->faseCompleta) {
-                gw->mapaMundo->fases[gw->faseAtual - 1].finalizado = true; // faseAtual é 1-based
+                gw->mapaMundo->fases[gw->faseAtual - 1].finalizado = true;
+                salvarCheckpoint(gw);
             }
 
             verificarMorteJogador(gw);
@@ -170,10 +191,17 @@ void updateGameWorld( GameWorld *gw, float delta ) {
         
         case ESTADO_JOGO_GAME_OVER:
 
-            if(IsKeyPressed(KEY_ENTER)) {
+            if(gw->checkpointAtivo) {
+                if(IsKeyPressed(KEY_ENTER)) {
+                    PlaySound(rm.somBotao);
+                    voltarParaCheckpoint(gw);
+                }
+            }
+
+            if(IsKeyPressed(KEY_BACKSPACE)) {
                 PlaySound(rm.somBotao);
                 inicializarGW(gw);
-                gw->estado = ESTADO_JOGO_INICIO;
+                iniciarTransicao(gw, ESTADO_JOGO_INICIO);
             }
             
             break;
@@ -317,6 +345,13 @@ void drawGameWorld( GameWorld *gw ) {
 
     switch (gw->estado) {
 
+        case ESTADO_JOGO_APRESENTACAO:
+
+        drawTextAlinhado("BLTS Studios", 300, 80, (Color) {255, 255, 255, gw->alphaTransicao}, CENTRO);
+        drawTextAlinhado("Apresenta", 400, 25, (Color) {255, 255, 255, gw->alphaTransicao}, CENTRO);
+
+        break;
+
         case ESTADO_JOGO_GAMEPLAY:
 
             ClearBackground( (Color) {175, 231, 255, 255} );
@@ -343,8 +378,10 @@ void drawGameWorld( GameWorld *gw ) {
         case ESTADO_JOGO_GAME_OVER:
 
             ClearBackground(BLACK);
-            drawTextAlinhado("GAME OVER", 200, 50, WHITE, CENTRO);
-            drawTextAlinhado("Aperte [ENTER] para continuar", 400, 25, WHITE, CENTRO);
+            drawTextAlinhado("GAME OVER", 160, 50, WHITE, CENTRO);
+
+            drawTextAlinhado("[ENTER] Voltar para o último checkpoint", 350, 25, gw->checkpointAtivo ? WHITE : DARKGRAY, CENTRO);
+            drawTextAlinhado("[BACKSPACE] Voltar ao menu inicial", 400, 25, WHITE, CENTRO);
 
             break;
 
@@ -455,11 +492,7 @@ void drawGameWorld( GameWorld *gw ) {
                 0.0f,
                 WHITE
             );
-                 
-            
-
-  
-            
+                              
             break;
 
         case ESTADO_JOGO_PAUSE:    
@@ -673,6 +706,50 @@ static void reiniciarJogo(GameWorld *gw) {
     
 }
 
+static void salvarCheckpoint(GameWorld *gw) {
+
+    if(gw->mapa == NULL || gw->mapa->jogador == NULL) {
+        return;
+    }
+
+    if(gw->faseAtual == 3 || gw->faseAtual == 6) {
+        gw->checkpointFase = gw->faseAtual;
+        gw->checkpointVidas = gw->mapa->jogador->vidas;
+        gw->checkpointMoedas = gw->mapa->jogador->moedas;
+        gw->checkpointAtivo = true;
+    }
+
+}
+
+static void voltarParaCheckpoint(GameWorld *gw) {
+
+    if(!gw->checkpointAtivo) {
+        return;
+    }
+
+    if(gw->mapa != NULL) {
+        destruirMapa(gw->mapa);
+        gw->mapa = NULL;
+    }
+
+    StopMusicStream(rm.musicaFase1);
+    StopMusicStream(rm.musicaFase2);
+    StopMusicStream(rm.musicaFase3);
+
+    gw->mapaMundo->fases[gw->checkpointFase].finalizado = false;
+    gw->mapaMundo->fases[gw->checkpointFase + 1].finalizado = false;
+    gw->mapaMundo->fases[gw->checkpointFase + 1].liberado = false;
+
+    gw->mapaMundo->jogador.x = gw->mapaMundo->fases[gw->checkpointFase].pos.x;
+    gw->mapaMundo->jogador.y = gw->mapaMundo->fases[gw->checkpointFase].pos.y;
+    gw->mapaMundo->faseAtual = gw->checkpointFase;
+
+    gw->vidasSalvas = gw->checkpointVidas;
+    gw->moedasSalvas = gw->checkpointMoedas;
+    iniciarTransicao(gw, ESTADO_JOGO_MAPA_MUNDO);
+
+}
+
 static void inicializarGW(GameWorld *gw) {
 
     if (gw->mapaMundo != NULL) {
@@ -687,11 +764,15 @@ static void inicializarGW(GameWorld *gw) {
     gw->timerJogo = 180000;
     gw->alphaTransicao = 0;
     gw->timerMorte = 0;
-    gw->proximoEstado = ESTADO_JOGO_INICIO;
+    gw->proximoEstado = ESTADO_JOGO_APRESENTACAO;
     gw->mapa = NULL;
-    gw->estado = ESTADO_JOGO_INICIO;
+    gw->estado = ESTADO_JOGO_APRESENTACAO;
     gw->vidasSalvas = 5;
     gw->moedasSalvas = 0;
+    gw->checkpointFase = 0;
+    gw->checkpointVidas = 5;
+    gw->checkpointMoedas = 0;
+    gw->checkpointAtivo = false;
 
     gw->camera = (Camera2D) {
         .offset = {0},
