@@ -739,6 +739,8 @@ static void voltarParaCheckpoint(GameWorld *gw) {
     gw->mapaMundo->fases[gw->checkpointFase].finalizado = false;
     gw->mapaMundo->fases[gw->checkpointFase + 1].finalizado = false;
     gw->mapaMundo->fases[gw->checkpointFase + 1].liberado = false;
+    gw->mapaMundo->fases[gw->checkpointFase + 2].finalizado = false;
+    gw->mapaMundo->fases[gw->checkpointFase + 2].liberado = false;
 
     gw->mapaMundo->jogador.x = gw->mapaMundo->fases[gw->checkpointFase].pos.x;
     gw->mapaMundo->jogador.y = gw->mapaMundo->fases[gw->checkpointFase].pos.y;
