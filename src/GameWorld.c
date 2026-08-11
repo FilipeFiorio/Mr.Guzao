@@ -209,19 +209,6 @@ void updateGameWorld( GameWorld *gw, float delta ) {
         case ESTADO_JOGO_GAME_OVER:
 
             ShowCursor();
-
-            if(gw->checkpointAtivo) {
-                if(IsKeyPressed(KEY_ENTER)) {
-                    PlaySound(rm.somBotao);
-                    voltarParaCheckpoint(gw);
-                }
-            }
-
-            if(IsKeyPressed(KEY_BACKSPACE)) {
-                PlaySound(rm.somBotao);
-                inicializarGW(gw);
-                iniciarTransicao(gw, ESTADO_JOGO_INICIO);
-            }
             
             break;
 
@@ -376,8 +363,38 @@ void drawGameWorld( GameWorld *gw ) {
             ClearBackground(BLACK);
             drawTextAlinhado("GAME OVER", 160, 50, WHITE, CENTRO);
 
-            drawTextAlinhado("[ENTER] Voltar para o último checkpoint", 350, 25, gw->checkpointAtivo ? WHITE : DARKGRAY, CENTRO);
-            drawTextAlinhado("[BACKSPACE] Voltar ao menu inicial", 400, 25, WHITE, CENTRO);
+            Rectangle botaoCheckpoint = {GetRenderWidth() * 0.5f - 150, GetRenderHeight() * 0.4f, 300, 100};
+            Rectangle botaoReiniciarGameOver = {botaoCheckpoint.x, GetRenderHeight() * 0.5f, botaoCheckpoint.width, botaoCheckpoint.height};
+            Rectangle botaoSairGameOver = {botaoCheckpoint.x, GetRenderHeight() * 0.6f, botaoCheckpoint.width, botaoCheckpoint.height};
+
+            if(GuiButton(botaoCheckpoint,"CHECKPOINT")) {
+                if(gw->checkpointAtivo) {
+                    PlaySound(rm.somBotao);
+                    voltarParaCheckpoint(gw);
+                }
+            }
+
+            //pode tem memory leak
+            if(GuiButton(botaoReiniciarGameOver, "REINICIAR")) {
+                PlaySound(rm.somBotao);
+                inicializarGW(gw);
+            }
+
+            if(GuiButton(botaoSairGameOver, "SAIR")) {
+                PlaySound(rm.somBotao);
+                gw->fecharJogo = true;
+            }
+
+            if(CheckCollisionPointRec(GetMousePosition(), botaoCheckpoint)) {
+                gw->checkpointAtivo ? SetMouseCursor(MOUSE_CURSOR_POINTING_HAND) : SetMouseCursor(MOUSE_CURSOR_NOT_ALLOWED);
+            }else if(CheckCollisionPointRec(GetMousePosition(), botaoReiniciarGameOver)) {
+                SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+            }else if(CheckCollisionPointRec(GetMousePosition(), botaoSairGameOver)) {
+                SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+            } else {
+                SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+            }
+
 
             break;
 
@@ -393,7 +410,6 @@ void drawGameWorld( GameWorld *gw ) {
             DrawTexturePro(rm.texturaInicio, origem, destino, (Vector2) {0}, 0.0f, WHITE);
 
             drawTextAlinhado("Mr. Guzão", 200, 72, WHITE, CENTRO);
-
 
             Rectangle botaoIniciar = {GetRenderWidth() * 0.5f - 150, GetRenderHeight() * 0.6f, 300, 100};
             Rectangle botaoSair = {botaoIniciar.x, GetRenderHeight() * 0.7f, botaoIniciar.width, botaoIniciar.height};
@@ -626,6 +642,7 @@ void drawGameWorld( GameWorld *gw ) {
             EndMode2D();
 
             desenharHud(gw);
+            desenharMiniMapa(gw);
 
             break;
 
@@ -780,6 +797,7 @@ static void verificarGameOver(GameWorld *gw) {
         destruirMapa(gw->mapa);
         gw->mapa = NULL;
         gw->estado = ESTADO_JOGO_GAME_OVER;
+        SetMousePosition(GetRenderWidth() / 2, GetRenderHeight() / 2);
     }
 
 }
