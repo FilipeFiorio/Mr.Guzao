@@ -549,6 +549,7 @@ void drawGameWorld( GameWorld *gw ) {
                     }
 
                     if(GuiButton(botaoPersonagem, "PERSONAGEM")) {
+                        StopMusicStream(rm.musicaMundo);
                         PlaySound(rm.somBotao);
                         gw->estado = ESTADO_JOGO_PERSONAGEM;
                         estadoAntesPause = 67;
@@ -608,6 +609,9 @@ void drawGameWorld( GameWorld *gw ) {
                     }
 
                     if(GuiButton(botaoSairFase, "SAIR")) {
+                        StopMusicStream(rm.musicaFase1);
+                        StopMusicStream(rm.musicaFase2);
+                        StopMusicStream(rm.musicaFase3);
                         PlaySound(rm.somBotao);
                         iniciarTransicao(gw, ESTADO_JOGO_MAPA_MUNDO);
                     }
@@ -804,6 +808,10 @@ static void verificarGameOver(GameWorld *gw) {
 
 static void reiniciarFase(GameWorld *gw) {
 
+    StopMusicStream(rm.musicaFase1);
+    StopMusicStream(rm.musicaFase2);
+    StopMusicStream(rm.musicaFase3);
+
     Jogador *j = gw->mapa->jogador;
 
     int vidaAtual = j->vidas;
@@ -816,7 +824,6 @@ static void reiniciarFase(GameWorld *gw) {
     sprintf(caminhoMapa, "resources/mapas/fase%d.txt", faseAtual);
     gw->mapa = carregarMapa(caminhoMapa, gw);
 
-    gw->gravidade = 600;
     gw->timerJogo = 180000;
     gw->faseAtual = faseAtual;
     gw->estado = ESTADO_JOGO_GAMEPLAY;
@@ -873,6 +880,12 @@ static void voltarParaCheckpoint(GameWorld *gw) {
 }
 
 static void inicializarGW(GameWorld *gw) {
+
+    StopMusicStream(rm.musicaFase1);
+    StopMusicStream(rm.musicaFase2);
+    StopMusicStream(rm.musicaFase3);
+    StopMusicStream(rm.musicaInicio);
+    StopMusicStream(rm.musicaMundo);
 
     if (gw->mapaMundo != NULL) {
         destruirMapaMundo(gw->mapaMundo);
