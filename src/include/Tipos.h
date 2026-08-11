@@ -500,6 +500,7 @@ typedef struct GameWorld {
     Mapa *mapa;
     MapaMundo *mapaMundo;
     Camera2D camera;
+    EstadoJogo estadoAnterior;
     EstadoJogo estado;
     EstadoJogo proximoEstado;
     float gravidade;
@@ -514,5 +515,6 @@ typedef struct GameWorld {
     int checkpointMoedas;
     bool checkpointAtivo;
     float timerMorte;
+    bool fecharJogo;
 }GameWorld;
 

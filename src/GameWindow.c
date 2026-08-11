@@ -126,10 +126,9 @@ void initGameWindow( GameWindow *gameWindow ) {
         gameWindow->gw = createGameWorld();
 
         // game loop
-        while ( !WindowShouldClose() ) {
+        while (!gameWindow->gw->fecharJogo) {
             updateGameWorld( gameWindow->gw, GetFrameTime() );
             drawGameWorld( gameWindow->gw );
-            HideCursor();
         }
 
         bool initAudio = gameWindow->initAudio;
