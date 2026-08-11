@@ -20,15 +20,15 @@
 
 #include "raylib/raylib.h"
 //#include "raylib/raymath.h"
-//#define RAYGUI_IMPLEMENTATION    // to use raygui, comment these three lines.
-//#include "raylib/raygui.h"       // other compilation units must only include
-//#undef RAYGUI_IMPLEMENTATION     // raygui.h
+#define RAYGUI_IMPLEMENTATION    // to use raygui, comment these three lines.
+#include "raylib/raygui.h"       // other compilation units must only include
+#undef RAYGUI_IMPLEMENTATION     // raygui.h
 
 static void atualizarCamera(GameWorld *gw);
 static void desenharFundo(GameWorld *gw);
 static void verificarMorteJogador(GameWorld *gw);
 static void verificarGameOver(GameWorld *gw);
-static void reiniciarJogo(GameWorld *gw);
+static void reiniciarFase(GameWorld *gw);
 static void voltarParaCheckpoint(GameWorld *gw);
 static void salvarCheckpoint(GameWorld *gw);
 static void inicializarGW(GameWorld *gw);
@@ -38,6 +38,7 @@ static void iniciarTransicao(GameWorld *gw, EstadoJogo proximoEstado);
 static void desenharMiniMapa(GameWorld *gw);
 
 static bool inverterAlpha = false;
+static EstadoJogo estadoAntesPause = 67;
 
 /**
  * @brief Creates a dinamically allocated GameWorld struct instance.
@@ -89,24 +90,29 @@ void updateGameWorld( GameWorld *gw, float delta ) {
 
     switch (gw->estado) {
 
+        
         case ESTADO_JOGO_APRESENTACAO:
 
-        if(!inverterAlpha) {
-            gw->alphaTransicao += 100 * delta;
-            if(gw->alphaTransicao >= 255) {
-                inverterAlpha = true;
-            }
-        } else {
-            gw->alphaTransicao -= 100 * delta;
-            if(gw->alphaTransicao <= 0) {
-                gw->estado = ESTADO_JOGO_INICIO;
-            }
-        }
+            HideCursor();
 
+            if(!inverterAlpha) {
+                gw->alphaTransicao += 100 * delta;
+                if(gw->alphaTransicao >= 255) {
+                    inverterAlpha = true;
+                }
+            } else {
+                gw->alphaTransicao -= 100 * delta;
+                if(gw->alphaTransicao <= 0) {
+                    SetMousePosition(GetRenderWidth() / 2, GetRenderHeight() / 2);
+                    gw->estado = ESTADO_JOGO_INICIO;
+                }
+            }
 
-        break;
-    
+            break;
+        
         case ESTADO_JOGO_GAMEPLAY:
+
+            HideCursor();
 
             if(gw->mapa->jogador->estado != JOGADOR_MORRENDO) {
 
@@ -145,7 +151,9 @@ void updateGameWorld( GameWorld *gw, float delta ) {
             }
 
 
-            if(IsKeyPressed(KEY_P)) {
+            if(IsKeyPressed(KEY_ESCAPE)) {
+                SetMousePosition(GetRenderWidth() / 2, GetRenderHeight() / 2);
+                estadoAntesPause = ESTADO_JOGO_GAMEPLAY;
                 gw->estado = ESTADO_JOGO_PAUSE;
                 PlaySound(rm.somPausa);
             }
@@ -179,6 +187,15 @@ void updateGameWorld( GameWorld *gw, float delta ) {
 
         case ESTADO_JOGO_MAPA_MUNDO:
 
+            HideCursor();
+
+            if(IsKeyPressed(KEY_ESCAPE)) {
+                SetMousePosition(GetRenderWidth() / 2, GetRenderHeight() / 2);
+                estadoAntesPause = ESTADO_JOGO_MAPA_MUNDO;
+                gw->estado = ESTADO_JOGO_PAUSE;
+                PlaySound(rm.somPausa);
+            }
+
             if(!IsMusicStreamPlaying(rm.musicaMundo)) {
                 PlayMusicStream(rm.musicaMundo);
             } else {
@@ -190,6 +207,8 @@ void updateGameWorld( GameWorld *gw, float delta ) {
             break;
         
         case ESTADO_JOGO_GAME_OVER:
+
+            ShowCursor();
 
             if(gw->checkpointAtivo) {
                 if(IsKeyPressed(KEY_ENTER)) {
@@ -208,85 +227,43 @@ void updateGameWorld( GameWorld *gw, float delta ) {
 
         case ESTADO_JOGO_INICIO:
 
+            ShowCursor();
+
             if(!IsMusicStreamPlaying(rm.musicaInicio)) {
                 PlayMusicStream(rm.musicaInicio);
             } else {
                 UpdateMusicStream(rm.musicaInicio);
             }
 
-            if(IsKeyPressed(KEY_ENTER)) {
-                PlaySound(rm.somBotao);
-                StopMusicStream(rm.musicaInicio);
-                iniciarTransicao(gw, ESTADO_JOGO_PERSONAGEM);
-            }
-
             break;
 
         case ESTADO_JOGO_PERSONAGEM:
 
-        
-            if((IsKeyPressed(KEY_A) || IsKeyPressed(KEY_LEFT)) && gw->personagemAtual != 0) {
-                gw->personagemAtual = 0;
-                PlaySound(rm.somMapaMover);
-            } else if((IsKeyPressed(KEY_D) || IsKeyPressed(KEY_RIGHT)) && gw->personagemAtual != 1) {
-                gw->personagemAtual = 1;
-                PlaySound(rm.somMapaMover);
-            }
-            
-            if(IsKeyPressed(KEY_ENTER)) {
-                PlaySound(rm.somBotao);
-                iniciarTransicao(gw, ESTADO_JOGO_MAPA_MUNDO);
-            }
+            ShowCursor();
 
-            //TraceLog(LOG_INFO, TextFormat("Personagem Atual: %d", gw->personagemAtual));
-            
             break;
 
         case ESTADO_JOGO_PAUSE:
 
-            if(IsKeyPressed(KEY_P)) {
+            ShowCursor();
+
+            if(IsKeyPressed(KEY_ESCAPE)) {
                 PlaySound(rm.somPausa);
-                gw->estado = ESTADO_JOGO_GAMEPLAY;
-            }
-
-            if(IsKeyPressed(KEY_BACKSPACE)) {
-                PlaySound(rm.somBotao); 
-                switch (gw->faseAtual) {
-                case 1:
-                case 2:
-                case 3:
-                    StopMusicStream(rm.musicaFase1);
-                    break;
-                case 4:
-                case 5:
-                case 6:
-                    StopMusicStream(rm.musicaFase2);
-                    break;
-                case 7:
-                case 8:
-                case 9:
-                    StopMusicStream(rm.musicaFase3);
-                    break;
-                default:
-                    TraceLog(LOG_ERROR, "Numero de fase atual inesperado");
-                    break;
-                }
-
-                gw->vidasSalvas = gw->mapa->jogador->vidas;
-                gw->moedasSalvas = gw->mapa->jogador->moedas;
-
-                iniciarTransicao(gw, ESTADO_JOGO_MAPA_MUNDO);
+                gw->estado = estadoAntesPause;
+                estadoAntesPause = 67;
             }
 
             break;
 
         case ESTADO_JOGO_MORTE:
 
+            HideCursor();
+
             gw->timerMorte += delta;
 
             if(!IsSoundPlaying(rm.somMorte)) {
                 if(gw->mapa->jogador->vidas >= 1) {
-                    reiniciarJogo(gw);
+                    reiniciarFase(gw);
                 } else {
                     PlaySound(rm.somGameOver);
                     destruirMapa(gw->mapa);
@@ -299,6 +276,8 @@ void updateGameWorld( GameWorld *gw, float delta ) {
 
         case ESTADO_JOGO_FIM:
 
+            HideCursor();
+
             if(IsKeyPressed(KEY_ENTER)){
                 if(!IsSoundPlaying(rm.somVitoria)) {
                     gw->estado = ESTADO_JOGO_INICIO;
@@ -308,6 +287,8 @@ void updateGameWorld( GameWorld *gw, float delta ) {
             break;
         
         case ESTADO_JOGO_FADE_IN:
+
+            HideCursor();
             
             gw->alphaTransicao -= 600 * delta;
 
@@ -319,6 +300,8 @@ void updateGameWorld( GameWorld *gw, float delta ) {
             break;
         
         case ESTADO_JOGO_FADE_OUT:
+
+            HideCursor();
 
             gw->alphaTransicao += 600 * delta;
 
@@ -342,6 +325,19 @@ void updateGameWorld( GameWorld *gw, float delta ) {
 void drawGameWorld( GameWorld *gw ) {
     
     BeginDrawing();
+    
+    GuiSetFont(rm.fonte);
+    GuiSetStyle(DEFAULT, TEXT_SIZE, 24);
+    GuiSetStyle(BUTTON, BORDER_WIDTH, 3);
+    GuiSetStyle(BUTTON, BASE_COLOR_NORMAL, ColorToInt((Color){45, 92, 170, 255}));
+    GuiSetStyle(BUTTON, BASE_COLOR_FOCUSED, ColorToInt((Color){70, 130, 220, 255}));
+    GuiSetStyle(BUTTON, BASE_COLOR_PRESSED, ColorToInt((Color){20, 60, 120, 255}));
+    GuiSetStyle(BUTTON, BORDER_COLOR_NORMAL, ColorToInt(WHITE));
+    GuiSetStyle(BUTTON, BORDER_COLOR_FOCUSED, ColorToInt(YELLOW));
+    GuiSetStyle(BUTTON, BORDER_COLOR_PRESSED, ColorToInt(ORANGE));
+    GuiSetStyle(BUTTON, TEXT_COLOR_NORMAL, ColorToInt(WHITE));
+    GuiSetStyle(BUTTON, TEXT_COLOR_FOCUSED, ColorToInt(BLACK));
+    GuiSetStyle(BUTTON, TEXT_COLOR_PRESSED, ColorToInt(WHITE));
 
     switch (gw->estado) {
 
@@ -397,7 +393,26 @@ void drawGameWorld( GameWorld *gw ) {
             DrawTexturePro(rm.texturaInicio, origem, destino, (Vector2) {0}, 0.0f, WHITE);
 
             drawTextAlinhado("Mr. Guzão", 200, 72, WHITE, CENTRO);
-            drawTextAlinhado("Aperte [ENTER] para iniciar", 500, 25, WHITE, CENTRO);
+
+
+            Rectangle botaoIniciar = {GetRenderWidth() * 0.5f - 150, GetRenderHeight() * 0.6f, 300, 100};
+            Rectangle botaoSair = {botaoIniciar.x, GetRenderHeight() * 0.7f, botaoIniciar.width, botaoIniciar.height};
+
+            if(GuiButton(botaoIniciar, "JOGAR")) {
+                PlaySound(rm.somBotao);
+                StopMusicStream(rm.musicaInicio);
+                iniciarTransicao(gw, ESTADO_JOGO_PERSONAGEM);
+            }
+
+            if(GuiButton(botaoSair, "SAIR")) {
+                gw->fecharJogo = true;
+            }
+
+            if(CheckCollisionPointRec(GetMousePosition(), botaoIniciar) || CheckCollisionPointRec(GetMousePosition(), botaoSair)) {
+                SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+            } else {
+                SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+            }
 
             break;
 
@@ -421,14 +436,9 @@ void drawGameWorld( GameWorld *gw ) {
                     GetRenderHeight() * 0.5f 
             };
 
-            if(gw->personagemAtual == 0) {
-                DrawRectangleRoundedLines(
-                    ret1,
-                    0.1f,
-                    0,
-                    WHITE
-                );
-
+            if(CheckCollisionPointRec(GetMousePosition(), ret1)) {
+                SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+                DrawRectangleRounded(ret1, 0.1f, 0, LIGHTGRAY);
                 DrawTextPro(rm.fonte, 
                     "Mr. Guzão",
                     (Vector2) {
@@ -441,16 +451,15 @@ void drawGameWorld( GameWorld *gw ) {
                     0, 
                     WHITE
                 );
+                if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+                    PlaySound(rm.somBotao);
+                    gw->personagemAtual = 0;
+                    iniciarTransicao(gw, ESTADO_JOGO_MAPA_MUNDO);
+                }
 
-
-            } else {   
-                DrawRectangleRoundedLines(
-                    ret2,
-                    0.1f,
-                    0,
-                    WHITE
-                );
-
+            } else if(CheckCollisionPointRec(GetMousePosition(), ret2)) {
+                SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+                DrawRectangleRounded(ret2, 0.1f, 0, LIGHTGRAY);
                 DrawTextPro(rm.fonte, 
                     "Mr. Guzinho",
                     (Vector2) {
@@ -463,8 +472,15 @@ void drawGameWorld( GameWorld *gw ) {
                     0, 
                     WHITE
                 );
-            }    
-                
+                if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+                    PlaySound(rm.somBotao);
+                    gw->personagemAtual = 1;
+                    iniciarTransicao(gw, ESTADO_JOGO_MAPA_MUNDO);
+                }
+            } else {
+                SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+            }
+
             DrawTexturePro(
                 rm.texturaJogador,
                 (Rectangle) {0, 0, 16, 16},
@@ -495,20 +511,106 @@ void drawGameWorld( GameWorld *gw ) {
                               
             break;
 
-        case ESTADO_JOGO_PAUSE:    
+        case ESTADO_JOGO_PAUSE:  
 
-            ClearBackground( (Color) {175, 231, 255, 255} );
+            switch(estadoAntesPause) {
 
-            BeginMode2D(gw->camera);
-            
-            desenharFundo(gw);
-            desenharMapa(gw->mapa);
-            
-            EndMode2D();
-            
-            drawTextAlinhado("Jogo Pausado", 200, 25, WHITE, CENTRO);
-            desenharHud(gw);
-            desenharMiniMapa(gw);
+                case ESTADO_JOGO_MAPA_MUNDO:
+
+                    desenharMapaMundo(gw->mapaMundo);
+                    desenharHud(gw);
+                    drawTextAlinhado("JOGO PAUSADO", GetRenderHeight() * 0.3f, 40, WHITE, CENTRO);
+
+                    Rectangle botaoResumir = {GetRenderWidth() * 0.5f - 150, GetRenderHeight() * 0.4f, 300, 100};
+                    Rectangle botaoPersonagem = {botaoResumir.x, GetRenderHeight() * 0.5f, botaoResumir.width, botaoResumir.height};
+                    Rectangle botaoReiniciar = {botaoResumir.x, GetRenderHeight() * 0.6f, botaoResumir.width, botaoResumir.height};
+                    Rectangle botaoSair = {botaoResumir.x, GetRenderHeight() * 0.7f, botaoResumir.width, botaoResumir.height};
+
+                    if(GuiButton(botaoResumir, "RESUMIR")) {
+                        PlaySound(rm.somBotao);
+                        gw->estado = estadoAntesPause;
+                        estadoAntesPause = 67;
+                    }
+
+                    if(GuiButton(botaoPersonagem, "PERSONAGEM")) {
+                        PlaySound(rm.somBotao);
+                        gw->estado = ESTADO_JOGO_PERSONAGEM;
+                        estadoAntesPause = 67;
+                    }
+
+                    // talvez tenha memory leak
+                    if(GuiButton(botaoReiniciar, "REINICIAR")) {
+                        PlaySound(rm.somBotao);
+                        inicializarGW(gw);
+                    }
+
+                    if(GuiButton(botaoSair, "SAIR")) {
+                        PlaySound(rm.somBotao);
+                        gw->fecharJogo = true;
+                    }
+
+                    if(CheckCollisionPointRec(GetMousePosition(), botaoResumir)) {
+                        SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+                    }else if(CheckCollisionPointRec(GetMousePosition(), botaoPersonagem)) {
+                        SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+                    }else if(CheckCollisionPointRec(GetMousePosition(), botaoReiniciar)) {
+                        SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+                    }else if(CheckCollisionPointRec(GetMousePosition(), botaoSair)) {
+                        SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+                    } else {
+                        SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+                    }
+
+                    break;
+                case ESTADO_JOGO_GAMEPLAY:
+                    ClearBackground( (Color) {175, 231, 255, 255} );
+        
+                    BeginMode2D(gw->camera);
+                    
+                    desenharFundo(gw);
+                    desenharMapa(gw->mapa);
+                    
+                    EndMode2D();
+                    
+                    drawTextAlinhado("JOGO PAUSADO", GetRenderHeight() * 0.3f, 40, WHITE, CENTRO);
+                    desenharHud(gw);
+                    desenharMiniMapa(gw);
+
+                    Rectangle botaoResumirFase = {GetRenderWidth() * 0.5f - 150, GetRenderHeight() * 0.4f, 300, 100};
+                    Rectangle botaoReiniciarFase = {botaoResumirFase.x, GetRenderHeight() * 0.5f, botaoResumirFase.width, botaoResumirFase.height};
+                    Rectangle botaoSairFase = {botaoResumirFase.x, GetRenderHeight() * 0.6f, botaoResumirFase.width, botaoResumirFase.height};
+
+                    if(GuiButton(botaoResumirFase, "RESUMIR")) {
+                        PlaySound(rm.somBotao);
+                        gw->estado = estadoAntesPause;
+                        estadoAntesPause = 67;
+                    }
+
+                    if(GuiButton(botaoReiniciarFase, "REINICIAR")) {
+                        PlaySound(rm.somBotao);
+                        reiniciarFase(gw);
+                    }
+
+                    if(GuiButton(botaoSairFase, "SAIR")) {
+                        PlaySound(rm.somBotao);
+                        iniciarTransicao(gw, ESTADO_JOGO_MAPA_MUNDO);
+                    }
+
+                    if(CheckCollisionPointRec(GetMousePosition(), botaoResumirFase)) {
+                        SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+                    }else if(CheckCollisionPointRec(GetMousePosition(), botaoReiniciarFase)) {
+                        SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+                    }else if(CheckCollisionPointRec(GetMousePosition(), botaoSairFase)) {
+                        SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+                    } else {
+                        SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+                    }
+                    break;
+
+                default:
+                    break;
+
+            }
 
             break;
 
@@ -682,7 +784,7 @@ static void verificarGameOver(GameWorld *gw) {
 
 }
 
-static void reiniciarJogo(GameWorld *gw) {
+static void reiniciarFase(GameWorld *gw) {
 
     Jogador *j = gw->mapa->jogador;
 
@@ -758,7 +860,7 @@ static void inicializarGW(GameWorld *gw) {
         destruirMapaMundo(gw->mapaMundo);
     }
 
-    
+    gw->fecharJogo = false;
     gw->faseAtual = 1;
     gw->personagemAtual = 0;
     gw->mapaMundo = criarMapaMundo(9);
@@ -766,9 +868,10 @@ static void inicializarGW(GameWorld *gw) {
     gw->timerJogo = 180000;
     gw->alphaTransicao = 0;
     gw->timerMorte = 0;
-    gw->proximoEstado = ESTADO_JOGO_APRESENTACAO;
     gw->mapa = NULL;
     gw->estado = ESTADO_JOGO_APRESENTACAO;
+    gw->proximoEstado = ESTADO_JOGO_APRESENTACAO;
+    gw->estadoAnterior = ESTADO_JOGO_APRESENTACAO;
     gw->vidasSalvas = 5;
     gw->moedasSalvas = 0;
     gw->checkpointFase = 0;
@@ -857,7 +960,7 @@ static void desenharHud(GameWorld *gw) {
     const char *textoMoedas = TextFormat("x %d", moedas);
     desenharTextoContornado(textoMoedas, cursorX, 25, 20, (Color){ 255, 230, 150, 255 });
 
-    if(gw->estado == ESTADO_JOGO_GAMEPLAY || gw->estado == ESTADO_JOGO_PAUSE || gw->estado == ESTADO_JOGO_MORTE) {
+    if(estadoAntesPause != ESTADO_JOGO_MAPA_MUNDO && gw->estado != ESTADO_JOGO_MAPA_MUNDO) {
 
         int segundosRestantes = gw->timerJogo / 1000;
         int minutos = segundosRestantes / 60;
