@@ -87,8 +87,7 @@ Você também pode baixar a versão já compilada diretamente na aba [Releases](
 | Pular       | Espaço        |
 | Correr      | Shift esq.    |
 | Pausar      | Esc           |
-| Voltar      | BackSpace     |
-| Selecionar  | Enter         |
+
 
 ## 👤 Autores
 
