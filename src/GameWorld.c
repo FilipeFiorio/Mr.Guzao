@@ -839,7 +839,7 @@ static void salvarCheckpoint(GameWorld *gw) {
         return;
     }
 
-    if(gw->faseAtual == 3 || gw->faseAtual == 6) {
+    if(gw->faseAtual != 9) {
         gw->checkpointFase = gw->faseAtual;
         gw->checkpointVidas = gw->mapa->jogador->vidas;
         gw->checkpointMoedas = gw->mapa->jogador->moedas;
