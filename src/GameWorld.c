@@ -330,7 +330,7 @@ void drawGameWorld( GameWorld *gw ) {
 
         case ESTADO_JOGO_APRESENTACAO:
 
-        drawTextAlinhado("BLTS Studios", 300, 80, (Color) {255, 255, 255, gw->alphaTransicao}, CENTRO);
+        drawTextAlinhado("Us Milhores Studios", 300, 80, (Color) {255, 255, 255, gw->alphaTransicao}, CENTRO);
         drawTextAlinhado("Apresenta", 400, 25, (Color) {255, 255, 255, gw->alphaTransicao}, CENTRO);
 
         break;
