@@ -611,27 +611,34 @@ void resolverColisaoInimigoComInimigo(Rectangle *ret, Vector2 *vel, Mapa *m) {
 
         if(inimigo->tipo == INIMIGO_NORMAL) {
 
-            InimigoNormal *i =(InimigoNormal*) inimigo->objeto;
+            InimigoNormal *i = (InimigoNormal*) inimigo->objeto;
 
-            if(CheckCollisionRecs(*ret, i->ret) && ret->x != i->ret.x && i->estaVivo) {
-                vel->x = -vel->x;
+            if(ret->x != i->ret.x && i->estaVivo) {               
+                if(CheckCollisionRecs(*ret, i->ret) && i->estaVivo) {
+                    vel->x = -vel->x;
+                }
             }
 
         } else if(inimigo->tipo == INIMIGO_DASH) {
 
             InimigoDash *i =(InimigoDash*) inimigo->objeto;
 
-            if(CheckCollisionRecs(*ret, i->ret) && ret->x != i->ret.x && i->estaVivo) {
-                vel->x = -vel->x;
+            if(ret->x != i->ret.x && i->estaVivo) {              
+                if(CheckCollisionRecs(*ret, i->ret)) {
+                    vel->x = -vel->x;
+                }
             }
 
         } else if(inimigo->tipo == INIMIGO_ESPINHO) {
 
             InimigoEspinho *i =(InimigoEspinho*) inimigo->objeto;
 
-            if(CheckCollisionRecs(*ret, i->ret) && ret->x != i->ret.x) {
-                vel->x = -vel->x;
+            if(ret->x != i->ret.width) {
+                if(CheckCollisionRecs(*ret, i->ret) && ret->x != i->ret.x) {
+                    vel->x = -vel->x;
+                }
             }
+
 
         }
 

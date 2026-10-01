@@ -363,7 +363,7 @@ void drawGameWorld( GameWorld *gw ) {
             ClearBackground(BLACK);
             drawTextAlinhado("GAME OVER", 160, 50, WHITE, CENTRO);
 
-            Rectangle botaoCheckpoint = {GetRenderWidth() * 0.5f - 150, GetRenderHeight() * 0.4f, 300, 100};
+            Rectangle botaoCheckpoint = {GetRenderWidth() * 0.5f - 150, GetRenderHeight() * 0.4f, 280, 85};
             Rectangle botaoReiniciarGameOver = {botaoCheckpoint.x, GetRenderHeight() * 0.5f, botaoCheckpoint.width, botaoCheckpoint.height};
             Rectangle botaoSairGameOver = {botaoCheckpoint.x, GetRenderHeight() * 0.6f, botaoCheckpoint.width, botaoCheckpoint.height};
 
@@ -411,7 +411,7 @@ void drawGameWorld( GameWorld *gw ) {
 
             drawTextAlinhado("Mr. Guzão", 200, 72, WHITE, CENTRO);
 
-            Rectangle botaoIniciar = {GetRenderWidth() * 0.5f - 150, GetRenderHeight() * 0.6f, 300, 100};
+            Rectangle botaoIniciar = {GetRenderWidth() * 0.5f - 150, GetRenderHeight() * 0.6f, 280, 85};
             Rectangle botaoSair = {botaoIniciar.x, GetRenderHeight() * 0.7f, botaoIniciar.width, botaoIniciar.height};
 
             if(GuiButton(botaoIniciar, "JOGAR")) {
@@ -537,7 +537,7 @@ void drawGameWorld( GameWorld *gw ) {
                     desenharHud(gw);
                     drawTextAlinhado("JOGO PAUSADO", GetRenderHeight() * 0.3f, 40, WHITE, CENTRO);
 
-                    Rectangle botaoResumir = {GetRenderWidth() * 0.5f - 150, GetRenderHeight() * 0.4f, 300, 100};
+                    Rectangle botaoResumir = {GetRenderWidth() * 0.5f - 150, GetRenderHeight() * 0.4f, 280, 85};
                     Rectangle botaoPersonagem = {botaoResumir.x, GetRenderHeight() * 0.5f, botaoResumir.width, botaoResumir.height};
                     Rectangle botaoReiniciar = {botaoResumir.x, GetRenderHeight() * 0.6f, botaoResumir.width, botaoResumir.height};
                     Rectangle botaoSair = {botaoResumir.x, GetRenderHeight() * 0.7f, botaoResumir.width, botaoResumir.height};
@@ -593,7 +593,7 @@ void drawGameWorld( GameWorld *gw ) {
                     desenharHud(gw);
                     desenharMiniMapa(gw);
 
-                    Rectangle botaoResumirFase = {GetRenderWidth() * 0.5f - 150, GetRenderHeight() * 0.4f, 300, 100};
+                    Rectangle botaoResumirFase = {GetRenderWidth() * 0.5f - 150, GetRenderHeight() * 0.4f, 280, 85};
                     Rectangle botaoReiniciarFase = {botaoResumirFase.x, GetRenderHeight() * 0.5f, botaoResumirFase.width, botaoResumirFase.height};
                     Rectangle botaoSairFase = {botaoResumirFase.x, GetRenderHeight() * 0.6f, botaoResumirFase.width, botaoResumirFase.height};
 
