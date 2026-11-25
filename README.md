@@ -5,11 +5,11 @@ Jogo de plataforma 2D desenvolvido em **C** utilizando a biblioteca **[raylib](h
 ![Linguagem](https://img.shields.io/badge/linguagem-C-blue)
 ![Raylib](https://img.shields.io/badge/engine-raylib-orange)
 
-## 📖 Sobre o projeto
+## Sobre o projeto
 
 **Mr. Guzão** é um jogo de plataforma onde o jogador controla o personagem principal através de fases repletas de desafios, inimigos e obstáculos. O projeto foi construído do zero em C puro, com a raylib cuidando de renderização, input e áudio.
 
-## 🎮 Funcionalidades
+## Funcionalidades
 
 - Movimentação e física de plataforma (pulo, colisões, gravidade)
 - Sistema de HUD (vidas, moedas, temporizador)
@@ -17,13 +17,13 @@ Jogo de plataforma 2D desenvolvido em **C** utilizando a biblioteca **[raylib](h
 - Suporte multiplataforma (Linux e Windows)
 - Versão jogável no navegador (WebAssembly)
 
-## 🛠️ Tecnologias
+## Tecnologias
 
 - **Linguagem:** C
 - **Engine/Biblioteca gráfica:** [raylib](https://www.raylib.com/)
 - **Build:** Makefile (Linux), scripts `.bat`/`.ps1` (Windows) e Emscripten (Web/WebAssembly)
 
-## 📂 Estrutura do repositório
+## Estrutura do repositório
 
 ```
 Mr.Guzao/
@@ -38,7 +38,7 @@ Mr.Guzao/
 └── README.md
 ```
 
-## 🚀 Como compilar e executar
+## Como compilar e executar
 
 ### Linux
 
@@ -75,11 +75,11 @@ build.bat
 
 O executável e os recursos necessários serão gerados/empacotados na pasta de saída definida pelo script.
 
-## 📦 Releases
+## Releases
 
 Você também pode baixar a versão já compilada diretamente na aba [Releases](https://github.com/FilipeFiorio/Mr.Guzao/releases) do repositório. Para rodar, basta executar o jogo dentro do diretório com os resources.
 
-## 🎯 Controles
+## Controles
 
 | Ação        | Tecla         |
 |-------------|---------------|
@@ -89,6 +89,6 @@ Você também pode baixar a versão já compilada diretamente na aba [Releases](
 | Pausar      | Esc           |
 
 
-## 👤 Autores
+## Autores
 
 **Filipe Fiorio** — [@FilipeFiorio](https://github.com/FilipeFiorio) & **Gustavo Mastelaro** — [@gustavoMastelaro](https://github.com/gustavoMastelaro)
