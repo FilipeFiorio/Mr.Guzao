@@ -2,9 +2,6 @@
 
 Jogo de plataforma 2D desenvolvido em **C** utilizando a biblioteca **[raylib](https://www.raylib.com/)**.
 
-![Linguagem](https://img.shields.io/badge/linguagem-C-blue)
-![Raylib](https://img.shields.io/badge/engine-raylib-orange)
-
 ## Sobre o projeto
 
 **Mr. Guzão** é um jogo de plataforma onde o jogador controla o personagem principal através de fases repletas de desafios, inimigos e obstáculos. O projeto foi construído do zero em C puro, com a raylib cuidando de renderização, input e áudio.
